@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Atocha">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1E3A8A">
+<title>Atocha</title>
+<link rel="manifest" id="pwa-manifest">
+<link rel="apple-touch-icon" id="apple-icon">
+<style>
+:root {
+  --blue-900: #0F2557;
+  --blue-800: #1E3A8A;
+  --blue-700: #1D4ED8;
+  --blue-600: #2563EB;
+  --blue-500: #3B82F6;
+  --blue-100: #DBEAFE;
+  --blue-50:  #EFF6FF;
+  --gold:     #F59E0B;
+  --gold-light: #FDE68A;
+  --green:    #10B981;
+  --red:      #EF4444;
+  --orange:   #F97316;
+  --purple:   #8B5CF6;
+  --gray-900: #111827;
+  --gray-800: #1F2937;
+  --gray-700: #374151;
+  --gray-600: #4B5563;
+  --gray-400: #9CA3AF;
+  --gray-200: #E5E7EB;
+  --gray-100: #F3F4F6;
+  --white:    #FFFFFF;
+  --sidebar-w: 220px;
+  --header-h: 56px;
+  --radius: 12px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
+}
+.dark {
+  --blue-50:  #1a2744;
+  --blue-100: #1e3a6e;
+  --gray-100: #1F2937;
+  --gray-200: #374151;
+  --gray-400: #6B7280;
+  --gray-600: #9CA3AF;
+  --gray-700: #D1D5DB;
+  --gray-800: #E5E7EB;
+  --gray-900: #F9FAFB;
+  --white:    #111827;
+  --shadow:   0 2px 12px rgba(0,0,0,0.3);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--gray-100); color: var(--gray-900); min-height: 100vh; transition: background .3s, color .3s; }
+
+/* ── ONBOARDING ── */
+#onboarding { position: fixed; inset: 0; background: linear-gradient(135deg, var(--blue-900), var(--blue-700)); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 24px; }
+.ob-card { background: white; border-radius: 20px; padding: 40px 36px; max-width: 460px; width: 100%; box-shadow: var(--shadow-lg); }
+.ob-logo { font-size: 32px; font-weight: 800; color: var(--blue-800); letter-spacing: -1px; margin-bottom: 4px; }
+.ob-sub { color: var(--gray-600); font-size: 14px; margin-bottom: 32px; }
+.ob-step { display: none; }
+.ob-step.active { display: block; }
+.ob-step h2 { font-size: 20px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+.ob-step p { font-size: 14px; color: var(--gray-600); margin-bottom: 24px; line-height: 1.5; }
+.ob-field { margin-bottom: 16px; }
+.ob-field label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+.ob-field input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 15px; color: var(--gray-900); outline: none; transition: border .2s; }
+.ob-field input:focus { border-color: var(--blue-600); }
+.ob-field .hint { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+.btn-primary { width: 100%; padding: 14px; background: var(--blue-700); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background .2s; }
+.btn-primary:hover { background: var(--blue-600); }
+.ob-dots { display: flex; gap: 8px; justify-content: center; margin-top: 24px; }
+.ob-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-200); transition: background .3s; }
+.ob-dot.active { background: var(--blue-600); }
+
+/* ── LAYOUT ── */
+#app { display: none; }
+.sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: linear-gradient(180deg, var(--blue-900) 0%, var(--blue-800) 100%); color: white; display: flex; flex-direction: column; z-index: 100; transition: transform .3s; overflow-y: auto; }
+.sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar-logo .app-name { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.sidebar-logo .company-name { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+.sidebar-progress { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar-progress .prog-label { font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 6px; display: flex; justify-content: space-between; }
+.prog-bar { height: 6px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--gold); border-radius: 4px; transition: width .5s ease; }
+.sidebar-nav { flex: 1; padding: 12px 0; }
+.nav-section { padding: 8px 20px 4px; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 1px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; transition: background .2s; font-size: 14px; color: rgba(255,255,255,0.8); position: relative; }
+.nav-item:hover { background: rgba(255,255,255,0.08); }
+.nav-item.active { background: rgba(255,255,255,0.15); color: white; font-weight: 600; }
+.nav-item .badge { margin-left: auto; background: var(--red); color: white; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+/* ── MAIN ── */
+.main { margin-left: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
+.topbar { height: var(--header-h); background: white; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; padding: 0 24px; gap: 12px; position: sticky; top: 0; z-index: 50; }
+.dark .topbar { background: var(--gray-800); border-color: var(--gray-200); }
+.topbar-title { font-size: 16px; font-weight: 700; color: var(--gray-900); flex: 1; }
+.topbar-btn { padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: all .2s; }
+.btn-cloud { background: var(--blue-600); color: white; }
+.btn-cloud:hover { background: var(--blue-700); }
+.btn-save { background: var(--gold); color: var(--blue-900); }
+.btn-save:hover { background: #D97706; }
+.btn-icon { background: var(--gray-100); color: var(--gray-700); width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+.dark .btn-icon { background: var(--gray-200); }
+.hamburger { display: none; background: none; border: none; cursor: pointer; color: var(--gray-700); font-size: 20px; }
+.content { flex: 1; padding: 24px; max-width: 1200px; width: 100%; }
+
+/* ── CARDS ── */
+.card { background: white; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.dark .card { background: var(--gray-800); }
+.card-title { font-size: 14px; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+
+/* ── DASHBOARD ── */
+.dash-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-card { background: white; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.dark .stat-card { background: var(--gray-800); }
+.stat-label { font-size: 12px; color: var(--gray-600); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.stat-value { font-size: 26px; font-weight: 800; color: var(--gray-900); letter-spacing: -0.5px; }
+.stat-sub { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+
+.task-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.task-panel { background: white; border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+.dark .task-panel { background: var(--gray-800); }
+.tp-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.tp-dot { width: 10px; height: 10px; border-radius: 50%; }
+.tp-title { font-size: 13px; font-weight: 700; color: var(--gray-700); }
+.tp-count { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--gray-400); }
+.task-item { padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; font-size: 13px; background: var(--gray-100); }
+.dark .task-item { background: var(--gray-700); }
+.task-item .ti-name { font-weight: 600; color: var(--gray-900); margin-bottom: 2px; }
+.task-item .ti-meta { font-size: 11px; color: var(--gray-400); }
+.empty-panel { text-align: center; padding: 20px; color: var(--gray-400); font-size: 13px; }
+
+/* ── MODULE GRID ── */
+.modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.module-card { background: white; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); cursor: pointer; transition: transform .2s, box-shadow .2s; position: relative; }
+.dark .module-card { background: var(--gray-800); }
+.module-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.mc-badge-count { position: absolute; top: 12px; right: 12px; background: var(--red); color: white; font-size: 11px; font-weight: 700; min-width: 20px; height: 20px; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
+.mc-icon { font-size: 28px; margin-bottom: 10px; }
+.mc-name { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+.mc-desc { font-size: 12px; color: var(--gray-400); margin-bottom: 12px; }
+.mc-footer { display: flex; align-items: center; justify-content: space-between; }
+.status-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+.status-marcha { background: #D1FAE5; color: #065F46; }
+.status-planificacion { background: #FEF3C7; color: #92400E; }
+.status-desarrollo { background: #DBEAFE; color: #1E40AF; }
+.status-exploracion { background: #EDE9FE; color: #5B21B6; }
+.status-concepto { background: var(--gray-200); color: var(--gray-700); }
+.mc-amount { font-size: 18px; font-weight: 800; color: var(--blue-700); }
+
+/* ── PROJECT PAGE ── */
+.project-header { background: white; border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow); }
+.dark .project-header { background: var(--gray-800); }
+.ph-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+.ph-icon { font-size: 36px; }
+.ph-info { flex: 1; }
+.ph-name { font-size: 22px; font-weight: 800; color: var(--gray-900); margin-bottom: 4px; }
+.ph-desc { font-size: 14px; color: var(--gray-400); }
+.ph-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.ph-amount { font-size: 28px; font-weight: 800; color: var(--blue-700); }
+.ph-prog { flex: 1; min-width: 160px; }
+.ph-prog-label { font-size: 12px; color: var(--gray-400); margin-bottom: 4px; }
+.ph-prog-bar { height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
+.ph-prog-fill { height: 100%; background: linear-gradient(90deg, var(--blue-600), var(--blue-500)); border-radius: 4px; transition: width .5s; }
+.edit-btn { padding: 8px 14px; background: var(--blue-50); color: var(--blue-700); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+/* ── TASKS ── */
+.task-form { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.task-form input, .task-form select { padding: 10px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; color: var(--gray-900); background: white; outline: none; }
+.dark .task-form input, .dark .task-form select { background: var(--gray-700); border-color: var(--gray-600); color: var(--gray-900); }
+.task-form input[type="text"] { flex: 1; min-width: 160px; }
+.task-form input[type="date"] { width: 150px; }
+.task-form select { width: 110px; }
+.btn-add { padding: 10px 18px; background: var(--blue-600); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.btn-add:hover { background: var(--blue-700); }
+
+.tasks-list { display: flex; flex-direction: column; gap: 8px; }
+.task-row { display: flex; align-items: center; gap: 10px; background: var(--gray-100); border-radius: 10px; padding: 12px 14px; transition: background .2s; }
+.dark .task-row { background: var(--gray-700); }
+.task-row.done { opacity: 0.6; }
+.task-row.done .task-name { text-decoration: line-through; color: var(--gray-400); }
+.task-check { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--gray-400); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .2s; }
+.task-check.checked { background: var(--green); border-color: var(--green); color: white; font-size: 12px; }
+.task-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--gray-900); }
+.task-date { font-size: 12px; color: var(--gray-400); }
+.task-date.overdue { color: var(--red); font-weight: 600; }
+.task-priority { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; }
+.p-alta { background: #FEE2E2; color: #991B1B; }
+.p-media { background: #FEF3C7; color: #92400E; }
+.p-baja { background: #D1FAE5; color: #065F46; }
+.task-done-date { font-size: 11px; color: var(--green); font-weight: 600; }
+.task-del { background: none; border: none; color: var(--gray-400); cursor: pointer; font-size: 16px; padding: 4px; }
+.task-del:hover { color: var(--red); }
+
+/* ── CHECKLIST MAESTRO ── */
+.checklist-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-btn { padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--gray-200); background: white; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--gray-600); transition: all .2s; }
+.dark .filter-btn { background: var(--gray-700); border-color: var(--gray-600); }
+.filter-btn.active { background: var(--blue-700); color: white; border-color: var(--blue-700); }
+
+/* ── NOTAS ── */
+.notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.note-card { background: white; border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); position: relative; }
+.dark .note-card { background: var(--gray-800); }
+.note-title { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+.note-body { font-size: 14px; color: var(--gray-600); line-height: 1.5; white-space: pre-wrap; }
+.note-date { font-size: 11px; color: var(--gray-400); margin-top: 10px; }
+.note-del { position: absolute; top: 12px; right: 12px; background: none; border: none; color: var(--gray-400); cursor: pointer; font-size: 16px; }
+.note-del:hover { color: var(--red); }
+.note-form { background: white; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
+.dark .note-form { background: var(--gray-800); }
+.note-form input, .note-form textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; margin-bottom: 10px; outline: none; resize: vertical; font-family: inherit; color: var(--gray-900); background: white; }
+.dark .note-form input, .dark .note-form textarea { background: var(--gray-700); border-color: var(--gray-600); color: var(--gray-900); }
+.note-form input:focus, .note-form textarea:focus { border-color: var(--blue-600); }
+
+/* ── SYNC ── */
+.sync-card { background: white; border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); max-width: 500px; }
+.dark .sync-card { background: var(--gray-800); }
+.sync-status { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+.status-dot { width: 12px; height: 12px; border-radius: 50%; }
+.dot-red { background: var(--red); }
+.dot-green { background: var(--green); }
+.dot-orange { background: var(--orange); }
+.sync-label { font-size: 14px; font-weight: 600; color: var(--gray-700); }
+.sync-form input { width: 100%; padding: 10px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; margin-bottom: 10px; outline: none; color: var(--gray-900); background: white; }
+.dark .sync-form input { background: var(--gray-700); border-color: var(--gray-600); color: var(--gray-900); }
+.sync-form input:focus { border-color: var(--blue-600); }
+.sync-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.btn-sync-up { padding: 10px 18px; background: var(--blue-600); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
+.btn-sync-down { padding: 10px 18px; background: var(--green); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
+.sync-hint { font-size: 12px; color: var(--gray-400); margin-top: 12px; line-height: 1.5; }
+
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.modal { background: white; border-radius: 16px; padding: 28px; max-width: 480px; width: 100%; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto; }
+.dark .modal { background: var(--gray-800); }
+.modal h3 { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 20px; }
+.modal-field { margin-bottom: 14px; }
+.modal-field label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+.modal-field input, .modal-field select, .modal-field textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; outline: none; color: var(--gray-900); background: white; font-family: inherit; }
+.dark .modal-field input, .dark .modal-field select, .dark .modal-field textarea { background: var(--gray-700); border-color: var(--gray-600); color: var(--gray-900); }
+.modal-field input:focus, .modal-field select:focus { border-color: var(--blue-600); }
+.emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-top: 8px; }
+.emoji-btn { padding: 8px; font-size: 20px; border: 2px solid transparent; border-radius: 8px; cursor: pointer; background: var(--gray-100); text-align: center; transition: all .2s; }
+.dark .emoji-btn { background: var(--gray-700); }
+.emoji-btn.selected { border-color: var(--blue-600); background: var(--blue-50); }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.btn-cancel { flex: 1; padding: 12px; background: var(--gray-100); color: var(--gray-700); border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-confirm { flex: 1; padding: 12px; background: var(--blue-700); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--gray-900); color: white; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; z-index: 9999; transition: transform .3s; white-space: nowrap; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── REPORT ── */
+@media print {
+  .sidebar, .topbar, .no-print { display: none !important; }
+  .main { margin-left: 0 !important; }
+  body { background: white !important; }
+  .content { padding: 0 !important; }
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  :root { --sidebar-w: 0px; }
+  .sidebar { transform: translateX(-220px); width: 220px; }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .hamburger { display: flex; }
+  .content { padding: 16px; }
+  .dash-stats { grid-template-columns: 1fr 1fr; }
+  .task-panels { grid-template-columns: 1fr; }
+  .modules-grid { grid-template-columns: 1fr 1fr; }
+  .topbar { padding: 0 16px; }
+}
+@media (max-width: 480px) {
+  .modules-grid { grid-template-columns: 1fr; }
+  .dash-stats { grid-template-columns: 1fr 1fr; }
+}
+
+.overlay-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 99; display: none; }
+.overlay-bg.show { display: block; }
+
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.section-title { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+.add-module-btn { padding: 8px 16px; background: var(--blue-600); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+.add-module-btn:hover { background: var(--blue-700); }
+
+.dist-bar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 20px; gap: 2px; }
+.dist-seg { height: 100%; border-radius: 3px; transition: flex .5s; }
+
+.backup-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-backup { padding: 12px 20px; border-radius: 8px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.btn-export { background: var(--blue-600); color: white; }
+.btn-import { background: var(--green); color: white; }
+
+/* ── BOTTOM NAV (mobile only) ── */
+.bottom-nav { display: none; }
+@media (max-width: 768px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 62px;
+    background: white;
+    border-top: 1px solid var(--gray-200);
+    z-index: 150;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  }
+  .dark .bottom-nav { background: var(--gray-800); border-color: var(--gray-200); }
+  .bn-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    color: var(--gray-400);
+    font-size: 10px;
+    font-weight: 600;
+    transition: color .2s;
+    position: relative;
+    padding-bottom: 4px;
+  }
+  .bn-item.active { color: var(--blue-700); }
+  .bn-item .bn-icon { font-size: 20px; line-height: 1; }
+  .bn-item .bn-badge {
+    position: absolute;
+    top: 6px;
+    right: calc(50% - 18px);
+    background: var(--red);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+  }
+  /* push content up so bottom nav doesn't cover it */
+  .content { padding-bottom: 80px; }
+}
+/* ── CLOUD BANNER ── */
+.cloud-banner { display:flex; align-items:center; gap:14px; background:linear-gradient(90deg,#1E3A8A,#1D4ED8); color:white; padding:14px 20px; border-radius:var(--radius); margin-bottom:20px; box-shadow:var(--shadow); }
+.cb-icon { font-size:28px; flex-shrink:0; }
+.cb-text { flex:1; }
+.cb-title { font-size:15px; font-weight:700; margin-bottom:2px; }
+.cb-sub { font-size:12px; opacity:.8; }
+.cb-btn { padding:10px 18px; background:var(--gold); color:var(--blue-900); border:none; border-radius:8px; font-size:13px; font-weight:800; cursor:pointer; white-space:nowrap; }
+.cb-close { background:none; border:none; color:rgba(255,255,255,.6); font-size:20px; cursor:pointer; padding:0 4px; }
+
+/* ── INSTALL BANNER ── */
+.install-banner { display:none; align-items:center; gap:12px; background:var(--gold); color:var(--blue-900); padding:12px 18px; border-radius:var(--radius); margin-bottom:16px; }
+.install-banner.show { display:flex; }
+.ib-text { flex:1; font-size:13px; font-weight:700; }
+.ib-btn { padding:9px 16px; background:var(--blue-800); color:white; border:none; border-radius:8px; font-size:13px; font-weight:800; cursor:pointer; white-space:nowrap; }
+.ib-close { background:none; border:none; color:var(--blue-900); font-size:18px; cursor:pointer; opacity:.6; }
+
+/* ── MODULE ACTION BAR ── */
+.mod-action-bar { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+.btn-mod-save { padding:10px 18px; background:var(--gold); color:var(--blue-900); border:none; border-radius:8px; font-size:13px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:6px; }
+.btn-mod-sync { padding:10px 18px; background:var(--blue-600); color:white; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; }
+</style>
+<body>
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div class="ob-card">
+    <div class="ob-logo">Atocha</div>
+    <div class="ob-sub">Planificación Estratégica · Configuración inicial</div>
+
+    <div class="ob-step active" id="ob1">
+      <h2>¡Bienvenido!</h2>
+      <p>Vamos a configurar tu espacio de trabajo en unos segundos.</p>
+      <div class="ob-field">
+        <label>Nombre de tu empresa o proyecto</label>
+        <input type="text" id="ob-company" placeholder="Ej: Empresa XYZ" maxlength="40">
+      </div>
+      <div class="ob-field">
+        <label>Descripción corta (opcional)</label>
+        <input type="text" id="ob-tagline" placeholder="Ej: Plan Estratégico 2025" maxlength="50">
+        <div class="hint">Aparece debajo del nombre en la barra lateral.</div>
+      </div>
+      <button class="btn-primary" onclick="obNext1()">Continuar →</button>
+    </div>
+
+    <div class="ob-step" id="ob2">
+      <h2>Meta total</h2>
+      <p>¿Cuánto es el valor total del plan estratégico en pesos colombianos?</p>
+      <div class="ob-field">
+        <label>Meta total (COP)</label>
+        <input type="text" id="ob-meta" placeholder="Ej: 500.000.000" oninput="formatCOPInput(this)">
+        <div class="hint">Podrás distribuirlo entre tus proyectos después.</div>
+      </div>
+      <button class="btn-primary" onclick="obNext2()">Continuar →</button>
+    </div>
+
+    <div class="ob-step" id="ob3">
+      <h2>Tus proyectos</h2>
+      <p>Crea tus proyectos estratégicos. Puedes agregar hasta 8 proyectos y editarlos en cualquier momento.</p>
+      <div id="ob-projects-list" style="margin-bottom:14px;max-height:220px;overflow-y:auto;"></div>
+      <button class="btn-primary" style="background:var(--gray-200);color:var(--gray-700);margin-bottom:10px;" onclick="obAddProject()">+ Agregar proyecto</button>
+      <button class="btn-primary" onclick="obFinish()">Empezar →</button>
+    </div>
+
+    <div class="ob-dots">
+      <div class="ob-dot active" id="dot1"></div>
+      <div class="ob-dot" id="dot2"></div>
+      <div class="ob-dot" id="dot3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- CLOUD DOWNLOAD BANNER -->
+  <div class="cloud-banner" id="cloud-banner" style="position:fixed;top:0;left:0;right:0;z-index:500;border-radius:0;margin:0;display:none;">
+    <div class="cb-icon">☁️</div>
+    <div class="cb-text">
+      <div class="cb-title">¿Descargar datos de la nube?</div>
+      <div class="cb-sub">Descarga primero para tener los datos más recientes · Última sync: <span id="banner-sync-date">nunca</span></div>
+    </div>
+    <button class="cb-btn" onclick="bannerSyncDown()">⬇️ Descargar</button>
+    <button class="cb-close" onclick="hideBanner()">✕</button>
+  </div>
+
+  <!-- INSTALL BANNER -->
+  <div class="install-banner" id="install-banner">
+    <div class="ib-text">📲 Instala Atocha en tu dispositivo como app</div>
+    <button class="ib-btn" id="install-btn" onclick="installApp()">⬇️ Instalar</button>
+    <button class="ib-close" onclick="document.getElementById('install-banner').classList.remove('show')">✕</button>
+  </div>
+
+  <div class="overlay-bg" id="overlay" onclick="closeSidebar()"></div>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="app-name">Atocha</div>
+      <div class="company-name" id="sb-company">—</div>
+    </div>
+    <div class="sidebar-progress">
+      <div class="prog-label">
+        <span>Progreso general</span>
+        <span id="sb-pct">0%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="sb-bar" style="width:0%"></div></div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;" id="sb-amounts">—</div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-section">General</div>
+      <div class="nav-item active" onclick="goPage('dashboard')" id="nav-dashboard">🎯 Dashboard</div>
+      <div class="nav-section">Módulos</div>
+      <div id="sb-modules"></div>
+      <div class="nav-section">Gestión</div>
+      <div class="nav-item" onclick="goPage('checklist')" id="nav-checklist">📋 Checklist Maestro <span class="badge" id="badge-checklist" style="display:none">0</span></div>
+      <div class="nav-item" onclick="goPage('notas')" id="nav-notas">📝 Notas</div>
+      <div class="nav-item" onclick="goPage('sync')" id="nav-sync">☁️ Sincronización</div>
+      <div class="nav-item" onclick="goPage('backup')" id="nav-backup">📦 Backup</div>
+      <div class="nav-section">Opciones</div>
+      <div class="nav-item" onclick="toggleDark()" id="nav-dark">🌙 Modo Oscuro</div>
+      <div class="nav-item" onclick="goPage('config')" id="nav-config">⚙️ Configuración</div>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <button class="topbar-btn btn-cloud" onclick="syncUp()">☁️ Subir</button>
+      <button class="topbar-btn btn-save" onclick="saveLocal()">💾 Guardar</button>
+      <button class="topbar-btn btn-icon" onclick="printReport()" title="Imprimir reporte">🖨️</button>
+    </div>
+    <div class="content" id="page-content"></div>
+  </div>
+
+  <!-- BOTTOM NAV (mobile) -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <div class="bn-item active" id="bn-dashboard" onclick="goPage('dashboard')">
+      <div class="bn-icon">🎯</div>
+      <span>Dashboard</span>
+    </div>
+    <div class="bn-item" id="bn-checklist" onclick="goPage('checklist')">
+      <div class="bn-icon">📋</div>
+      <span>Checklist</span>
+      <div class="bn-badge" id="bn-badge" style="display:none">0</div>
+    </div>
+    <div class="bn-item" id="bn-menu" onclick="toggleSidebar()">
+      <div class="bn-icon">☰</div>
+      <span>Menú</span>
+    </div>
+    <div class="bn-item" id="bn-notas" onclick="goPage('notas')">
+      <div class="bn-icon">📝</div>
+      <span>Notas</span>
+    </div>
+    <div class="bn-item" id="bn-sync" onclick="syncUp()">
+      <div class="bn-icon">☁️</div>
+      <span>Subir</span>
+    </div>
+  </nav>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" style="display:none" onclick="closeModal(event)">
+  <div class="modal" id="modal-body"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+let state = {
+  company: '',
+  tagline: '',
+  metaTotal: 0,
+  modules: [],   // {id, name, desc, icon, status, meta, tasks:[]}
+  checklist: [], // {id, name, priority, date, done, doneDate, projectId}
+  notes: [],     // {id, title, body, date}
+  sync: { url: '', key: '' },
+  dark: false,
+  lastSync: null
+};
+
+const EMOJIS = ['🏢','🏗️','🌍','🚀','💡','🤝','📈','🏭','🏪','🌐','💰','🔧','🏠','⚡','🎯','🛒','🏥','🎓','🚗','✈️','🌱','💎','🔬','📱','🛡️','🌊','🏆','🎪'];
+const STATUSES = [
+  {key:'marcha',    label:'En Marcha',     cls:'status-marcha'},
+  {key:'planificacion', label:'Planificación', cls:'status-planificacion'},
+  {key:'desarrollo',label:'Desarrollo',    cls:'status-desarrollo'},
+  {key:'exploracion',label:'Exploración',  cls:'status-exploracion'},
+  {key:'concepto',  label:'Concepto',      cls:'status-concepto'},
+];
+const COLORS = ['#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#EC4899','#06B6D4','#F97316'];
+
+// ═══════════════════════════════════════════
+//  PERSIST
+// ═══════════════════════════════════════════
+function saveLocal() {
+  localStorage.setItem('atocha_wl', JSON.stringify(state));
+  showToast('💾 Guardado');
+}
+function loadLocal() {
+  const d = localStorage.getItem('atocha_wl');
+  if (d) { try { state = JSON.parse(d); return true; } catch(e){} }
+  return false;
+}
+
+// ═══════════════════════════════════════════
+//  FORMAT
+// ═══════════════════════════════════════════
+function fmtCOP(n) {
+  if (!n && n !== 0) return '$0';
+  return '$' + Math.round(n).toLocaleString('es-CO');
+}
+function parseCOP(s) {
+  return parseInt(s.replace(/[^0-9]/g,'')) || 0;
+}
+function formatCOPInput(el) {
+  const v = parseCOP(el.value);
+  el.value = v ? v.toLocaleString('es-CO') : '';
+}
+
+// ═══════════════════════════════════════════
+//  ONBOARDING
+// ═══════════════════════════════════════════
+let obProjects = [];
+function obNext1() {
+  const c = document.getElementById('ob-company').value.trim();
+  if (!c) { showToast('Ingresa el nombre de tu empresa'); return; }
+  document.getElementById('ob1').classList.remove('active');
+  document.getElementById('ob2').classList.add('active');
+  document.getElementById('dot1').classList.remove('active');
+  document.getElementById('dot2').classList.add('active');
+}
+function obNext2() {
+  const m = parseCOP(document.getElementById('ob-meta').value);
+  if (!m) { showToast('Ingresa la meta total en COP'); return; }
+  document.getElementById('ob2').classList.remove('active');
+  document.getElementById('ob3').classList.add('active');
+  document.getElementById('dot2').classList.remove('active');
+  document.getElementById('dot3').classList.add('active');
+  renderObProjects();
+}
+function obAddProject() {
+  if (obProjects.length >= 8) { showToast('Máximo 8 proyectos'); return; }
+  obProjects.push({ name: `Proyecto ${obProjects.length + 1}`, meta: 0 });
+  renderObProjects();
+}
+function renderObProjects() {
+  const el = document.getElementById('ob-projects-list');
+  if (!obProjects.length) {
+    el.innerHTML = `<div style="text-align:center;padding:16px;color:var(--gray-400);font-size:13px;">Agrega al menos un proyecto para empezar</div>`;
+    return;
+  }
+  el.innerHTML = obProjects.map((p, i) => `
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+      <input type="text" value="${p.name}" placeholder="Nombre proyecto" style="flex:1;padding:8px 10px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:13px;outline:none;" oninput="obProjects[${i}].name=this.value">
+      <input type="text" value="${p.meta ? p.meta.toLocaleString('es-CO') : ''}" placeholder="Meta COP" style="width:130px;padding:8px 10px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:13px;outline:none;" oninput="obProjects[${i}].meta=parseCOP(this.value);formatCOPInput(this)">
+      <button onclick="obProjects.splice(${i},1);renderObProjects()" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:18px;padding:0 4px;">×</button>
+    </div>`).join('');
+}
+function obFinish() {
+  const company = document.getElementById('ob-company').value.trim();
+  const tagline = document.getElementById('ob-tagline').value.trim();
+  const meta = parseCOP(document.getElementById('ob-meta').value);
+  state.company = company;
+  state.tagline = tagline || 'Plan Estratégico';
+  state.metaTotal = meta;
+  state.modules = obProjects.map((p, i) => ({
+    id: 'mod_' + Date.now() + i,
+    name: p.name || `Proyecto ${i+1}`,
+    desc: '',
+    icon: EMOJIS[i] || '📁',
+    status: 'planificacion',
+    meta: p.meta || 0,
+    tasks: []
+  }));
+  saveLocal();
+  document.getElementById('onboarding').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initApp();
+}
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+function initApp() {
+  if (state.dark) document.body.classList.add('dark');
+  document.getElementById('sb-company').textContent = state.company;
+  renderSidebar();
+  goPage('dashboard');
+  setTimeout(showCloudBanner, 800);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (loadLocal()) {
+    document.getElementById('onboarding').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initApp();
+  }
+});
+
+// ═══════════════════════════════════════════
+//  SIDEBAR
+// ═══════════════════════════════════════════
+function renderSidebar() {
+  document.getElementById('sb-company').textContent = state.company;
+  const assigned = state.modules.reduce((s,m) => s + (m.meta||0), 0);
+  const pct = state.metaTotal ? Math.round(assigned / state.metaTotal * 100) : 0;
+  document.getElementById('sb-pct').textContent = pct + '%';
+  document.getElementById('sb-bar').style.width = Math.min(pct, 100) + '%';
+  document.getElementById('sb-amounts').textContent = fmtCOP(assigned) + ' / ' + fmtCOP(state.metaTotal);
+
+  const pending = getAllTasks().filter(t => !t.done).length;
+  const cl = document.getElementById('badge-checklist');
+  if (pending > 0) { cl.style.display = 'flex'; cl.textContent = pending; } else { cl.style.display = 'none'; }
+  // bottom nav badge
+  const bnb = document.getElementById('bn-badge');
+  if (bnb) { if (pending > 0) { bnb.style.display = 'flex'; bnb.textContent = pending; } else { bnb.style.display = 'none'; } }
+
+  const mods = document.getElementById('sb-modules');
+  mods.innerHTML = state.modules.map(m => {
+    const p = m.tasks.filter(t => !t.done).length;
+    return `<div class="nav-item" onclick="goPage('mod_${m.id}')" id="nav-mod_${m.id}">
+      ${m.icon} ${m.name}
+      ${p > 0 ? `<span class="badge">${p}</span>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════
+let currentPage = '';
+function goPage(page) {
+  currentPage = page;
+  closeSidebar();
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const nav = document.getElementById('nav-' + page);
+  if (nav) nav.classList.add('active');
+  document.getElementById('topbar-title').textContent = getPageTitle(page);
+  // update bottom nav
+  document.querySelectorAll('.bn-item').forEach(n => n.classList.remove('active'));
+  if (page === 'dashboard') { const b = document.getElementById('bn-dashboard'); if(b) b.classList.add('active'); }
+  else if (page === 'checklist') { const b = document.getElementById('bn-checklist'); if(b) b.classList.add('active'); }
+  else if (page === 'notas') { const b = document.getElementById('bn-notas'); if(b) b.classList.add('active'); }
+  const c = document.getElementById('page-content');
+  c.innerHTML = '';
+  if (page === 'dashboard') renderDashboard();
+  else if (page === 'checklist') renderChecklist();
+  else if (page === 'notas') renderNotas();
+  else if (page === 'sync') renderSync();
+  else if (page === 'backup') renderBackup();
+  else if (page === 'config') renderConfig();
+  else if (page.startsWith('mod_')) {
+    const id = page.replace('mod_', '');
+    renderModule(id);
+  }
+}
+
+function getPageTitle(page) {
+  if (page === 'dashboard') return 'Dashboard';
+  if (page === 'checklist') return 'Checklist Maestro';
+  if (page === 'notas') return 'Notas';
+  if (page === 'sync') return 'Sincronización';
+  if (page === 'backup') return 'Backup';
+  if (page === 'config') return 'Configuración';
+  if (page.startsWith('mod_')) {
+    const id = page.replace('mod_', '');
+    const m = state.modules.find(x => x.id === id);
+    return m ? m.name : 'Proyecto';
+  }
+  return 'Atocha';
+}
+
+// ═══════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════
+function getAllTasks() {
+  let all = [];
+  state.modules.forEach(m => m.tasks.forEach(t => all.push({...t, projectName: m.name, projectId: m.id})));
+  state.checklist.forEach(t => all.push({...t, projectName: 'Checklist Maestro', projectId: null}));
+  return all;
+}
+
+function renderDashboard() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const in7 = new Date(today); in7.setDate(in7.getDate() + 7);
+  const in30 = new Date(today); in30.setDate(in30.getDate() + 30);
+  const all = getAllTasks();
+  const overdue = all.filter(t => !t.done && t.date && new Date(t.date) < today);
+  const soon = all.filter(t => !t.done && t.date && new Date(t.date) >= today && new Date(t.date) <= in7);
+  const upcoming = all.filter(t => !t.done && t.date && new Date(t.date) > in7 && new Date(t.date) <= in30);
+  const done = all.filter(t => t.done);
+  const assigned = state.modules.reduce((s,m) => s + (m.meta||0), 0);
+  const pct = state.metaTotal ? Math.round(assigned / state.metaTotal * 100) : 0;
+
+  let html = `
+  <div class="dash-stats">
+    <div class="stat-card">
+      <div class="stat-label">Meta Total</div>
+      <div class="stat-value" style="font-size:20px">${fmtCOP(state.metaTotal)}</div>
+      <div class="stat-sub">Plan estratégico</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Asignado</div>
+      <div class="stat-value" style="font-size:20px;color:var(--blue-600)">${fmtCOP(assigned)}</div>
+      <div class="stat-sub">${pct}% del total</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Proyectos</div>
+      <div class="stat-value">${state.modules.length}</div>
+      <div class="stat-sub">${state.modules.filter(m=>m.status==='marcha').length} en marcha</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Tareas pendientes</div>
+      <div class="stat-value" style="color:var(--orange)">${all.filter(t=>!t.done).length}</div>
+      <div class="stat-sub">${done.length} completadas</div>
+    </div>
+  </div>`;
+
+  // Distribution bar
+  if (state.modules.length) {
+    html += `<div class="card" style="margin-bottom:20px;">
+      <div class="card-title">📊 Distribución por proyecto</div>
+      <div class="dist-bar">
+        ${state.modules.map((m,i) => {
+          const w = state.metaTotal ? Math.max((m.meta/state.metaTotal)*100, 1) : 0;
+          return `<div class="dist-seg" style="flex:${w};background:${COLORS[i%COLORS.length]}" title="${m.name}: ${fmtCOP(m.meta)}"></div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        ${state.modules.map((m,i) => `<div style="display:flex;align-items:center;gap:6px;font-size:12px;">
+          <div style="width:10px;height:10px;border-radius:3px;background:${COLORS[i%COLORS.length]}"></div>
+          <span style="color:var(--gray-600)">${m.name}</span>
+          <span style="font-weight:700;color:var(--gray-900)">${fmtCOP(m.meta)}</span>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  // Task panels
+  html += `<div class="task-panels">
+    ${taskPanel('🔴 Vencidas', 'var(--red)', overdue, true)}
+    ${taskPanel('🟡 Por vencer (7 días)', 'var(--gold)', soon, false)}
+    ${taskPanel('🔵 Próximas (30 días)', 'var(--blue-500)', upcoming, false)}
+    ${taskPanel('✅ Cumplidas', 'var(--green)', done, false, true)}
+  </div>`;
+
+  // Modules grid
+  html += `<div class="section-header">
+    <div class="section-title">Módulos del Ecosistema</div>
+    <button class="add-module-btn" onclick="openAddModule()">+ Nuevo proyecto</button>
+  </div>
+  <div class="modules-grid">
+    ${state.modules.map(m => moduleCard(m)).join('')}
+    ${state.modules.length === 0 ? `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400);">Agrega tu primer proyecto →</div>` : ''}
+  </div>`;
+
+  document.getElementById('page-content').innerHTML = html;
+}
+
+function taskPanel(title, color, tasks, isOverdue = false, isDone = false) {
+  return `<div class="task-panel">
+    <div class="tp-header">
+      <div class="tp-dot" style="background:${color}"></div>
+      <div class="tp-title">${title}</div>
+      <div class="tp-count">${tasks.length}</div>
+    </div>
+    ${tasks.length === 0 ? `<div class="empty-panel">Sin tareas</div>` :
+      tasks.slice(0,5).map(t => `
+        <div class="task-item">
+          <div class="ti-name">${t.name}</div>
+          <div class="ti-meta">${t.projectName}${t.date ? ' · ' + formatDate(t.date) : ''}${isDone && t.doneDate ? ' · ✅ ' + formatDate(t.doneDate) : ''}</div>
+        </div>`).join('') +
+      (tasks.length > 5 ? `<div style="text-align:center;font-size:12px;color:var(--gray-400);margin-top:6px;">+${tasks.length-5} más</div>` : '')
+    }
+  </div>`;
+}
+
+function moduleCard(m) {
+  const pending = m.tasks.filter(t => !t.done).length;
+  const s = STATUSES.find(x => x.key === m.status) || STATUSES[0];
+  return `<div class="module-card" onclick="goPage('mod_${m.id}')">
+    ${pending > 0 ? `<div class="mc-badge-count">${pending}</div>` : ''}
+    <div class="mc-icon">${m.icon}</div>
+    <div class="mc-name">${m.name}</div>
+    <div class="mc-desc">${m.desc || '—'}</div>
+    <div class="mc-footer">
+      <span class="status-badge ${s.cls}">${s.label}</span>
+      <span class="mc-amount">${fmtCOP(m.meta)}</span>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════
+//  ADD/EDIT MODULE
+// ═══════════════════════════════════════════
+function openAddModule() {
+  if (state.modules.length >= 8) { showToast('Máximo 8 proyectos'); return; }
+  openModuleModal();
+}
+function openEditModule(id) {
+  const m = state.modules.find(x => x.id === id);
+  openModuleModal(m);
+}
+function openModuleModal(mod = null) {
+  const isEdit = !!mod;
+  let selEmoji = mod ? mod.icon : EMOJIS[state.modules.length % EMOJIS.length];
+  let selStatus = mod ? mod.status : 'planificacion';
+
+  document.getElementById('modal-body').innerHTML = `
+    <h3>${isEdit ? 'Editar proyecto' : 'Nuevo proyecto'}</h3>
+    <div class="modal-field"><label>Nombre</label><input type="text" id="mf-name" value="${mod ? mod.name : ''}" placeholder="Nombre del proyecto"></div>
+    <div class="modal-field"><label>Descripción corta</label><input type="text" id="mf-desc" value="${mod ? mod.desc : ''}" placeholder="Ej: Red Comercial & Retail"></div>
+    <div class="modal-field"><label>Objetivo (COP)</label><input type="text" id="mf-meta" value="${mod && mod.meta ? mod.meta.toLocaleString('es-CO') : ''}" placeholder="0" oninput="formatCOPInput(this)"></div>
+    <div class="modal-field"><label>Estado</label><select id="mf-status">${STATUSES.map(s => `<option value="${s.key}" ${selStatus===s.key?'selected':''}>${s.label}</option>`).join('')}</select></div>
+    <div class="modal-field"><label>Ícono</label><div class="emoji-grid" id="eg">${EMOJIS.map(e => `<button class="emoji-btn ${e===selEmoji?'selected':''}" onclick="selectEmoji('${e}')">${e}</button>`).join('')}</div></div>
+    ${isEdit ? `<button onclick="deleteModule('${mod.id}')" style="width:100%;padding:10px;background:#FEE2E2;color:var(--red);border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;">🗑 Eliminar proyecto</button>` : ''}
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-confirm" onclick="saveModule('${isEdit ? mod.id : ''}')">${isEdit ? 'Guardar' : 'Crear'}</button>
+    </div>`;
+  document.getElementById('modal').style.display = 'flex';
+  window._selEmoji = selEmoji;
+}
+function selectEmoji(e) {
+  window._selEmoji = e;
+  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.toggle('selected', b.textContent === e));
+}
+function saveModule(id) {
+  const name = document.getElementById('mf-name').value.trim();
+  if (!name) { showToast('Ingresa un nombre'); return; }
+  const meta = parseCOP(document.getElementById('mf-meta').value);
+  const desc = document.getElementById('mf-desc').value.trim();
+  const status = document.getElementById('mf-status').value;
+  if (id) {
+    const m = state.modules.find(x => x.id === id);
+    Object.assign(m, { name, desc, icon: window._selEmoji, status, meta });
+  } else {
+    state.modules.push({ id: 'mod_' + Date.now(), name, desc, icon: window._selEmoji, status, meta, tasks: [] });
+  }
+  closeModal(); saveLocal(); renderSidebar(); goPage(currentPage);
+}
+function deleteModule(id) {
+  if (!confirm('¿Eliminar este proyecto y todas sus tareas?')) return;
+  state.modules = state.modules.filter(x => x.id !== id);
+  closeModal(); saveLocal(); renderSidebar(); goPage('dashboard');
+}
+
+// ═══════════════════════════════════════════
+//  MODULE PAGE
+// ═══════════════════════════════════════════
+function renderModule(id) {
+  const m = state.modules.find(x => x.id === id);
+  if (!m) { document.getElementById('page-content').innerHTML = '<p>Proyecto no encontrado.</p>'; return; }
+  const s = STATUSES.find(x => x.key === m.status) || STATUSES[0];
+  const done = m.tasks.filter(t => t.done).length;
+  const pct = m.tasks.length ? Math.round(done / m.tasks.length * 100) : 0;
+
+  const html = `
+  <div class="project-header">
+    <div class="ph-top">
+      <div class="ph-icon">${m.icon}</div>
+      <div class="ph-info">
+        <div class="ph-name">${m.name}</div>
+        <div class="ph-desc">${m.desc || '—'}</div>
+      </div>
+      <button class="edit-btn" onclick="openEditModule('${m.id}')">✏️ Editar</button>
+    </div>
+    <div class="ph-meta">
+      <div>
+        <div style="font-size:12px;color:var(--gray-400);margin-bottom:2px;">Objetivo</div>
+        <div class="ph-amount">${fmtCOP(m.meta)}</div>
+      </div>
+      <div>
+        <span class="status-badge ${s.cls}">${s.label}</span>
+      </div>
+      <div class="ph-prog">
+        <div class="ph-prog-label">Progreso tareas: ${done}/${m.tasks.length} (${pct}%)</div>
+        <div class="ph-prog-bar"><div class="ph-prog-fill" style="width:${pct}%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tareas del proyecto</div>
+    <div class="mod-action-bar">
+      <button class="btn-mod-save" onclick="saveLocal();showToast('💾 Guardado')">💾 Guardar</button>
+      <button class="btn-mod-sync" onclick="syncUp()">☁️ Subir a nube</button>
+      <button class="btn-mod-sync" style="background:var(--green)" onclick="syncDown()">⬇️ Descargar nube</button>
+    </div>
+    <div class="task-form">
+      <input type="text" id="tf-name-${id}" placeholder="Nueva tarea..." onkeydown="if(event.key==='Enter')addTask('${id}')">
+      <input type="date" id="tf-date-${id}">
+      <select id="tf-pri-${id}">
+        <option value="media">Media</option>
+        <option value="alta">Alta</option>
+        <option value="baja">Baja</option>
+      </select>
+      <button class="btn-add" onclick="addTask('${id}')">+ Agregar</button>
+    </div>
+    <div class="tasks-list" id="tasks-list-${id}">
+      ${renderTaskList(m.tasks, id)}
+    </div>
+  </div>`;
+
+  document.getElementById('page-content').innerHTML = html;
+}
+
+function renderTaskList(tasks, modId) {
+  if (!tasks.length) return `<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:14px;">Sin tareas aún. ¡Agrega la primera!</div>`;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return tasks.map(t => {
+    const isOverdue = !t.done && t.date && new Date(t.date) < today;
+    return `<div class="task-row ${t.done ? 'done' : ''}">
+      <div class="task-check ${t.done ? 'checked' : ''}" onclick="toggleTask('${modId}','${t.id}')">
+        ${t.done ? '✓' : ''}
+      </div>
+      <div class="task-name">${t.name}</div>
+      ${t.date ? `<div class="task-date ${isOverdue ? 'overdue' : ''}">${formatDate(t.date)}</div>` : ''}
+      <span class="task-priority p-${t.priority}">${t.priority}</span>
+      ${t.done && t.doneDate ? `<div class="task-done-date">✅ ${formatDate(t.doneDate)}</div>` : ''}
+      <button class="task-del" onclick="deleteTask('${modId}','${t.id}')">×</button>
+    </div>`;
+  }).join('');
+}
+
+function addTask(modId) {
+  const nameEl = document.getElementById(`tf-name-${modId}`);
+  const name = nameEl.value.trim();
+  if (!name) return;
+  const m = state.modules.find(x => x.id === modId);
+  m.tasks.push({
+    id: 't_' + Date.now(),
+    name,
+    date: document.getElementById(`tf-date-${modId}`).value,
+    priority: document.getElementById(`tf-pri-${modId}`).value,
+    done: false,
+    doneDate: null
+  });
+  nameEl.value = '';
+  saveLocal(); renderSidebar();
+  document.getElementById(`tasks-list-${modId}`).innerHTML = renderTaskList(m.tasks, modId);
+}
+
+function toggleTask(modId, taskId) {
+  const m = state.modules.find(x => x.id === modId);
+  const t = m.tasks.find(x => x.id === taskId);
+  t.done = !t.done;
+  t.doneDate = t.done ? new Date().toISOString().split('T')[0] : null;
+  saveLocal(); renderSidebar();
+  document.getElementById(`tasks-list-${modId}`).innerHTML = renderTaskList(m.tasks, modId);
+}
+
+function deleteTask(modId, taskId) {
+  const m = state.modules.find(x => x.id === modId);
+  m.tasks = m.tasks.filter(x => x.id !== taskId);
+  saveLocal(); renderSidebar();
+  document.getElementById(`tasks-list-${modId}`).innerHTML = renderTaskList(m.tasks, modId);
+}
+
+// ═══════════════════════════════════════════
+//  CHECKLIST MAESTRO
+// ═══════════════════════════════════════════
+let checkFilter = 'all';
+function renderChecklist() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  let html = `
+  <div class="card">
+    <div class="task-form">
+      <input type="text" id="cl-name" placeholder="Nueva tarea maestra..." onkeydown="if(event.key==='Enter')addChecklistTask()">
+      <input type="date" id="cl-date">
+      <select id="cl-pri">
+        <option value="media">Media</option>
+        <option value="alta">Alta</option>
+        <option value="baja">Baja</option>
+      </select>
+      <button class="btn-add" onclick="addChecklistTask()">+ Agregar</button>
+    </div>
+    <div class="checklist-filters">
+      ${['all','pending','done','overdue'].map(f => `<button class="filter-btn ${checkFilter===f?'active':''}" onclick="checkFilter='${f}';renderChecklist()">${{all:'Todas',pending:'Pendientes',done:'Cumplidas',overdue:'Vencidas'}[f]}</button>`).join('')}
+    </div>
+    <div class="tasks-list" id="cl-list">${renderChecklistItems()}</div>
+  </div>`;
+  document.getElementById('page-content').innerHTML = html;
+}
+
+function renderChecklistItems() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  let tasks = [...state.checklist];
+  if (checkFilter === 'pending') tasks = tasks.filter(t => !t.done);
+  else if (checkFilter === 'done') tasks = tasks.filter(t => t.done);
+  else if (checkFilter === 'overdue') tasks = tasks.filter(t => !t.done && t.date && new Date(t.date) < today);
+  if (!tasks.length) return `<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:14px;">Sin tareas en esta categoría.</div>`;
+  return tasks.map(t => {
+    const isOverdue = !t.done && t.date && new Date(t.date) < today;
+    return `<div class="task-row ${t.done?'done':''}">
+      <div class="task-check ${t.done?'checked':''}" onclick="toggleCL('${t.id}')">${t.done?'✓':''}</div>
+      <div class="task-name">${t.name}</div>
+      ${t.date ? `<div class="task-date ${isOverdue?'overdue':''}">${formatDate(t.date)}</div>` : ''}
+      <span class="task-priority p-${t.priority}">${t.priority}</span>
+      ${t.done && t.doneDate ? `<div class="task-done-date">✅ ${formatDate(t.doneDate)}</div>` : ''}
+      <button class="task-del" onclick="deleteCL('${t.id}')">×</button>
+    </div>`;
+  }).join('');
+}
+
+function addChecklistTask() {
+  const name = document.getElementById('cl-name').value.trim();
+  if (!name) return;
+  state.checklist.push({
+    id: 'cl_' + Date.now(),
+    name,
+    date: document.getElementById('cl-date').value,
+    priority: document.getElementById('cl-pri').value,
+    done: false,
+    doneDate: null
+  });
+  document.getElementById('cl-name').value = '';
+  saveLocal(); renderSidebar();
+  document.getElementById('cl-list').innerHTML = renderChecklistItems();
+}
+function toggleCL(id) {
+  const t = state.checklist.find(x => x.id === id);
+  t.done = !t.done;
+  t.doneDate = t.done ? new Date().toISOString().split('T')[0] : null;
+  saveLocal(); renderSidebar();
+  document.getElementById('cl-list').innerHTML = renderChecklistItems();
+}
+function deleteCL(id) {
+  state.checklist = state.checklist.filter(x => x.id !== id);
+  saveLocal(); renderSidebar();
+  document.getElementById('cl-list').innerHTML = renderChecklistItems();
+}
+
+// ═══════════════════════════════════════════
+//  NOTAS
+// ═══════════════════════════════════════════
+function renderNotas() {
+  let html = `
+  <div class="note-form">
+    <input type="text" id="nt-title" placeholder="Título de la nota">
+    <textarea id="nt-body" rows="3" placeholder="Escribe tu nota aquí..."></textarea>
+    <button class="btn-add" onclick="addNote()">+ Agregar nota</button>
+  </div>
+  <div class="notes-grid">
+    ${state.notes.length === 0 ? `<div style="color:var(--gray-400);font-size:14px;">Sin notas aún.</div>` :
+      state.notes.slice().reverse().map(n => `
+        <div class="note-card">
+          <button class="note-del" onclick="deleteNote('${n.id}')">×</button>
+          <div class="note-title">${n.title || 'Sin título'}</div>
+          <div class="note-body">${escHtml(n.body)}</div>
+          <div class="note-date">${formatDate(n.date)}</div>
+        </div>`).join('')}
+  </div>`;
+  document.getElementById('page-content').innerHTML = html;
+}
+function addNote() {
+  const body = document.getElementById('nt-body').value.trim();
+  if (!body) return;
+  state.notes.push({ id: 'n_'+Date.now(), title: document.getElementById('nt-title').value.trim(), body, date: new Date().toISOString().split('T')[0] });
+  document.getElementById('nt-title').value = '';
+  document.getElementById('nt-body').value = '';
+  saveLocal(); renderNotas();
+}
+function deleteNote(id) {
+  state.notes = state.notes.filter(x => x.id !== id);
+  saveLocal(); renderNotas();
+}
+
+// ═══════════════════════════════════════════
+//  SYNC (Supabase)
+// ═══════════════════════════════════════════
+function renderSync() {
+  const connected = state.sync.url && state.sync.key;
+  document.getElementById('page-content').innerHTML = `
+  <div class="sync-card">
+    <div class="card-title">☁️ Sincronización Supabase</div>
+    <div class="sync-status">
+      <div class="status-dot ${connected ? 'dot-green' : 'dot-red'}"></div>
+      <div class="sync-label">${connected ? 'Configurado' : 'Sin configurar'}</div>
+    </div>
+    <div class="sync-form">
+      <label style="font-size:13px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">URL del proyecto Supabase</label>
+      <input type="text" id="sy-url" value="${state.sync.url}" placeholder="https://xxxx.supabase.co">
+      <label style="font-size:13px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">Anon Key</label>
+      <input type="text" id="sy-key" value="${state.sync.key}" placeholder="eyJ...">
+      <button class="btn-add" onclick="saveSync()">💾 Guardar configuración</button>
+    </div>
+    <div class="sync-actions">
+      <button class="btn-sync-up" onclick="syncUp()">☁️ Subir a la nube</button>
+      <button class="btn-sync-down" onclick="syncDown()">⬇️ Descargar de nube</button>
+    </div>
+    <div class="sync-hint">
+      💡 <strong>Regla de oro:</strong> Descarga al entrar · Sube al salir.<br>
+      Última sync: ${state.lastSync ? new Date(state.lastSync).toLocaleString('es-CO') : 'nunca'}
+    </div>
+  </div>`;
+}
+function saveSync() {
+  state.sync.url = document.getElementById('sy-url').value.trim();
+  state.sync.key = document.getElementById('sy-key').value.trim();
+  saveLocal(); showToast('✅ Configuración guardada'); renderSync();
+}
+
+async function syncUp() {
+  if (!state.sync.url || !state.sync.key) { showToast('⚠️ Configura Supabase primero'); return; }
+  try {
+    const payload = JSON.stringify(state);
+    const res = await fetch(`${state.sync.url}/rest/v1/atocha_sync`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': state.sync.key, 'Authorization': `Bearer ${state.sync.key}`, 'Prefer': 'resolution=merge-duplicates' },
+      body: JSON.stringify({ id: 1, data: payload, updated_at: new Date().toISOString() })
+    });
+    if (res.ok || res.status === 201 || res.status === 200) {
+      state.lastSync = new Date().toISOString();
+      saveLocal(); showToast('☁️ Subido a la nube');
+    } else { showToast('❌ Error al subir'); }
+  } catch(e) { showToast('❌ Error de conexión'); }
+}
+
+async function syncDown() {
+  if (!state.sync.url || !state.sync.key) { showToast('⚠️ Configura Supabase primero'); return; }
+  try {
+    const res = await fetch(`${state.sync.url}/rest/v1/atocha_sync?id=eq.1`, {
+      headers: { 'apikey': state.sync.key, 'Authorization': `Bearer ${state.sync.key}` }
+    });
+    const rows = await res.json();
+    if (rows && rows[0] && rows[0].data) {
+      const remote = JSON.parse(rows[0].data);
+      const syncCfg = state.sync;
+      state = { ...remote, sync: syncCfg };
+      state.lastSync = new Date().toISOString();
+      saveLocal(); renderSidebar(); goPage(currentPage);
+      showToast('⬇️ Datos descargados');
+    } else { showToast('⚠️ Sin datos en la nube'); }
+  } catch(e) { showToast('❌ Error de conexión'); }
+}
+
+// ═══════════════════════════════════════════
+//  BACKUP
+// ═══════════════════════════════════════════
+function renderBackup() {
+  document.getElementById('page-content').innerHTML = `
+  <div class="card">
+    <div class="card-title">📦 Backup de datos</div>
+    <p style="font-size:14px;color:var(--gray-600);margin-bottom:20px;">Exporta todos tus datos como archivo JSON o importa un backup anterior.</p>
+    <div class="backup-actions">
+      <button class="btn-backup btn-export" onclick="exportBackup()">📥 Exportar Backup</button>
+      <label class="btn-backup btn-import" style="cursor:pointer;">
+        📤 Importar Backup
+        <input type="file" accept=".json" style="display:none" onchange="importBackup(event)">
+      </label>
+    </div>
+    <div style="margin-top:16px;font-size:12px;color:var(--gray-400);">Última exportación: guarda regularmente para no perder datos.</div>
+  </div>`;
+}
+function exportBackup() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `atocha_backup_${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  showToast('📦 Backup exportado');
+}
+function importBackup(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const d = JSON.parse(ev.target.result);
+      state = d;
+      saveLocal(); renderSidebar(); goPage('dashboard');
+      showToast('✅ Backup importado');
+    } catch { showToast('❌ Archivo inválido'); }
+  };
+  r.readAsText(file);
+}
+
+// ═══════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════
+function renderConfig() {
+  document.getElementById('page-content').innerHTML = `
+  <div class="card" style="max-width:480px;">
+    <div class="card-title">⚙️ Configuración general</div>
+    <div class="modal-field">
+      <label>Nombre de empresa / proyecto</label>
+      <input type="text" id="cfg-company" value="${state.company}">
+    </div>
+    <div class="modal-field">
+      <label>Descripción</label>
+      <input type="text" id="cfg-tagline" value="${state.tagline}">
+    </div>
+    <div class="modal-field">
+      <label>Meta total (COP)</label>
+      <input type="text" id="cfg-meta" value="${state.metaTotal ? state.metaTotal.toLocaleString('es-CO') : ''}" oninput="formatCOPInput(this)">
+    </div>
+    <button class="btn-confirm" onclick="saveConfig()" style="width:100%;padding:12px;">Guardar cambios</button>
+    <div style="margin-top:24px;border-top:1px solid var(--gray-200);padding-top:20px;">
+      <button onclick="resetApp()" style="width:100%;padding:12px;background:#FEE2E2;color:var(--red);border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">⚠️ Reiniciar app (borra todos los datos)</button>
+    </div>
+  </div>`;
+}
+function saveConfig() {
+  state.company = document.getElementById('cfg-company').value.trim() || state.company;
+  state.tagline = document.getElementById('cfg-tagline').value.trim() || state.tagline;
+  state.metaTotal = parseCOP(document.getElementById('cfg-meta').value);
+  saveLocal(); renderSidebar(); showToast('✅ Configuración guardada');
+}
+function resetApp() {
+  if (!confirm('¿Estás seguro? Se borrarán TODOS los datos.')) return;
+  localStorage.removeItem('atocha_wl');
+  location.reload();
+}
+
+// ═══════════════════════════════════════════
+//  REPORTE / PRINT
+// ═══════════════════════════════════════════
+function printReport() {
+  const today = new Date().toLocaleDateString('es-CO', {year:'numeric',month:'long',day:'numeric'});
+  let html = `<html><head><title>Reporte Atocha</title><style>
+    body{font-family:Arial,sans-serif;padding:30px;color:#111;}
+    h1{font-size:24px;color:#1E3A8A;margin-bottom:4px;}
+    h2{font-size:16px;color:#1E3A8A;margin:20px 0 8px;border-bottom:2px solid #1E3A8A;padding-bottom:4px;}
+    h3{font-size:14px;margin:12px 0 6px;}
+    .meta{font-size:13px;color:#666;margin-bottom:20px;}
+    table{width:100%;border-collapse:collapse;margin-bottom:12px;}
+    th{background:#1E3A8A;color:white;padding:6px 10px;text-align:left;font-size:12px;}
+    td{padding:6px 10px;border-bottom:1px solid #eee;font-size:12px;}
+    .done{color:#10B981;} .pending{color:#F59E0B;}
+    .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold;}
+    .alta{background:#FEE2E2;color:#991B1B;} .media{background:#FEF3C7;color:#92400E;} .baja{background:#D1FAE5;color:#065F46;}
+  </style></head><body>
+  <h1>Atocha · Reporte Estratégico</h1>
+  <div class="meta">${state.company} · ${state.tagline} · Generado: ${today}</div>
+  <div class="meta">Meta total: ${fmtCOP(state.metaTotal)}</div>`;
+
+  state.modules.forEach(m => {
+    html += `<h2>${m.icon} ${m.name} — ${fmtCOP(m.meta)}</h2>`;
+    if (!m.tasks.length) { html += `<p style="font-size:12px;color:#999">Sin tareas registradas.</p>`; return; }
+    html += `<table><tr><th>Tarea</th><th>Fecha</th><th>Prioridad</th><th>Estado</th><th>Cumplida</th></tr>`;
+    m.tasks.forEach(t => {
+      html += `<tr><td>${t.name}</td><td>${t.date ? formatDate(t.date) : '—'}</td><td><span class="badge ${t.priority}">${t.priority}</span></td>
+        <td class="${t.done?'done':'pending'}">${t.done?'✅ Cumplida':'⏳ Pendiente'}</td>
+        <td>${t.done && t.doneDate ? formatDate(t.doneDate) : '—'}</td></tr>`;
+    });
+    html += `</table>`;
+  });
+
+  if (state.checklist.length) {
+    html += `<h2>📋 Checklist Maestro</h2>
+    <table><tr><th>Tarea</th><th>Fecha</th><th>Prioridad</th><th>Estado</th><th>Cumplida</th></tr>`;
+    state.checklist.forEach(t => {
+      html += `<tr><td>${t.name}</td><td>${t.date ? formatDate(t.date) : '—'}</td><td><span class="badge ${t.priority}">${t.priority}</span></td>
+        <td class="${t.done?'done':'pending'}">${t.done?'✅ Cumplida':'⏳ Pendiente'}</td>
+        <td>${t.done && t.doneDate ? formatDate(t.doneDate) : '—'}</td></tr>`;
+    });
+    html += `</table>`;
+  }
+
+  html += `</body></html>`;
+  const w = window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+  w.print();
+}
+
+// ═══════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════
+function toggleDark() {
+  state.dark = !state.dark;
+  document.body.classList.toggle('dark', state.dark);
+  saveLocal();
+  showToast(state.dark ? '🌙 Modo oscuro activado' : '☀️ Modo claro activado');
+}
+function formatDate(d) {
+  if (!d) return '';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+function closeModal(e) {
+  if (!e || e.target.id === 'modal') document.getElementById('modal').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════
+//  PWA — MANIFEST + SERVICE WORKER + INSTALL
+// ═══════════════════════════════════════════
+(function initPWA() {
+  // Generate icon as canvas data URL
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  // Background
+  const grad = ctx.createLinearGradient(0,0,512,512);
+  grad.addColorStop(0,'#0F2557'); grad.addColorStop(1,'#1D4ED8');
+  ctx.fillStyle = grad;
+  const r = 100;
+  ctx.beginPath();
+  ctx.moveTo(r,0); ctx.lineTo(512-r,0); ctx.quadraticCurveTo(512,0,512,r);
+  ctx.lineTo(512,512-r); ctx.quadraticCurveTo(512,512,512-r,512);
+  ctx.lineTo(r,512); ctx.quadraticCurveTo(0,512,0,512-r);
+  ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
+  ctx.closePath(); ctx.fill();
+  // Letter A
+  ctx.fillStyle = '#F59E0B';
+  ctx.font = 'bold 360px Arial Black, Arial';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('A', 256, 280);
+  const iconDataURL = canvas.toDataURL('image/png');
+
+  // Set apple-touch-icon
+  document.getElementById('apple-icon').href = iconDataURL;
+  document.getElementById('apple-icon').rel = 'apple-touch-icon';
+
+  // Build manifest
+  const manifest = {
+    name: 'Atocha',
+    short_name: 'Atocha',
+    description: 'Planificación Estratégica',
+    start_url: './',
+    display: 'standalone',
+    background_color: '#1E3A8A',
+    theme_color: '#1E3A8A',
+    orientation: 'portrait-primary',
+    icons: [
+      { src: iconDataURL, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+      { src: iconDataURL, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+  document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
+
+  // Service worker
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+const CACHE = 'atocha-v1';
+self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html']))));
+self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('./index.html')))));
+    `;
+    const swBlob = new Blob([swCode], {type:'application/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+  }
+})();
+
+// Install prompt
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').classList.add('show');
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').classList.remove('show');
+  showToast('✅ Atocha instalada correctamente');
+});
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+  } else {
+    showToast('En iOS: Safari → Compartir → Añadir a pantalla de inicio');
+  }
+}
+
+// Cloud banner on load
+function showCloudBanner() {
+  const banner = document.getElementById('cloud-banner');
+  if (!state.sync.url || !state.sync.key) return;
+  const date = state.lastSync ? new Date(state.lastSync).toLocaleString('es-CO') : 'nunca';
+  document.getElementById('banner-sync-date').textContent = date;
+  banner.style.display = 'flex';
+  // push main content down
+  document.querySelector('.main').style.paddingTop = '60px';
+}
+function hideBanner() {
+  document.getElementById('cloud-banner').style.display = 'none';
+  document.querySelector('.main').style.paddingTop = '0';
+}
+async function bannerSyncDown() {
+  hideBanner();
+  await syncDown();
+}
+
+</script>
+</body>
+</html>
