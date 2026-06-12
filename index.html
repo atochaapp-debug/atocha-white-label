@@ -410,6 +410,11 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
         <input type="text" id="ob-tagline" placeholder="Ej: Plan Estratégico 2025" maxlength="50">
         <div class="hint">Aparece debajo del nombre en la barra lateral.</div>
       </div>
+      <div class="ob-field">
+        <label>Código de sincronización (opcional)</label>
+        <input type="text" id="ob-synccode" placeholder="Ej: cli_abc123" maxlength="60">
+        <div class="hint">¿Ya tienes este negocio en otro dispositivo? Pega aquí su código (lo encuentras en Configuración) para vincularlo y traer sus datos.</div>
+      </div>
       <button class="btn-primary" onclick="obNext1()">Continuar →</button>
     </div>
 
@@ -426,7 +431,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 
     <div class="ob-step" id="ob3">
       <h2>Tus proyectos</h2>
-      <p>Crea tus proyectos estratégicos. Puedes agregar hasta 8 proyectos y editarlos en cualquier momento.</p>
+      <p>Crea tus proyectos estratégicos. Puedes agregar hasta 22 proyectos y editarlos en cualquier momento.</p>
       <div id="ob-projects-list" style="margin-bottom:14px;max-height:220px;overflow-y:auto;"></div>
       <button class="btn-primary" style="background:var(--gray-200);color:var(--gray-700);margin-bottom:10px;" onclick="obAddProject()">+ Agregar proyecto</button>
       <button class="btn-primary" onclick="obFinish()">Empezar →</button>
@@ -696,7 +701,8 @@ function obFinish() {
   const company = document.getElementById('ob-company').value.trim();
   const tagline = document.getElementById('ob-tagline').value.trim();
   const meta = parseCOP(document.getElementById('ob-meta').value);
-  const newId = 'biz_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+  const syncCode = document.getElementById('ob-synccode').value.trim();
+  const newId = syncCode || ('biz_' + Date.now() + '_' + Math.random().toString(36).slice(2,8));
   const newState = {
     company,
     tagline: tagline || 'Plan Estratégico',
@@ -736,6 +742,13 @@ function obFinish() {
     document.getElementById('onboarding').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     initApp();
+  }
+
+  // Si se ingresó un código de sincronización, intenta traer los datos de la nube
+  if (syncCode) {
+    setTimeout(async () => {
+      await syncDown();
+    }, 500);
   }
 }
 
@@ -823,6 +836,7 @@ function startNewBusiness() {
   obProjects = [];
   document.getElementById('ob-company').value = '';
   document.getElementById('ob-tagline').value = '';
+  document.getElementById('ob-synccode').value = '';
   document.getElementById('ob-meta').value = '';
   document.getElementById('ob1').classList.add('active');
   document.getElementById('ob2').classList.remove('active');
@@ -1458,11 +1472,53 @@ function renderConfig() {
       <input type="text" id="cfg-meta" value="${state.metaTotal ? state.metaTotal.toLocaleString('es-CO') : ''}" oninput="formatCOPInput(this)">
     </div>
     <button class="btn-confirm" onclick="saveConfig()" style="width:100%;padding:12px;">Guardar cambios</button>
+
+    <div style="margin-top:24px;border-top:1px solid var(--gray-200);padding-top:20px;">
+      <div class="card-title" style="margin-bottom:8px;">🔗 Código de este negocio</div>
+      <p style="font-size:12px;color:var(--gray-400);margin-bottom:10px;line-height:1.5;">Copia este código y pégalo en el campo "Código de sincronización" al crear este mismo negocio en otro dispositivo, para vincularlos.</p>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="cfg-clientid" value="${state.clientId}" readonly style="flex:1;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:12px;font-family:monospace;color:var(--gray-900);background:var(--gray-100);">
+        <button onclick="copyClientId()" style="padding:10px 16px;background:var(--blue-600);color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">📋 Copiar</button>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:20px;">
+      <div class="card-title" style="margin-bottom:8px;">🔄 Vincular con otro dispositivo</div>
+      <p style="font-size:12px;color:var(--gray-400);margin-bottom:10px;line-height:1.5;">Pega aquí el código de este negocio copiado desde otro dispositivo, y descarga sus datos más recientes.</p>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="cfg-link-code" placeholder="cli_xxxxxxxx" style="flex:1;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:12px;font-family:monospace;color:var(--gray-900);background:white;">
+        <button onclick="linkAndSyncDown()" style="padding:10px 16px;background:var(--green);color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">⬇️ Vincular</button>
+      </div>
+    </div>
+
     <div style="margin-top:24px;border-top:1px solid var(--gray-200);padding-top:20px;display:flex;flex-direction:column;gap:10px;">
       ${Object.keys(profilesData.profiles).length > 1 ? `<button onclick="deleteBusiness()" style="width:100%;padding:12px;background:#FEF3C7;color:#92400E;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">🗑 Eliminar este negocio</button>` : ''}
       <button onclick="resetApp()" style="width:100%;padding:12px;background:#FEE2E2;color:var(--red);border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">⚠️ Reiniciar app (borra TODOS los negocios)</button>
     </div>
   </div>`;
+}
+function copyClientId() {
+  const el = document.getElementById('cfg-clientid');
+  el.select();
+  navigator.clipboard.writeText(el.value).then(() => {
+    showToast('📋 Código copiado');
+  }).catch(() => {
+    document.execCommand('copy');
+    showToast('📋 Código copiado');
+  });
+}
+async function linkAndSyncDown() {
+  const code = document.getElementById('cfg-link-code').value.trim();
+  if (!code) { showToast('⚠️ Pega un código primero'); return; }
+  if (!confirm('Esto reemplazará los datos locales de este negocio con los de la nube vinculados a ese código. ¿Continuar?')) return;
+  const oldId = state.clientId;
+  state.clientId = code;
+  // Actualizar referencia del perfil con el nuevo id
+  delete profilesData.profiles[oldId];
+  profilesData.profiles[code] = state;
+  profilesData.activeId = code;
+  await syncDown();
+  renderSidebar(); renderProfileSwitcher(); goPage('config');
 }
 function saveConfig() {
   state.company = document.getElementById('cfg-company').value.trim() || state.company;
