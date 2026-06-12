@@ -43,16 +43,18 @@
 .dark {
   --blue-50:  #1a2744;
   --blue-100: #1e3a6e;
-  --gray-100: #1F2937;
-  --gray-200: #374151;
-  --gray-400: #6B7280;
-  --gray-600: #9CA3AF;
-  --gray-700: #D1D5DB;
-  --gray-800: #E5E7EB;
-  --gray-900: #F9FAFB;
-  --white:    #111827;
-  --shadow:   0 2px 12px rgba(0,0,0,0.3);
+  --gray-100: #0F172A;
+  --gray-200: #334155;
+  --gray-400: #94A3B8;
+  --gray-600: #CBD5E1;
+  --gray-700: #334155;
+  --gray-800: #1E293B;
+  --gray-900: #F1F5F9;
+  --white:    #1E293B;
+  --shadow:   0 2px 12px rgba(0,0,0,0.4);
 }
+.dark .btn-icon { background: var(--gray-700); color: var(--gray-900); }
+.dark .status-concepto { background: var(--gray-600); color: var(--gray-100); }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--gray-100); color: var(--gray-900); min-height: 100vh; transition: background .3s, color .3s; }
 
@@ -82,6 +84,26 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .sidebar-logo .app-name { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
 .sidebar-logo .company-name { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── PROFILE SWITCHER ── */
+.profile-switcher { position: relative; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; user-select: none; }
+.ps-row { display: flex; align-items: center; gap: 10px; }
+.ps-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--gold); color: var(--blue-900); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+.ps-info { flex: 1; overflow: hidden; }
+.ps-name { font-size: 13px; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ps-label { font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.5px; }
+.ps-arrow { color: rgba(255,255,255,0.5); font-size: 12px; transition: transform .2s; }
+.profile-switcher.open .ps-arrow { transform: rotate(180deg); }
+.profile-menu { display: none; position: absolute; left: 12px; right: 12px; top: 100%; margin-top: 6px; background: var(--blue-900); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; box-shadow: var(--shadow-lg); z-index: 300; overflow: hidden; max-height: 260px; overflow-y: auto; }
+.profile-menu.show { display: block; }
+.profile-menu-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; font-size: 13px; color: rgba(255,255,255,0.85); cursor: pointer; transition: background .15s; }
+.profile-menu-item:hover { background: rgba(255,255,255,0.08); }
+.profile-menu-item.active { background: rgba(255,255,255,0.12); font-weight: 700; color: white; }
+.profile-menu-item .pm-icon { width: 26px; height: 26px; border-radius: 6px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; flex-shrink: 0; }
+.profile-menu-item .pm-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.profile-menu-item .pm-check { color: var(--gold); font-weight: 800; }
+.profile-menu-divider { border-top: 1px solid rgba(255,255,255,0.1); }
+.profile-menu-new { color: var(--gold); font-weight: 700; }
 .sidebar-progress { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .sidebar-progress .prog-label { font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 6px; display: flex; justify-content: space-between; }
 .prog-bar { height: 6px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow: hidden; }
@@ -104,7 +126,6 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .btn-save { background: var(--gold); color: var(--blue-900); }
 .btn-save:hover { background: #D97706; }
 .btn-icon { background: var(--gray-100); color: var(--gray-700); width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
-.dark .btn-icon { background: var(--gray-200); }
 .hamburger { display: none; background: none; border: none; cursor: pointer; color: var(--gray-700); font-size: 20px; }
 .content { flex: 1; padding: 24px; max-width: 1200px; width: 100%; }
 
@@ -446,6 +467,17 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
       <div class="app-name">Atocha</div>
       <div class="company-name" id="sb-company">—</div>
     </div>
+    <div class="profile-switcher" id="profile-switcher" onclick="toggleProfileMenu(event)">
+      <div class="ps-row">
+        <div class="ps-icon" id="ps-icon">A</div>
+        <div class="ps-info">
+          <div class="ps-label">Negocio activo</div>
+          <div class="ps-name" id="ps-name">—</div>
+        </div>
+        <div class="ps-arrow">▾</div>
+      </div>
+      <div class="profile-menu" id="profile-menu"></div>
+    </div>
     <div class="sidebar-progress">
       <div class="prog-label">
         <span>Progreso general</span>
@@ -522,10 +554,11 @@ let state = {
   company: '',
   tagline: '',
   metaTotal: 0,
+  clientId: null,
   modules: [],   // {id, name, desc, icon, status, meta, tasks:[]}
   checklist: [], // {id, name, priority, date, done, doneDate, projectId}
   notes: [],     // {id, title, body, date}
-  sync: { url: '', key: '' },
+  sync: { url: 'https://zssmacjxevyiwdolllcd.supabase.co', key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpzc21hY2p4ZXZ5aXdkb2xsbGNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMjA1OTIsImV4cCI6MjA5Njc5NjU5Mn0.hF35RV1tv5OY3nwyh_0_ba6jBix4QYHVc123wb5sTGI' },
   dark: false,
   lastSync: null
 };
@@ -539,17 +572,68 @@ const STATUSES = [
   {key:'concepto',  label:'Concepto',      cls:'status-concepto'},
 ];
 const COLORS = ['#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#EC4899','#06B6D4','#F97316'];
+const MAX_PROJECTS = 22;
+const DEFAULT_SUPABASE = {
+  url: 'https://zssmacjxevyiwdolllcd.supabase.co',
+  key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpzc21hY2p4ZXZ5aXdkb2xsbGNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMjA1OTIsImV4cCI6MjA5Njc5NjU5Mn0.hF35RV1tv5OY3nwyh_0_ba6jBix4QYHVc123wb5sTGI'
+};
+
+// ═══════════════════════════════════════════
+//  PROFILES (multi-negocio)
+// ═══════════════════════════════════════════
+let profilesData = { profiles: {}, activeId: null };
+
+function ensureDefaults() {
+  if (!state.sync || !state.sync.url || !state.sync.key) {
+    state.sync = { url: DEFAULT_SUPABASE.url, key: DEFAULT_SUPABASE.key };
+  }
+  if (!state.clientId) {
+    state.clientId = 'biz_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+  }
+  if (!state.checklist) state.checklist = [];
+  if (!state.notes) state.notes = [];
+  if (!state.modules) state.modules = [];
+  if (state.dark === undefined) state.dark = false;
+}
 
 // ═══════════════════════════════════════════
 //  PERSIST
 // ═══════════════════════════════════════════
 function saveLocal() {
-  localStorage.setItem('atocha_wl', JSON.stringify(state));
+  if (profilesData.activeId) {
+    profilesData.profiles[profilesData.activeId] = state;
+    localStorage.setItem('atocha_profiles_v1', JSON.stringify(profilesData));
+  }
   showToast('💾 Guardado');
 }
 function loadLocal() {
-  const d = localStorage.getItem('atocha_wl');
-  if (d) { try { state = JSON.parse(d); return true; } catch(e){} }
+  // Try new multi-profile storage first
+  const d = localStorage.getItem('atocha_profiles_v1');
+  if (d) {
+    try {
+      const parsed = JSON.parse(d);
+      if (parsed.activeId && parsed.profiles && parsed.profiles[parsed.activeId]) {
+        profilesData = parsed;
+        state = profilesData.profiles[profilesData.activeId];
+        ensureDefaults();
+        return true;
+      }
+    } catch(e){}
+  }
+  // Migration from old single-profile storage
+  const old = localStorage.getItem('atocha_wl');
+  if (old) {
+    try {
+      const oldState = JSON.parse(old);
+      const id = oldState.clientId || ('biz_' + Date.now() + '_' + Math.random().toString(36).slice(2,8));
+      oldState.clientId = id;
+      profilesData = { profiles: { [id]: oldState }, activeId: id };
+      state = oldState;
+      ensureDefaults();
+      saveLocal();
+      return true;
+    } catch(e){}
+  }
   return false;
 }
 
@@ -572,6 +656,7 @@ function formatCOPInput(el) {
 //  ONBOARDING
 // ═══════════════════════════════════════════
 let obProjects = [];
+let obMode = 'first'; // 'first' = onboarding inicial, 'new' = nuevo negocio
 function obNext1() {
   const c = document.getElementById('ob-company').value.trim();
   if (!c) { showToast('Ingresa el nombre de tu empresa'); return; }
@@ -590,7 +675,7 @@ function obNext2() {
   renderObProjects();
 }
 function obAddProject() {
-  if (obProjects.length >= 8) { showToast('Máximo 8 proyectos'); return; }
+  if (obProjects.length >= MAX_PROJECTS) { showToast(`Máximo ${MAX_PROJECTS} proyectos`); return; }
   obProjects.push({ name: `Proyecto ${obProjects.length + 1}`, meta: 0 });
   renderObProjects();
 }
@@ -611,31 +696,57 @@ function obFinish() {
   const company = document.getElementById('ob-company').value.trim();
   const tagline = document.getElementById('ob-tagline').value.trim();
   const meta = parseCOP(document.getElementById('ob-meta').value);
-  state.company = company;
-  state.tagline = tagline || 'Plan Estratégico';
-  state.metaTotal = meta;
-  state.modules = obProjects.map((p, i) => ({
-    id: 'mod_' + Date.now() + i,
-    name: p.name || `Proyecto ${i+1}`,
-    desc: '',
-    icon: EMOJIS[i] || '📁',
-    status: 'planificacion',
-    meta: p.meta || 0,
-    tasks: []
-  }));
-  saveLocal();
-  document.getElementById('onboarding').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  initApp();
+  const newId = 'biz_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+  const newState = {
+    company,
+    tagline: tagline || 'Plan Estratégico',
+    metaTotal: meta,
+    clientId: newId,
+    modules: obProjects.map((p, i) => ({
+      id: 'mod_' + Date.now() + i,
+      name: p.name || `Proyecto ${i+1}`,
+      desc: '',
+      icon: EMOJIS[i % EMOJIS.length] || '📁',
+      status: 'planificacion',
+      meta: p.meta || 0,
+      tasks: []
+    })),
+    checklist: [],
+    notes: [],
+    sync: { url: DEFAULT_SUPABASE.url, key: DEFAULT_SUPABASE.key },
+    dark: false,
+    lastSync: null
+  };
+
+  if (obMode === 'new') {
+    profilesData.profiles[newId] = newState;
+    profilesData.activeId = newId;
+    state = newState;
+    saveLocal();
+    document.getElementById('onboarding').style.display = 'none';
+    document.body.classList.remove('dark');
+    renderSidebar();
+    renderProfileSwitcher();
+    goPage('dashboard');
+    showToast('✅ Negocio "' + (company || 'Nuevo') + '" creado');
+  } else {
+    profilesData = { profiles: { [newId]: newState }, activeId: newId };
+    state = newState;
+    saveLocal();
+    document.getElementById('onboarding').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initApp();
+  }
 }
 
 // ═══════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════
 function initApp() {
-  if (state.dark) document.body.classList.add('dark');
+  if (state.dark) document.body.classList.add('dark'); else document.body.classList.remove('dark');
   document.getElementById('sb-company').textContent = state.company;
   renderSidebar();
+  renderProfileSwitcher();
   goPage('dashboard');
   setTimeout(showCloudBanner, 800);
 }
@@ -647,6 +758,81 @@ window.addEventListener('DOMContentLoaded', () => {
     initApp();
   }
 });
+
+// ═══════════════════════════════════════════
+//  PROFILE SWITCHER (multi-negocio)
+// ═══════════════════════════════════════════
+function initials(name) {
+  if (!name) return 'A';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+function renderProfileSwitcher() {
+  document.getElementById('ps-name').textContent = state.company || 'Sin nombre';
+  document.getElementById('ps-icon').textContent = initials(state.company);
+  const menu = document.getElementById('profile-menu');
+  const ids = Object.keys(profilesData.profiles);
+  let html = ids.map(id => {
+    const p = profilesData.profiles[id];
+    const active = id === profilesData.activeId;
+    return `<div class="profile-menu-item ${active?'active':''}" onclick="switchProfile('${id}')">
+      <div class="pm-icon">${initials(p.company)}</div>
+      <div class="pm-name">${p.company || 'Sin nombre'}</div>
+      ${active ? '<span class="pm-check">✓</span>' : ''}
+    </div>`;
+  }).join('');
+  html += `<div class="profile-menu-divider"></div>
+    <div class="profile-menu-item profile-menu-new" onclick="startNewBusiness()">
+      <div class="pm-icon">＋</div>
+      <div class="pm-name">Nuevo negocio</div>
+    </div>`;
+  menu.innerHTML = html;
+}
+function toggleProfileMenu(e) {
+  if (e) e.stopPropagation();
+  const menu = document.getElementById('profile-menu');
+  const sw = document.getElementById('profile-switcher');
+  menu.classList.toggle('show');
+  sw.classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+  const sw = document.getElementById('profile-switcher');
+  if (sw && !sw.contains(e.target)) {
+    document.getElementById('profile-menu').classList.remove('show');
+    sw.classList.remove('open');
+  }
+});
+function switchProfile(id) {
+  if (id === profilesData.activeId) { toggleProfileMenu(); return; }
+  saveLocal();
+  profilesData.activeId = id;
+  state = profilesData.profiles[id];
+  ensureDefaults();
+  localStorage.setItem('atocha_profiles_v1', JSON.stringify(profilesData));
+  toggleProfileMenu();
+  if (state.dark) document.body.classList.add('dark'); else document.body.classList.remove('dark');
+  renderSidebar();
+  renderProfileSwitcher();
+  goPage('dashboard');
+  showToast('🏢 ' + (state.company || 'Negocio') + ' activo');
+}
+function startNewBusiness() {
+  toggleProfileMenu();
+  obMode = 'new';
+  obProjects = [];
+  document.getElementById('ob-company').value = '';
+  document.getElementById('ob-tagline').value = '';
+  document.getElementById('ob-meta').value = '';
+  document.getElementById('ob1').classList.add('active');
+  document.getElementById('ob2').classList.remove('active');
+  document.getElementById('ob3').classList.remove('active');
+  document.getElementById('dot1').classList.add('active');
+  document.getElementById('dot2').classList.remove('active');
+  document.getElementById('dot3').classList.remove('active');
+  renderObProjects();
+  document.getElementById('onboarding').style.display = 'flex';
+}
 
 // ═══════════════════════════════════════════
 //  SIDEBAR
@@ -854,7 +1040,7 @@ function moduleCard(m) {
 //  ADD/EDIT MODULE
 // ═══════════════════════════════════════════
 function openAddModule() {
-  if (state.modules.length >= 8) { showToast('Máximo 8 proyectos'); return; }
+  if (state.modules.length >= MAX_PROJECTS) { showToast(`Máximo ${MAX_PROJECTS} proyectos`); return; }
   openModuleModal();
 }
 function openEditModule(id) {
@@ -1045,20 +1231,21 @@ function renderChecklist() {
 
 function renderChecklistItems() {
   const today = new Date(); today.setHours(0,0,0,0);
-  let tasks = [...state.checklist];
+  let tasks = getAllTasks();
   if (checkFilter === 'pending') tasks = tasks.filter(t => !t.done);
   else if (checkFilter === 'done') tasks = tasks.filter(t => t.done);
   else if (checkFilter === 'overdue') tasks = tasks.filter(t => !t.done && t.date && new Date(t.date) < today);
   if (!tasks.length) return `<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:14px;">Sin tareas en esta categoría.</div>`;
   return tasks.map(t => {
     const isOverdue = !t.done && t.date && new Date(t.date) < today;
+    const pid = t.projectId || '';
     return `<div class="task-row ${t.done?'done':''}">
-      <div class="task-check ${t.done?'checked':''}" onclick="toggleCL('${t.id}')">${t.done?'✓':''}</div>
-      <div class="task-name">${t.name}</div>
+      <div class="task-check ${t.done?'checked':''}" onclick="toggleCL('${pid}','${t.id}')">${t.done?'✓':''}</div>
+      <div class="task-name">${t.name}<div style="font-size:11px;color:var(--gray-400);font-weight:400;">${t.projectName}</div></div>
       ${t.date ? `<div class="task-date ${isOverdue?'overdue':''}">${formatDate(t.date)}</div>` : ''}
       <span class="task-priority p-${t.priority}">${t.priority}</span>
       ${t.done && t.doneDate ? `<div class="task-done-date">✅ ${formatDate(t.doneDate)}</div>` : ''}
-      <button class="task-del" onclick="deleteCL('${t.id}')">×</button>
+      <button class="task-del" onclick="deleteCL('${pid}','${t.id}')">×</button>
     </div>`;
   }).join('');
 }
@@ -1078,15 +1265,27 @@ function addChecklistTask() {
   saveLocal(); renderSidebar();
   document.getElementById('cl-list').innerHTML = renderChecklistItems();
 }
-function toggleCL(id) {
-  const t = state.checklist.find(x => x.id === id);
+function toggleCL(projectId, id) {
+  let t;
+  if (projectId) {
+    const m = state.modules.find(x => x.id === projectId);
+    t = m && m.tasks.find(x => x.id === id);
+  } else {
+    t = state.checklist.find(x => x.id === id);
+  }
+  if (!t) return;
   t.done = !t.done;
   t.doneDate = t.done ? new Date().toISOString().split('T')[0] : null;
   saveLocal(); renderSidebar();
   document.getElementById('cl-list').innerHTML = renderChecklistItems();
 }
-function deleteCL(id) {
-  state.checklist = state.checklist.filter(x => x.id !== id);
+function deleteCL(projectId, id) {
+  if (projectId) {
+    const m = state.modules.find(x => x.id === projectId);
+    if (m) m.tasks = m.tasks.filter(x => x.id !== id);
+  } else {
+    state.checklist = state.checklist.filter(x => x.id !== id);
+  }
   saveLocal(); renderSidebar();
   document.getElementById('cl-list').innerHTML = renderChecklistItems();
 }
@@ -1163,12 +1362,13 @@ function saveSync() {
 
 async function syncUp() {
   if (!state.sync.url || !state.sync.key) { showToast('⚠️ Configura Supabase primero'); return; }
+  if (!state.clientId) state.clientId = 'cli_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
   try {
     const payload = JSON.stringify(state);
     const res = await fetch(`${state.sync.url}/rest/v1/atocha_sync`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'apikey': state.sync.key, 'Authorization': `Bearer ${state.sync.key}`, 'Prefer': 'resolution=merge-duplicates' },
-      body: JSON.stringify({ id: 1, data: payload, updated_at: new Date().toISOString() })
+      body: JSON.stringify({ id: state.clientId, data: payload, updated_at: new Date().toISOString() })
     });
     if (res.ok || res.status === 201 || res.status === 200) {
       state.lastSync = new Date().toISOString();
@@ -1179,15 +1379,17 @@ async function syncUp() {
 
 async function syncDown() {
   if (!state.sync.url || !state.sync.key) { showToast('⚠️ Configura Supabase primero'); return; }
+  if (!state.clientId) { showToast('⚠️ Aún no has subido datos a la nube'); return; }
   try {
-    const res = await fetch(`${state.sync.url}/rest/v1/atocha_sync?id=eq.1`, {
+    const res = await fetch(`${state.sync.url}/rest/v1/atocha_sync?id=eq.${state.clientId}`, {
       headers: { 'apikey': state.sync.key, 'Authorization': `Bearer ${state.sync.key}` }
     });
     const rows = await res.json();
     if (rows && rows[0] && rows[0].data) {
       const remote = JSON.parse(rows[0].data);
       const syncCfg = state.sync;
-      state = { ...remote, sync: syncCfg };
+      const cid = state.clientId;
+      state = { ...remote, sync: syncCfg, clientId: cid };
       state.lastSync = new Date().toISOString();
       saveLocal(); renderSidebar(); goPage(currentPage);
       showToast('⬇️ Datos descargados');
@@ -1256,8 +1458,9 @@ function renderConfig() {
       <input type="text" id="cfg-meta" value="${state.metaTotal ? state.metaTotal.toLocaleString('es-CO') : ''}" oninput="formatCOPInput(this)">
     </div>
     <button class="btn-confirm" onclick="saveConfig()" style="width:100%;padding:12px;">Guardar cambios</button>
-    <div style="margin-top:24px;border-top:1px solid var(--gray-200);padding-top:20px;">
-      <button onclick="resetApp()" style="width:100%;padding:12px;background:#FEE2E2;color:var(--red);border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">⚠️ Reiniciar app (borra todos los datos)</button>
+    <div style="margin-top:24px;border-top:1px solid var(--gray-200);padding-top:20px;display:flex;flex-direction:column;gap:10px;">
+      ${Object.keys(profilesData.profiles).length > 1 ? `<button onclick="deleteBusiness()" style="width:100%;padding:12px;background:#FEF3C7;color:#92400E;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">🗑 Eliminar este negocio</button>` : ''}
+      <button onclick="resetApp()" style="width:100%;padding:12px;background:#FEE2E2;color:var(--red);border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">⚠️ Reiniciar app (borra TODOS los negocios)</button>
     </div>
   </div>`;
 }
@@ -1265,10 +1468,23 @@ function saveConfig() {
   state.company = document.getElementById('cfg-company').value.trim() || state.company;
   state.tagline = document.getElementById('cfg-tagline').value.trim() || state.tagline;
   state.metaTotal = parseCOP(document.getElementById('cfg-meta').value);
-  saveLocal(); renderSidebar(); showToast('✅ Configuración guardada');
+  saveLocal(); renderSidebar(); renderProfileSwitcher(); showToast('✅ Configuración guardada');
+}
+function deleteBusiness() {
+  if (Object.keys(profilesData.profiles).length <= 1) { showToast('⚠️ Debe quedar al menos un negocio'); return; }
+  if (!confirm(`¿Eliminar "${state.company}"? Se borrarán sus datos locales (no afecta la nube).`)) return;
+  delete profilesData.profiles[profilesData.activeId];
+  profilesData.activeId = Object.keys(profilesData.profiles)[0];
+  state = profilesData.profiles[profilesData.activeId];
+  ensureDefaults();
+  localStorage.setItem('atocha_profiles_v1', JSON.stringify(profilesData));
+  if (state.dark) document.body.classList.add('dark'); else document.body.classList.remove('dark');
+  renderSidebar(); renderProfileSwitcher(); goPage('dashboard');
+  showToast('🗑 Negocio eliminado');
 }
 function resetApp() {
-  if (!confirm('¿Estás seguro? Se borrarán TODOS los datos.')) return;
+  if (!confirm('¿Estás seguro? Se borrarán TODOS los negocios y datos locales.')) return;
+  localStorage.removeItem('atocha_profiles_v1');
   localStorage.removeItem('atocha_wl');
   location.reload();
 }
