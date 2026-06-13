@@ -1440,7 +1440,12 @@ function exportBackup() {
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `atocha_backup_${new Date().toISOString().split('T')[0]}.json`;
+  const safeName = (state.company || 'negocio').trim().toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  const now = new Date();
+  const date = now.toISOString().split('T')[0];
+  const time = now.toTimeString().slice(0,5).replace(':','');
+  a.download = `atocha_${safeName}_${date}_${time}.json`;
   a.click();
   showToast('📦 Backup exportado');
 }
