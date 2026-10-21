@@ -279,6 +279,48 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--gray-900); color: white; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; z-index: 9999; transition: transform .3s; white-space: nowrap; }
 .toast.show { transform: translateX(-50%) translateY(0); }
 
+/* ── EMBUDO DE PROSPECTOS ── */
+.emb-top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 20px; margin-bottom: 18px; }
+.emb-sub { font-size: 13px; color: var(--gray-600); margin-top: 4px; max-width: 560px; }
+.emb-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.emb-board { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 14px; align-items: flex-start; }
+.emb-col { flex: 0 0 262px; background: var(--gray-100); border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.emb-col-head { padding: 4px 4px 2px; }
+.emb-col-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: var(--gray-900); }
+.emb-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.emb-count { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--gray-600); background: white; border-radius: 999px; padding: 1px 9px; }
+.dark .emb-count { background: var(--gray-800); }
+.emb-col-sum { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
+.emb-col-guide { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+.emb-card { background: white; border-radius: 10px; padding: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 7px; }
+.dark .emb-card { background: var(--gray-800); }
+.emb-name { all: unset; cursor: pointer; font-size: 14px; font-weight: 700; color: var(--gray-900); overflow-wrap: anywhere; }
+.emb-name:focus-visible { outline: 2px solid var(--blue-600); outline-offset: 3px; border-radius: 4px; }
+.emb-rubro { font-size: 12px; color: var(--gray-600); overflow-wrap: anywhere; }
+.emb-money { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 8px; }
+.emb-fee { font-size: 14px; font-weight: 800; color: var(--blue-700); }
+.emb-fee.zero { color: var(--gray-400); font-weight: 600; }
+.emb-proj { font-size: 11px; font-weight: 700; color: #8B5CF6; }
+.emb-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.emb-chip { font-size: 10px; font-weight: 700; background: var(--gray-100); color: var(--gray-600); border-radius: 999px; padding: 2px 8px; }
+.emb-next { font-size: 12px; color: var(--gray-600); border-top: 1px solid var(--gray-200); padding-top: 7px; overflow-wrap: anywhere; }
+.emb-next b { color: var(--gray-900); }
+.emb-next.late, .emb-next.late b { color: var(--red); }
+.emb-move { align-self: flex-start; padding: 6px 10px; background: var(--blue-50); color: var(--blue-700); border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.emb-empty { font-size: 12px; color: var(--gray-400); text-align: center; border: 1.5px dashed var(--gray-200); border-radius: 10px; padding: 14px 8px; }
+.emb-blank { background: white; border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); text-align: center; margin-bottom: 18px; }
+.dark .emb-blank { background: var(--gray-800); }
+.emb-blank p { font-size: 14px; color: var(--gray-600); margin-bottom: 14px; }
+.emb-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.emb-checks { display: flex; flex-wrap: wrap; gap: 8px; }
+.emb-check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--gray-700); background: var(--gray-100); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.emb-check input { width: auto !important; margin: 0; }
+.emb-tpl { background: var(--gray-100); border-radius: 10px; padding: 12px; margin-top: 16px; }
+.emb-tpl-title { font-size: 11px; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+.emb-tpl-text { font-size: 13px; color: var(--gray-800); white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 10px; }
+.emb-del { background: none; border: none; color: var(--red); font-size: 13px; font-weight: 700; cursor: pointer; padding: 8px 0; margin-top: 10px; }
+@media (max-width: 520px) { .emb-row { grid-template-columns: 1fr; } .emb-col { flex-basis: 78vw; } }
+
 /* ── REPORT ── */
 @media print {
   .sidebar, .topbar, .no-print { display: none !important; }
@@ -500,6 +542,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
       <div class="nav-section">Módulos</div>
       <div id="sb-modules"></div>
       <div class="nav-section">Gestión</div>
+      <div class="nav-item" onclick="goPage('embudo')" id="nav-embudo">🧲 Embudo</div>
       <div class="nav-item" onclick="goPage('checklist')" id="nav-checklist">📋 Checklist Maestro <span class="badge" id="badge-checklist" style="display:none">0</span></div>
       <div class="nav-item" onclick="goPage('notas')" id="nav-notas">📝 Notas</div>
       <div class="nav-item" onclick="goPage('sync')" id="nav-sync">☁️ Sincronización</div>
@@ -603,6 +646,7 @@ function ensureDefaults() {
   }
   if (!state.checklist) state.checklist = [];
   if (!state.notes) state.notes = [];
+  if (!state.prospects) state.prospects = [];
   if (!state.modules) state.modules = [];
   if (state.dark === undefined) state.dark = false;
 }
@@ -913,6 +957,7 @@ function goPage(page) {
   if (page === 'dashboard') renderDashboard();
   else if (page === 'checklist') renderChecklist();
   else if (page === 'notas') renderNotas();
+  else if (page === 'embudo') renderEmbudo();
   else if (page === 'sync') renderSync();
   else if (page === 'backup') renderBackup();
   else if (page === 'config') renderConfig();
@@ -926,6 +971,7 @@ function getPageTitle(page) {
   if (page === 'dashboard') return 'Dashboard';
   if (page === 'checklist') return 'Checklist Maestro';
   if (page === 'notas') return 'Notas';
+  if (page === 'embudo') return 'Embudo de prospectos';
   if (page === 'sync') return 'Sincronización';
   if (page === 'backup') return 'Backup';
   if (page === 'config') return 'Configuración';
@@ -1344,6 +1390,266 @@ function addNote() {
 function deleteNote(id) {
   state.notes = state.notes.filter(x => x.id !== id);
   saveLocal(); renderNotas();
+}
+
+// ═══════════════════════════════════════════
+//  EMBUDO DE PROSPECTOS
+//  Guarda en state.prospects, así viaja con
+//  Guardar, Backup y Sincronización Supabase.
+// ═══════════════════════════════════════════
+const EMB_FEE = 2500000;
+const EMB_SERVICES = ['Trabajo virtual', 'Marketing', 'Apps'];
+const EMB_STAGES = [
+  { id: 'diseno',     name: 'En diseño',      color: '#8B5CF6', guide: 'Definir alcance y valor del proyecto.' },
+  { id: 'prospecto',  name: 'Prospecto',      color: '#6B7280', guide: 'Identificar al decisor y su contacto.' },
+  { id: 'contactado', name: 'Contactado',     color: '#3B82F6', guide: 'Primer mensaje enviado.' },
+  { id: 'reunion',    name: 'Reunión',        color: '#06B6D4', guide: 'Diagnóstico de 20 minutos.' },
+  { id: 'propuesta',  name: 'Propuesta',      color: '#F59E0B', guide: 'Paquete mensual enviado.' },
+  { id: 'activo',     name: 'Cliente activo', color: '#10B981', guide: 'Pagando mensualidad.' }
+];
+let embEditId = null;
+
+function embList() { if (!state.prospects) state.prospects = []; return state.prospects; }
+function embAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
+function embToday() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function embTemplate(stageId, empresa, contacto) {
+  const fee = fmtCOP(EMB_FEE);
+  const e = empresa || 'su empresa';
+  const c = contacto || ('equipo de ' + e);
+  const t = {
+    diseno: `Notas para definir el proyecto de ${e}:\n1. Qué problema resuelve y para quién.\n2. Qué se entrega y en qué plazo.\n3. Valor estimado y forma de pago.\nCuando tenga mensualidad o valor definido, pásalo a Prospecto.`,
+    prospecto: `Antes de escribir a ${e}, reúne:\n1. Nombre del dueño o gerente.\n2. WhatsApp o correo directo.\n3. Una frase sobre qué venden y a quién.\nCon eso listo, pásalo a Contactado.`,
+    contactado: `Buen día, ${c}. Soy [tu nombre] de Atocha. Ayudamos a empresas como DPS Productos de aseo a vender más con trabajo virtual, marketing y apps, por una mensualidad fija. Me gustaría mostrarle en 15 minutos cómo se vería para ${e}. ¿Qué día le queda bien?`,
+    reunion: `Preguntas para el diagnóstico con ${e}:\n1. ¿A quién le venden hoy y por qué canales?\n2. ¿Qué parte de las ventas o los pedidos les consume más tiempo?\n3. ¿Tienen redes, catálogo o app? ¿Quién las maneja?\n4. ¿Qué resultado les haría pagar ${fee} al mes sin dudar?\nCierra acordando la fecha para enviar la propuesta.`,
+    propuesta: `Buen día, ${c}. Gracias por la reunión. Le comparto la propuesta para ${e}: trabajo virtual, marketing y apps por ${fee} al mes, con informe mensual de resultados. Si le parece bien, empezamos esta semana. ¿Le resuelvo alguna duda?`,
+    activo: `Seguimiento mensual de ${e}:\n1. Enviar el informe de resultados del mes.\n2. Confirmar el pago de la mensualidad.\n3. Preguntar qué necesitan para el mes siguiente.`
+  };
+  return t[stageId] || '';
+}
+
+function renderEmbudo() {
+  const list = embList();
+  const by = {};
+  EMB_STAGES.forEach(s => by[s.id] = []);
+  list.forEach(p => (by[p.etapa] || by.prospecto).push(p));
+  let activo = 0, embudo = 0;
+  list.forEach(p => {
+    const m = Number(p.mensualidad) || 0;
+    if (p.etapa === 'activo') activo += m;
+    else if (p.etapa !== 'diseno') embudo += m;
+  });
+  const pendientes = (state.modules || []).filter(m => !list.some(p => p.moduleId === m.id)).length;
+
+  const header = `
+  <div class="emb-top">
+    <div>
+      <div class="section-title">Embudo de prospectos</div>
+      <div class="emb-sub">Un solo camino para todas las empresas: cada una avanza por las mismas etapas hasta pagar su mensualidad.</div>
+    </div>
+    <div class="emb-actions">
+      ${list.length && pendientes ? `<button class="edit-btn" onclick="embImportModules()">⬇️ Importar ${pendientes} desde Módulos</button>` : ''}
+      <button class="btn-add" onclick="embOpen()">+ Nuevo prospecto</button>
+    </div>
+  </div>`;
+
+  if (!list.length) {
+    document.getElementById('page-content').innerHTML = header + `
+    <div class="emb-blank">
+      <p>Aún no hay prospectos en el embudo.${pendientes ? ` Puedes traer tus ${pendientes} módulos como prospectos y luego ajustar la etapa de cada uno.` : ''}</p>
+      ${pendientes ? `<button class="btn-add" onclick="embImportModules()">⬇️ Importar ${pendientes} módulos como prospectos</button>` : `<button class="btn-add" onclick="embOpen()">+ Nuevo prospecto</button>`}
+    </div>`;
+    return;
+  }
+
+  const stats = `
+  <div class="dash-stats">
+    <div class="stat-card"><div class="stat-label">Ingreso activo</div><div class="stat-value">${fmtCOP(activo)}</div><div class="stat-sub">por mes, clientes que ya pagan</div></div>
+    <div class="stat-card"><div class="stat-label">En el embudo</div><div class="stat-value">${fmtCOP(embudo)}</div><div class="stat-sub">por mes, si cierran todos</div></div>
+    <div class="stat-card"><div class="stat-label">Proyectos en diseño</div><div class="stat-value">${by.diseno.length}</div><div class="stat-sub">aún sin mensualidad definida</div></div>
+  </div>`;
+
+  const cols = EMB_STAGES.map((s, idx) => {
+    const items = by[s.id].slice().sort((a, b) =>
+      (Number(b.mensualidad) || 0) - (Number(a.mensualidad) || 0) || String(a.nombre).localeCompare(String(b.nombre), 'es'));
+    const suma = items.reduce((t, p) => t + (Number(p.mensualidad) || 0), 0);
+    return `
+    <div class="emb-col">
+      <div class="emb-col-head">
+        <div class="emb-col-title"><span class="emb-dot" style="background:${s.color}"></span>${s.name}<span class="emb-count">${items.length}</span></div>
+        ${s.id !== 'diseno' ? `<div class="emb-col-sum">${fmtCOP(suma)} / mes</div>` : ''}
+        <div class="emb-col-guide">${s.guide}</div>
+      </div>
+      ${items.length ? items.map(p => embCard(p, idx)).join('') : '<div class="emb-empty">Sin empresas en esta etapa</div>'}
+    </div>`;
+  }).join('');
+
+  document.getElementById('page-content').innerHTML = header + stats + `<div class="emb-board">${cols}</div>`;
+}
+
+function embCard(p, idx) {
+  const m = Number(p.mensualidad) || 0;
+  const v = Number(p.valorProyecto) || 0;
+  const late = p.fechaAccion && p.fechaAccion < embToday() && p.etapa !== 'activo';
+  const next = EMB_STAGES[idx + 1];
+  const id = embAttr(p.id);
+  return `
+  <div class="emb-card">
+    <button class="emb-name" onclick="embOpen('${id}')">${escHtml(p.nombre)}</button>
+    ${p.rubro ? `<div class="emb-rubro">${escHtml(p.rubro)}</div>` : ''}
+    <div class="emb-money">
+      <span class="emb-fee${m ? '' : ' zero'}">${m ? fmtCOP(m) + ' /mes' : 'Sin mensualidad'}</span>
+      ${v ? `<span class="emb-proj">Proyecto ${fmtCOP(v)}</span>` : ''}
+    </div>
+    ${p.servicios && p.servicios.length ? `<div class="emb-chips">${p.servicios.map(s => `<span class="emb-chip">${escHtml(s)}</span>`).join('')}</div>` : ''}
+    ${p.proximaAccion || p.fechaAccion ? `<div class="emb-next${late ? ' late' : ''}"><b>${p.fechaAccion ? formatDate(p.fechaAccion) + (late ? ' (vencida)' : '') : 'Siguiente'}</b>${p.proximaAccion ? ' · ' + escHtml(p.proximaAccion) : ''}</div>` : ''}
+    ${next ? `<button class="emb-move" onclick="embMove('${id}','${next.id}')">Pasar a ${next.name} →</button>` : ''}
+  </div>`;
+}
+
+function embMove(id, etapa) {
+  const p = embList().find(x => x.id === id);
+  if (!p) return;
+  p.etapa = etapa;
+  saveLocal(); renderEmbudo();
+}
+
+function embImportModules() {
+  const list = embList();
+  let n = 0;
+  (state.modules || []).forEach(m => {
+    if (list.some(p => p.moduleId === m.id)) return;
+    const meta = Number(m.meta) || 0;
+    // En Marcha = cliente activo. Sin valor, o con un valor de proyecto
+    // muy grande (100 millones o más), queda "En diseño" y el valor pasa
+    // a "valor del proyecto" en vez de contarse como mensualidad.
+    let etapa = 'prospecto', mensualidad = meta, valorProyecto = 0;
+    if (m.status === 'marcha') etapa = 'activo';
+    else if (meta === 0 || meta >= 100000000) { etapa = 'diseno'; mensualidad = 0; valorProyecto = meta; }
+    list.push({
+      id: 'p_' + Date.now() + '_' + n, moduleId: m.id,
+      nombre: m.name || 'Sin nombre', rubro: m.desc || '',
+      etapa, mensualidad, valorProyecto,
+      servicios: etapa === 'diseno' ? [] : EMB_SERVICES.slice(),
+      contacto: '', telefono: '', email: '', ciudad: '',
+      proximaAccion: '', fechaAccion: '', notas: ''
+    });
+    n++;
+  });
+  if (n) { saveLocal(); showToast('⬇️ ' + n + ' prospectos importados'); }
+  else showToast('No hay módulos nuevos para importar');
+  renderEmbudo();
+}
+
+function embOpen(id) {
+  embEditId = id || null;
+  const p = id ? embList().find(x => x.id === id) : null;
+  const v = (k, d) => embAttr(p && p[k] != null ? p[k] : (d == null ? '' : d));
+  const etapa = p ? p.etapa : 'prospecto';
+  const mens = p ? (Number(p.mensualidad) || 0) : EMB_FEE;
+  const proy = p && Number(p.valorProyecto) ? Number(p.valorProyecto) : 0;
+  const servs = p ? (p.servicios || []) : EMB_SERVICES;
+  document.getElementById('modal-body').innerHTML = `
+    <h3>${p ? 'Editar prospecto' : 'Nuevo prospecto'}</h3>
+    <div class="modal-field"><label>Empresa</label><input type="text" id="emb-nombre" value="${v('nombre')}" oninput="embRefreshTpl()"></div>
+    <div class="modal-field"><label>Qué fabrica o vende</label><input type="text" id="emb-rubro" value="${v('rubro')}"></div>
+    <div class="emb-row">
+      <div class="modal-field"><label>Etapa</label>
+        <select id="emb-etapa" onchange="embRefreshTpl()">${EMB_STAGES.map(s => `<option value="${s.id}"${s.id === etapa ? ' selected' : ''}>${s.name}</option>`).join('')}</select>
+      </div>
+      <div class="modal-field"><label>Mensualidad (COP)</label><input type="text" id="emb-mens" inputmode="numeric" value="${mens ? mens.toLocaleString('es-CO') : ''}" oninput="formatCOPInput(this)"></div>
+    </div>
+    <div class="modal-field"><label>Valor estimado del proyecto (COP, opcional)</label><input type="text" id="emb-proy" inputmode="numeric" value="${proy ? proy.toLocaleString('es-CO') : ''}" oninput="formatCOPInput(this)"></div>
+    <div class="modal-field"><label>Servicios del paquete</label>
+      <div class="emb-checks">${EMB_SERVICES.map((s, i) => `<label class="emb-check"><input type="checkbox" id="emb-serv-${i}"${servs.indexOf(s) >= 0 ? ' checked' : ''}>${s}</label>`).join('')}</div>
+    </div>
+    <div class="emb-row">
+      <div class="modal-field"><label>Persona de contacto</label><input type="text" id="emb-contacto" value="${v('contacto')}" oninput="embRefreshTpl()"></div>
+      <div class="modal-field"><label>WhatsApp o teléfono</label><input type="tel" id="emb-tel" value="${v('telefono')}"></div>
+    </div>
+    <div class="emb-row">
+      <div class="modal-field"><label>Correo</label><input type="email" id="emb-email" value="${v('email')}"></div>
+      <div class="modal-field"><label>Ciudad o país</label><input type="text" id="emb-ciudad" value="${v('ciudad')}"></div>
+    </div>
+    <div class="emb-row">
+      <div class="modal-field"><label>Próxima acción</label><input type="text" id="emb-accion" value="${v('proximaAccion')}"></div>
+      <div class="modal-field"><label>Fecha</label><input type="date" id="emb-fecha" value="${v('fechaAccion')}"></div>
+    </div>
+    <div class="modal-field"><label>Notas</label><textarea id="emb-notas" rows="3">${escHtml(p ? p.notas : '')}</textarea></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-confirm" onclick="embSave()">Guardar</button>
+    </div>
+    ${p ? `<button class="emb-del" id="emb-del" onclick="embDelete()">Eliminar prospecto</button>` : ''}
+    <div class="emb-tpl">
+      <div class="emb-tpl-title" id="emb-tpl-title"></div>
+      <div class="emb-tpl-text" id="emb-tpl-text"></div>
+      <button class="edit-btn" onclick="embCopyTpl()">Copiar mensaje</button>
+    </div>`;
+  embRefreshTpl();
+  document.getElementById('modal').style.display = 'flex';
+  document.getElementById('emb-nombre').focus();
+}
+
+function embRefreshTpl() {
+  const sel = document.getElementById('emb-etapa');
+  if (!sel) return;
+  const stage = EMB_STAGES.find(s => s.id === sel.value) || EMB_STAGES[1];
+  document.getElementById('emb-tpl-title').textContent = 'Mensaje sugerido · ' + stage.name;
+  document.getElementById('emb-tpl-text').textContent = embTemplate(
+    stage.id,
+    document.getElementById('emb-nombre').value.trim(),
+    document.getElementById('emb-contacto').value.trim());
+}
+
+function embCopyTpl() {
+  const txt = document.getElementById('emb-tpl-text').textContent;
+  const fallback = () => {
+    const r = document.createRange();
+    r.selectNodeContents(document.getElementById('emb-tpl-text'));
+    const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    showToast('Selecciona y copia el texto');
+  };
+  try { navigator.clipboard.writeText(txt).then(() => showToast('📋 Mensaje copiado'), fallback); }
+  catch (e) { fallback(); }
+}
+
+function embSave() {
+  const nombre = document.getElementById('emb-nombre').value.trim();
+  if (!nombre) { showToast('Escribe el nombre de la empresa'); document.getElementById('emb-nombre').focus(); return; }
+  const data = {
+    nombre,
+    rubro: document.getElementById('emb-rubro').value.trim(),
+    etapa: document.getElementById('emb-etapa').value,
+    mensualidad: parseCOP(document.getElementById('emb-mens').value),
+    valorProyecto: parseCOP(document.getElementById('emb-proy').value),
+    servicios: EMB_SERVICES.filter((s, i) => document.getElementById('emb-serv-' + i).checked),
+    contacto: document.getElementById('emb-contacto').value.trim(),
+    telefono: document.getElementById('emb-tel').value.trim(),
+    email: document.getElementById('emb-email').value.trim(),
+    ciudad: document.getElementById('emb-ciudad').value.trim(),
+    proximaAccion: document.getElementById('emb-accion').value.trim(),
+    fechaAccion: document.getElementById('emb-fecha').value,
+    notas: document.getElementById('emb-notas').value.trim()
+  };
+  const list = embList();
+  const cur = embEditId ? list.find(x => x.id === embEditId) : null;
+  if (cur) Object.assign(cur, data);
+  else list.push(Object.assign({ id: 'p_' + Date.now() }, data));
+  document.getElementById('modal').style.display = 'none';
+  embEditId = null;
+  saveLocal(); renderEmbudo();
+}
+
+function embDelete() {
+  const b = document.getElementById('emb-del');
+  if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Toca otra vez para confirmar'; return; }
+  state.prospects = embList().filter(x => x.id !== embEditId);
+  document.getElementById('modal').style.display = 'none';
+  embEditId = null;
+  saveLocal(); renderEmbudo();
 }
 
 // ═══════════════════════════════════════════
