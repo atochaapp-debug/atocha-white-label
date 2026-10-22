@@ -1762,11 +1762,40 @@ function renderSync() {
       <button class="btn-sync-up" onclick="syncUp()">☁️ Subir a la nube</button>
       <button class="btn-sync-down" onclick="syncDown()">⬇️ Descargar de nube</button>
     </div>
+    <div class="sync-form" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:18px;">
+      <label style="font-size:13px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">Código de sincronización de este negocio</label>
+      <input type="text" id="sy-code" value="${embAttr(state.clientId || '')}" readonly onclick="this.select()">
+      <button class="btn-add" onclick="copySyncCode()">📋 Copiar código</button>
+      <div class="sync-hint" style="margin:10px 0 16px;">Los dispositivos que comparten este código ven los mismos datos.</div>
+      <label style="font-size:13px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">¿Ya usas este negocio en otro dispositivo? Pega aquí su código</label>
+      <input type="text" id="sy-code-new" placeholder="biz_..." autocomplete="off">
+      <button class="btn-sync-down" onclick="linkSyncCode()">🔗 Vincular y descargar</button>
+    </div>
     <div class="sync-hint">
       💡 <strong>Regla de oro:</strong> Descarga al entrar · Sube al salir.<br>
       Última sync: ${state.lastSync ? new Date(state.lastSync).toLocaleString('es-CO') : 'nunca'}
     </div>
   </div>`;
+}
+function copySyncCode() {
+  const inp = document.getElementById('sy-code');
+  const fallback = () => { inp.select(); showToast('Selecciona y copia el código'); };
+  try { navigator.clipboard.writeText(inp.value).then(() => showToast('📋 Código copiado'), fallback); }
+  catch (e) { fallback(); }
+}
+// Usa el código de otro dispositivo para ver los mismos datos en este.
+async function linkSyncCode() {
+  const code = document.getElementById('sy-code-new').value.trim();
+  if (!/^[\w.:\-]{3,100}$/.test(code)) { showToast('⚠️ Código no válido'); return; }
+  if (code === state.clientId) { showToast('Este negocio ya usa ese código'); return; }
+  const tieneDatos = (state.modules || []).length || (state.notes || []).length ||
+    (state.checklist || []).length || (state.prospects || []).length;
+  if (tieneDatos && !confirm('Este negocio ya tiene datos en este dispositivo. Al vincular se reemplazarán por los de la nube con ese código. ¿Continuar?')) return;
+  const anterior = state.clientId;
+  state.clientId = code;
+  const ok = await syncDown();
+  if (!ok) state.clientId = anterior;   // sin guardar: así el aviso de error no se tapa
+  renderSync();
 }
 function saveSync() {
   state.sync.url = document.getElementById('sy-url').value.trim();
@@ -1787,17 +1816,19 @@ async function syncUp() {
     if (res.ok || res.status === 201 || res.status === 200) {
       state.lastSync = new Date().toISOString();
       saveLocal(); showToast('☁️ Subido a la nube');
-    } else { showToast('❌ Error al subir'); }
-  } catch(e) { showToast('❌ Error de conexión'); }
+    } else { showToast('❌ Error al subir (código ' + res.status + ')'); }
+  } catch(e) { showToast('❌ Error de conexión: no se pudo llegar a Supabase'); }
 }
 
+// Devuelve true si descargó datos y false si no (para poder encadenar acciones).
 async function syncDown() {
-  if (!state.sync.url || !state.sync.key) { showToast('⚠️ Configura Supabase primero'); return; }
-  if (!state.clientId) { showToast('⚠️ Aún no has subido datos a la nube'); return; }
+  if (!state.sync.url || !state.sync.key) { showToast('⚠️ Configura Supabase primero'); return false; }
+  if (!state.clientId) { showToast('⚠️ Aún no has subido datos a la nube'); return false; }
   try {
-    const res = await fetch(`${state.sync.url}/rest/v1/atocha_sync?id=eq.${state.clientId}`, {
+    const res = await fetch(`${state.sync.url}/rest/v1/atocha_sync?id=eq.${encodeURIComponent(state.clientId)}`, {
       headers: { 'apikey': state.sync.key, 'Authorization': `Bearer ${state.sync.key}` }
     });
+    if (!res.ok) { showToast('❌ Error al descargar (código ' + res.status + ')'); return false; }
     const rows = await res.json();
     if (rows && rows[0] && rows[0].data) {
       const remote = JSON.parse(rows[0].data);
@@ -1807,8 +1838,11 @@ async function syncDown() {
       state.lastSync = new Date().toISOString();
       saveLocal(); renderSidebar(); goPage(currentPage);
       showToast('⬇️ Datos descargados');
-    } else { showToast('⚠️ Sin datos en la nube'); }
-  } catch(e) { showToast('❌ Error de conexión'); }
+      return true;
+    }
+    showToast('⚠️ No hay datos en la nube con el código de este negocio');
+    return false;
+  } catch(e) { showToast('❌ Error de conexión: no se pudo llegar a Supabase'); return false; }
 }
 
 // ═══════════════════════════════════════════
