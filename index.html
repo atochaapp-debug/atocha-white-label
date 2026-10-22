@@ -2187,7 +2187,7 @@ function embOpen(id, etapaForzada) {
       <div id="emb-docs">${embDocsHtml(p)}</div>
       <div class="emb-addrow" style="margin-top:10px">
         <input type="text" id="emb-doc-nombre" placeholder="Nombre del documento (ej: Plan de trabajo)">
-        <label class="edit-btn emb-file" title="Carga un archivo .txt o .md">📎 Cargar archivo<input type="file" id="emb-doc-file" accept=".txt,.md,.markdown,.csv,text/plain,text/markdown" style="display:none" onchange="embDocArchivo(this)"></label>
+        <label class="edit-btn emb-file" title="Carga un archivo de Word (.docx), .txt o .md">📎 Cargar archivo<input type="file" id="emb-doc-file" accept=".docx,.txt,.md,.markdown,.csv,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none" onchange="embDocArchivo(this)"></label>
       </div>
       <textarea id="emb-doc-texto" rows="4" class="emb-doc-area" placeholder="…o pega aquí el texto del documento"></textarea>
       <button class="btn-add" type="button" onclick="embAddDoc()" style="margin-top:8px">+ Agregar documento</button>
@@ -2367,32 +2367,127 @@ function embAddEnl() {
 const EMB_DOC_MAX = 300000;   // caracteres por documento (para no hacer pesada la sincronización)
 function embDocsHtml(p) {
   const lista = p.documentos || [];
-  if (!lista.length) return '<div class="emb-none">Sin documentos. Carga un archivo .txt o .md, o pega el texto abajo.</div>';
+  if (!lista.length) return '<div class="emb-none">Sin documentos. Carga un archivo Word (.docx), .txt o .md, o pega el texto abajo.</div>';
   return lista.map(d => `<div class="emb-act">
       <button class="emb-doc-open" type="button" onclick="docVer('${embAttr(d.id)}')">📄 ${escHtml(d.nombre)}</button>
       <span class="emb-act-date">${Math.max(1, Math.round(String(d.texto || '').length / 1000))} KB</span>
       <button class="emb-x" type="button" title="Eliminar" onclick="embConfirmX(this,'doc','${embAttr(d.id)}')">×</button>
     </div>`).join('');
 }
+// Detecta contenido que no es texto (archivos comprimidos, PDF, etc.) para no guardar basura.
+function docEsBinario(t) {
+  t = String(t || '');
+  if (/^PK\u0003\u0004/.test(t) || t.indexOf('%PDF') === 0 || t.indexOf('\u0000') >= 0) return true;
+  const malos = (t.match(/�/g) || []).length;
+  return malos > 5 && malos / t.length > 0.01;
+}
+// Lee un .docx (Word) en el propio navegador: es un zip con word/document.xml. Se convierte a texto tipo Markdown.
+async function docxATexto(buf) {
+  const u8 = new Uint8Array(buf), dv = new DataView(buf);
+  let e = -1;
+  for (let i = u8.length - 22; i >= Math.max(0, u8.length - 65557); i--) { if (dv.getUint32(i, true) === 0x06054b50) { e = i; break; } }
+  if (e < 0) throw new Error('zip');
+  const n = dv.getUint16(e + 10, true); let p = dv.getUint32(e + 16, true);
+  for (let k = 0; k < n; k++) {
+    if (dv.getUint32(p, true) !== 0x02014b50) break;
+    const metodo = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true), usize = dv.getUint32(p + 24, true);
+    const nl = dv.getUint16(p + 28, true), el = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), lho = dv.getUint32(p + 42, true);
+    const nombre = new TextDecoder().decode(u8.subarray(p + 46, p + 46 + nl));
+    if (nombre === 'word/document.xml') {
+      if (usize > 15e6) throw new Error('grande');
+      const ini = lho + 30 + dv.getUint16(lho + 26, true) + dv.getUint16(lho + 28, true);
+      const datos = u8.subarray(ini, ini + csize);
+      let xml;
+      if (metodo === 0) xml = datos;
+      else if (metodo === 8) xml = new Uint8Array(await new Response(new Blob([datos]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+      else throw new Error('metodo');
+      return docxXmlATexto(new TextDecoder('utf-8').decode(xml));
+    }
+    p += 46 + nl + el + cl;
+  }
+  throw new Error('sin document.xml');
+}
+function docxXmlATexto(xml) {
+  const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+  const doc = new DOMParser().parseFromString(xml, 'application/xml');
+  if (doc.getElementsByTagName('parsererror').length) throw new Error('xml');
+  const hijos = (el, tag) => Array.from(el.childNodes).filter(x => x.localName === tag && x.namespaceURI === W);
+  const texto = par => {
+    let out = '';
+    Array.from(par.getElementsByTagNameNS(W, 'r')).forEach(r => {
+      let t = '';
+      Array.from(r.childNodes).forEach(c => {
+        if (c.namespaceURI !== W) return;
+        if (c.localName === 't') t += c.textContent;
+        else if (c.localName === 'tab' || c.localName === 'br') t += ' ';
+      });
+      if (!t) return;
+      const rp = hijos(r, 'rPr')[0], b = rp && hijos(rp, 'b')[0];
+      const negrita = b && !/^(0|false)$/i.test(b.getAttributeNS(W, 'val') || '');
+      out += negrita && t.trim() ? t.replace(/^(\s*)(.*?)(\s*)$/s, '$1**$2**$3') : t;
+    });
+    return out.replace(/\*\*\s*\*\*/g, '').replace(/\s+$/g, '');
+  };
+  const lineas = [];
+  const cuerpo = doc.getElementsByTagNameNS(W, 'body')[0]; if (!cuerpo) throw new Error('sin cuerpo');
+  Array.from(cuerpo.childNodes).forEach(nodo => {
+    if (nodo.namespaceURI !== W) return;
+    if (nodo.localName === 'p') {
+      const pr = hijos(nodo, 'pPr')[0];
+      const est = pr && hijos(pr, 'pStyle')[0] ? (hijos(pr, 'pStyle')[0].getAttributeNS(W, 'val') || '') : '';
+      const lista = (pr && hijos(pr, 'numPr')[0]) || /^(List|Lista|Prrafodelista|Párrafodelista)/i.test(est.replace(/\s/g, ''));
+      let t = texto(nodo);
+      if (!t.trim()) { if (lineas.length && lineas[lineas.length - 1] !== '') lineas.push(''); return; }
+      let m;
+      if ((m = /^(?:Heading|Ttulo|Título|Titulo)\s*(\d)/i.exec(est))) { lineas.push('', '#'.repeat(Math.min(+m[1] + 1, 4)) + ' ' + t.replace(/\*\*/g, ''), ''); }
+      else if (/^Title$/i.test(est)) lineas.push('', '# ' + t.replace(/\*\*/g, ''), '');
+      else if (lista) lineas.push('- ' + t);
+      else lineas.push(t, '');
+    } else if (nodo.localName === 'tbl') {
+      const filas = hijos(nodo, 'tr').map(tr => hijos(tr, 'tc').map(tc => hijos(tc, 'p').map(texto).filter(Boolean).join(' ').replace(/\|/g, '/')));
+      if (!filas.length) return;
+      const ncol = Math.max(...filas.map(f => f.length));
+      const fila = f => '| ' + Array.from({ length: ncol }, (_, i) => f[i] || '').join(' | ') + ' |';
+      lineas.push('', fila(filas[0]), '|' + ' --- |'.repeat(ncol), ...filas.slice(1).map(fila), '');
+    }
+  });
+  return lineas.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
 function embDocArchivo(inp) {
   const f = inp.files && inp.files[0]; if (!f) return;
-  if (f.size > EMB_DOC_MAX * 3) { showToast('⚠️ El archivo es muy grande (máximo ~300 mil caracteres)'); inp.value = ''; return; }
-  const r = new FileReader();
-  r.onload = () => {
-    document.getElementById('emb-doc-texto').value = String(r.result || '');
+  inp.value = '';
+  const ext = (f.name.split('.').pop() || '').toLowerCase();
+  if (['pdf', 'doc', 'xls', 'xlsx', 'ppt', 'pptx', 'odt', 'rtf', 'zip', 'png', 'jpg', 'jpeg', 'gif', 'webp'].indexOf(ext) >= 0) {
+    showToast('⚠️ Ese tipo de archivo no se puede abrir aquí. Usa .docx, .txt o .md, o copia y pega el texto'); return;
+  }
+  const poner = texto => {
+    if (docEsBinario(texto) || !String(texto).trim()) { showToast('⚠️ El archivo no tiene texto que se pueda leer. Copia el texto y pégalo en la caja'); return; }
+    document.getElementById('emb-doc-texto').value = texto;
     const n = document.getElementById('emb-doc-nombre');
     if (!n.value.trim()) n.value = f.name.replace(/\.[^.]+$/, '');
     showToast('📎 Archivo cargado: ahora presiona "Agregar documento"');
   };
+  const r = new FileReader();
   r.onerror = () => showToast('⚠️ No se pudo leer el archivo');
-  r.readAsText(f, 'UTF-8');
-  inp.value = '';
+  if (ext === 'docx') {
+    if (f.size > 10e6) { showToast('⚠️ El archivo es muy grande'); return; }
+    r.onload = async () => {
+      try { poner(await docxATexto(r.result)); }
+      catch (e) { showToast('⚠️ No se pudo leer el Word. Ábrelo, copia el texto y pégalo en la caja'); }
+    };
+    r.readAsArrayBuffer(f);
+  } else {
+    if (f.size > EMB_DOC_MAX * 3) { showToast('⚠️ El archivo es muy grande (máximo ~300 mil caracteres)'); return; }
+    r.onload = () => poner(String(r.result || ''));
+    r.readAsText(f, 'UTF-8');
+  }
 }
 function embAddDoc() {
   const p = embActual(); if (!p) return;
   const n = document.getElementById('emb-doc-nombre'), t = document.getElementById('emb-doc-texto');
   const texto = t.value.replace(/\r\n?/g, '\n').trim();
   if (!texto) { showToast('⚠️ Pega el texto o carga un archivo'); t.focus(); return; }
+  if (docEsBinario(texto)) { showToast('⚠️ Eso no es texto legible. Copia el texto del documento y pégalo aquí'); return; }
   if (texto.length > EMB_DOC_MAX) { showToast('⚠️ El documento es muy largo (máximo ~300 mil caracteres)'); return; }
   if (!p.documentos) p.documentos = [];
   p.documentos.push({ id: embId('d'), nombre: n.value.trim() || 'Documento ' + (p.documentos.length + 1), texto, fecha: new Date().toISOString() });
