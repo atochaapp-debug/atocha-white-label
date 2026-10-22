@@ -1,6 +1,6 @@
 // Service worker de Atocha: primero la red (siempre la versión más nueva) y,
 // si no hay internet, lo último guardado. Solo atiende archivos de la propia app.
-const CACHE = 'atocha-v2';
+const CACHE = 'atocha-v3';
 const BASE = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -21,7 +21,7 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   if (new URL(req.url).origin !== self.location.origin) return;
   e.respondWith(
-    fetch(req)
+    fetch(req, { cache: 'no-store' })
       .then(res => {
         if (res && res.ok) { const copia = res.clone(); caches.open(CACHE).then(c => c.put(req, copia)); }
         return res;
