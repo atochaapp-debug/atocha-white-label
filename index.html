@@ -147,6 +147,14 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .stat-value { font-size: 26px; font-weight: 800; color: var(--gray-900); letter-spacing: -0.5px; }
 .stat-sub { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
 
+.filter-bar { display: flex; flex-wrap: wrap; gap: 6px; }
+.ali-tag { display: inline-block; font-size: 10px; font-weight: 800; color: white; padding: 2px 7px; border-radius: 999px; letter-spacing: .3px; text-transform: uppercase; vertical-align: 1px; }
+.ali-pick { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 14px; margin-bottom: 10px; background: var(--gray-100); border: 1.5px solid transparent; border-radius: 12px; cursor: pointer; font-family: inherit; color: var(--gray-900); }
+.dark .ali-pick { background: var(--gray-700); }
+.ali-pick:hover { border-color: var(--blue-600); }
+.ali-pick-i { font-size: 26px; }
+.ali-pick b { display: block; font-size: 15px; }
+.ali-pick small { display: block; font-size: 12px; color: var(--gray-400); margin-top: 2px; }
 .dash-click { cursor: pointer; transition: transform .15s, box-shadow .15s; position: relative; }
 .dash-click:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 .dash-click:focus-visible { outline: 2px solid var(--blue-600); outline-offset: 2px; }
@@ -719,6 +727,7 @@ function ensureDefaults() {
   if (!state.checklist) state.checklist = [];
   if (!state.notes) state.notes = [];
   if (!state.prospects) state.prospects = [];
+  if (!state.aliados) state.aliados = [];
   if (!state.modules) state.modules = [];
   if (state.dark === undefined) state.dark = false;
 }
@@ -1091,6 +1100,10 @@ function renderDashboard() {
   const assigned = state.modules.reduce((s,m) => s + (m.meta||0), 0);
   const pct = state.metaTotal ? Math.round(assigned / state.metaTotal * 100) : 0;
 
+  const embAll = embList();
+  const embIngresoActivo = embAll.filter(p => p.etapa === 'activo').reduce((t, p) => t + (Number(p.mensualidad) || 0), 0);
+  const embClientes = embAll.filter(p => p.etapa === 'activo').length;
+  const embEnCurso = embAll.filter(p => p.etapa !== 'activo' && p.etapa !== 'perdido').length;
   const tarjeta = (clave, etiqueta, valor, sub, color, grande) => `
     <div class="stat-card dash-click" role="button" tabindex="0" onclick="dashAbrir('${clave}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();dashAbrir('${clave}')}">
       <div class="stat-label">${etiqueta}</div>
@@ -1115,12 +1128,19 @@ function renderDashboard() {
       <div class="stat-value">${state.modules.length}</div>
       <div class="stat-sub">${state.modules.filter(m=>m.status==='marcha').length} en marcha</div>
     </div>
+    ${tarjeta('ali', '🤝 Aliados', aliList().length, aliList().length ? ['partner','socio','inversor'].map(k => aliList().filter(a => a.tipo === k).length + ' ' + ALI_TIPOS[k].pl).join(' · ') : 'Agrega el primero', '')}
+    <div class="stat-card dash-click" role="button" tabindex="0" onclick="goPage('embudo')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('embudo')}">
+      <div class="stat-label">🧲 Embudo · ingreso mensual</div>
+      <div class="stat-value" style="font-size:20px;color:var(--green)">${fmtCOP(embIngresoActivo)}</div>
+      <div class="stat-sub">${embEnCurso} en embudo · ${embClientes} clientes activos</div>
+      <div class="dash-ver">Abrir embudo ›</div>
+    </div>
   </div>`;
 
   // Modules grid
   html += `<div class="section-header">
     <div class="section-title">Módulos del Ecosistema</div>
-    <button class="add-module-btn" onclick="openAddModule()">+ Nuevo proyecto</button>
+    <button class="add-module-btn" onclick="aliElegirTipo()">+ Nuevo</button>
   </div>
   <div class="modules-grid">
     ${state.modules.map(m => moduleCard(m)).join('')}
@@ -1160,6 +1180,7 @@ function dashAbrir(clave) {
   const all = getAllTasks();
   const porFecha = (x, y) => (x.date || '9999').localeCompare(y.date || '9999');
   let titulo = '', cuerpo = '';
+  if (clave === 'ali') { aliLista(); return; }
   if (clave === 'asig') {
     const assigned = state.modules.reduce((s,m) => s + (m.meta||0), 0);
     const meta = state.metaTotal || 0;
@@ -1203,6 +1224,167 @@ function dashAbrir(clave) {
   m.innerHTML = `<h3>${titulo}</h3>${cuerpo}<div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cerrar</button></div>`;
   m.style.maxWidth = '560px';
   document.getElementById('modal').style.display = 'flex';
+}
+
+// ═══════════════════════════════════════════
+//  ALIADOS (Partner, Socio, Inversor) + selector "+ Nuevo"
+// ═══════════════════════════════════════════
+const ALI_TIPOS = {
+  partner:  { n: 'Partner',  pl: 'partners',    c: '#3B82F6' },
+  socio:    { n: 'Socio',    pl: 'socios',      c: '#10B981' },
+  inversor: { n: 'Inversor', pl: 'inversores',  c: '#F59E0B' }
+};
+const ALI_ESTADOS = [
+  { id: 'conversacion', n: 'En conversación' },
+  { id: 'activo',       n: 'Activo' },
+  { id: 'pausado',      n: 'Pausado' }
+];
+let aliFiltro = '', aliEditId = null, aliTmp = { enlaces: [] };
+function aliList() { if (!state.aliados) state.aliados = []; return state.aliados; }
+function aliEstadoNombre(id) { const e = ALI_ESTADOS.find(x => x.id === id); return e ? e.n : 'En conversación'; }
+
+function aliElegirTipo() {
+  const b = (icono, nombre, desc, accion) => `<button class="ali-pick" onclick="${accion}"><span class="ali-pick-i">${icono}</span><span><b>${nombre}</b><small>${desc}</small></span></button>`;
+  const m = document.getElementById('modal-body');
+  m.style.maxWidth = '';
+  m.innerHTML = `<h3>¿Qué quieres crear?</h3>
+    ${b('📁', 'Proyecto', 'Con meta en pesos y tareas', "closeModal();openAddModule()")}
+    ${b('🤝', 'Partner', 'Empresa o persona aliada', "aliOpen(null,'partner')")}
+    ${b('👥', 'Socio', 'Con porcentaje de participación', "aliOpen(null,'socio')")}
+    ${b('💰', 'Inversor', 'Con monto aportado o comprometido', "aliOpen(null,'inversor')")}
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancelar</button></div>`;
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function aliLista() {
+  const todos = aliList();
+  const lista = aliFiltro ? todos.filter(a => a.tipo === aliFiltro) : todos;
+  const inv = todos.filter(a => a.tipo === 'inversor');
+  const suma = est => inv.filter(a => a.estado === est).reduce((t, a) => t + (Number(a.monto) || 0), 0);
+  const part = todos.filter(a => a.tipo === 'socio' && a.estado === 'activo').reduce((t, a) => t + (Number(a.participacion) || 0), 0);
+  const chip = (id, txt) => `<button class="filter-btn ${aliFiltro === id ? 'active' : ''}" onclick="aliSetFiltro('${id}')">${txt}</button>`;
+  const filas = lista.length ? lista.slice().sort((x, y) => String(x.nombre).localeCompare(String(y.nombre), 'es')).map(a => {
+    const t = ALI_TIPOS[a.tipo] || ALI_TIPOS.partner;
+    const wa = embWa(a.telefono);
+    const datos = [
+      aliEstadoNombre(a.estado),
+      a.contacto ? escHtml(a.contacto) : '',
+      a.tipo === 'inversor' && a.monto ? fmtCOP(a.monto) : '',
+      a.tipo === 'socio' && a.participacion !== '' && a.participacion != null ? a.participacion + '% de participación' : '',
+      (a.enlaces || []).length ? '🔗 ' + a.enlaces.length : ''
+    ].filter(Boolean).join(' · ');
+    return `<div class="task-item dash-tarea" onclick="aliOpen('${a.id}')">
+      <div class="ti-name"><span class="ali-tag" style="background:${t.c}">${t.n}</span> ${escHtml(a.nombre)}${wa ? ` <a class="emb-tag wa" href="${wa}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">💬 WhatsApp</a>` : ''}</div>
+      <div class="ti-meta">${datos}</div>
+    </div>`;
+  }).join('') : `<div class="empty-panel">${todos.length ? 'No hay aliados de este tipo' : 'Aún no hay aliados. Agrega el primero.'}</div>`;
+  const m = document.getElementById('modal-body');
+  m.style.maxWidth = '560px';
+  m.innerHTML = `<h3>🤝 Aliados <span style="color:var(--gray-400);font-weight:600">(${todos.length})</span></h3>
+    <div class="dash-resumen">
+      <div><span>Aportado (activos)</span><b style="color:var(--green)">${fmtCOP(suma('activo'))}</b></div>
+      <div><span>En conversación</span><b>${fmtCOP(suma('conversacion'))}</b></div>
+      <div><span>Participación socios</span><b>${Math.round(part * 100) / 100}%</b></div>
+    </div>
+    <div class="filter-bar" style="margin-bottom:12px">${chip('', 'Todos')}${Object.keys(ALI_TIPOS).map(k => chip(k, ALI_TIPOS[k].n + 's')).join('')}</div>
+    ${filas}
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cerrar</button>
+      <button class="btn-confirm" onclick="aliOpen(null,'${aliFiltro || 'partner'}')">+ Nuevo aliado</button>
+    </div>`;
+  document.getElementById('modal').style.display = 'flex';
+}
+function aliSetFiltro(f) { aliFiltro = f; aliLista(); }
+
+function aliOpen(id, tipo) {
+  const a = id ? aliList().find(x => x.id === id) : null;
+  if (id && !a) { aliLista(); return; }
+  const d = a || { tipo: tipo || 'partner', nombre: '', contacto: '', telefono: '', email: '', monto: 0, participacion: '', estado: 'conversacion', notas: '', enlaces: [] };
+  aliEditId = a ? a.id : null;
+  aliTmp = { enlaces: (d.enlaces || []).map(e => ({ id: e.id, nombre: e.nombre, url: e.url })) };
+  const m = document.getElementById('modal-body');
+  m.style.maxWidth = '560px';
+  m.innerHTML = `<h3>${a ? 'Editar aliado' : 'Nuevo aliado'}</h3>
+    <div class="modal-field"><label>Tipo</label><select id="ali-tipo">${Object.keys(ALI_TIPOS).map(k => `<option value="${k}" ${d.tipo === k ? 'selected' : ''}>${ALI_TIPOS[k].n}</option>`).join('')}</select></div>
+    <div class="modal-field"><label>Nombre o empresa</label><input type="text" id="ali-nombre" value="${embAttr(d.nombre)}" placeholder="Ej: Inversiones Andes" autocomplete="off"></div>
+    <div class="modal-field"><label>Persona de contacto</label><input type="text" id="ali-contacto" value="${embAttr(d.contacto)}" autocomplete="off"></div>
+    <div class="modal-field"><label>WhatsApp / teléfono</label><input type="text" id="ali-tel" value="${embAttr(d.telefono)}" oninput="aliRefreshWa()" autocomplete="off"><div id="ali-wa-slot" style="margin-top:6px"></div></div>
+    <div class="modal-field"><label>Correo</label><input type="text" id="ali-email" value="${embAttr(d.email)}" autocomplete="off"></div>
+    <div class="modal-field"><label>Aporte en pesos (inversor)</label><input type="text" id="ali-monto" value="${d.monto ? Number(d.monto).toLocaleString('es-CO') : ''}" placeholder="0" oninput="formatCOPInput(this)"></div>
+    <div class="modal-field"><label>Participación % (socio)</label><input type="text" id="ali-part" value="${d.participacion === '' || d.participacion == null ? '' : embAttr(d.participacion)}" placeholder="Ej: 10" autocomplete="off"></div>
+    <div class="modal-field"><label>Estado</label><select id="ali-estado">${ALI_ESTADOS.map(e => `<option value="${e.id}" ${d.estado === e.id ? 'selected' : ''}>${e.n}</option>`).join('')}</select></div>
+    <div class="modal-field"><label>Notas</label><textarea id="ali-notas" rows="3">${escHtml(d.notas || '')}</textarea></div>
+    <div class="modal-field"><label>Enlaces y documentos</label>
+      <div id="ali-enls">${aliEnlHtml()}</div>
+      <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+        <input type="text" id="ali-enl-nombre" placeholder="Nombre (opcional)" style="flex:1;min-width:120px" autocomplete="off">
+        <input type="text" id="ali-enl-url" placeholder="Pega la dirección" style="flex:2;min-width:160px" autocomplete="off">
+        <button class="btn-add" type="button" onclick="aliAddEnl()">Agregar</button>
+      </div>
+    </div>
+    ${a ? `<button onclick="aliEliminar()" style="width:100%;padding:10px;background:#FEE2E2;color:var(--red);border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;">🗑 Eliminar aliado</button>` : ''}
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="aliVolver()">Cancelar</button>
+      <button class="btn-confirm" onclick="aliGuardar()">Guardar</button>
+    </div>`;
+  document.getElementById('modal').style.display = 'flex';
+  aliRefreshWa();
+}
+function aliVolver() { if (aliList().length) aliLista(); else closeModal(); }
+function aliRefreshWa() {
+  const slot = document.getElementById('ali-wa-slot'); const inp = document.getElementById('ali-tel');
+  if (!slot || !inp) return;
+  const wa = embWa(inp.value);
+  slot.innerHTML = wa ? `<a class="emb-tag wa" href="${wa}" target="_blank" rel="noopener noreferrer">💬 Abrir WhatsApp</a>` : '';
+}
+function aliEnlHtml() {
+  return aliTmp.enlaces.map(e => {
+    const u = embUrlSegura(e.url);
+    return `<div class="dash-fila">${u ? `<a class="emb-link" href="${embAttr(u)}" target="_blank" rel="noopener noreferrer">${escHtml(e.nombre)}</a>` : `<span>${escHtml(e.nombre)}</span>`}<span style="flex:1"></span><button class="edit-btn" type="button" onclick="aliQuitarEnl('${e.id}')" title="Quitar">×</button></div>`;
+  }).join('');
+}
+function aliAddEnl() {
+  const url = embUrlSegura(document.getElementById('ali-enl-url').value);
+  if (!url) { showToast('⚠️ Escribe una dirección válida (https://…)'); return; }
+  let nombre = document.getElementById('ali-enl-nombre').value.trim();
+  if (!nombre) { try { nombre = new URL(url).hostname.replace(/^www\./, ''); } catch (e) { nombre = 'Enlace'; } }
+  aliTmp.enlaces.push({ id: embId('e'), nombre, url });
+  document.getElementById('ali-enl-nombre').value = ''; document.getElementById('ali-enl-url').value = '';
+  document.getElementById('ali-enls').innerHTML = aliEnlHtml();
+}
+function aliQuitarEnl(id) {
+  aliTmp.enlaces = aliTmp.enlaces.filter(e => e.id !== id);
+  document.getElementById('ali-enls').innerHTML = aliEnlHtml();
+}
+function aliGuardar() {
+  const v = id => document.getElementById(id).value;
+  const nombre = v('ali-nombre').trim();
+  if (!nombre) { showToast('⚠️ Escribe el nombre'); return; }
+  const tipo = ALI_TIPOS[v('ali-tipo')] ? v('ali-tipo') : 'partner';
+  const estado = ALI_ESTADOS.some(e => e.id === v('ali-estado')) ? v('ali-estado') : 'conversacion';
+  let part = parseFloat(String(v('ali-part')).replace(',', '.'));
+  part = isNaN(part) ? '' : Math.min(100, Math.max(0, part));
+  const datos = { tipo, nombre, contacto: v('ali-contacto').trim(), telefono: v('ali-tel').trim(), email: v('ali-email').trim(),
+    monto: parseCOP(v('ali-monto')) || 0, participacion: part, estado, notas: v('ali-notas').trim(), enlaces: aliTmp.enlaces };
+  const lista = aliList();
+  const a = aliEditId ? lista.find(x => x.id === aliEditId) : null;
+  if (a) Object.assign(a, datos);
+  else lista.push(Object.assign({ id: embId('a'), desde: new Date().toISOString() }, datos));
+  aliEditId = null;
+  saveLocal();
+  showToast('✅ Aliado guardado');
+  if (currentPage === 'dashboard') renderDashboard();
+  aliLista();
+}
+function aliEliminar() {
+  if (!aliEditId) return;
+  if (!confirm('¿Eliminar este aliado? No se puede deshacer.')) return;
+  state.aliados = aliList().filter(x => x.id !== aliEditId);
+  aliEditId = null;
+  saveLocal();
+  showToast('Aliado eliminado');
+  if (currentPage === 'dashboard') renderDashboard();
+  aliVolver();
 }
 
 function moduleCard(m) {
