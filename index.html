@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#1E3A8A">
 <title>Atocha</title>
-<link rel="manifest" id="pwa-manifest">
+<link rel="manifest" href="manifest.json" id="pwa-manifest">
 <link rel="apple-touch-icon" id="apple-icon">
 <style>
 :root {
@@ -128,7 +128,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .btn-save { background: var(--gold); color: var(--blue-900); }
 .btn-save:hover { background: #D97706; }
 .btn-icon { background: var(--gray-100); color: var(--gray-700); width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
-.hamburger { display: none; background: none; border: none; cursor: pointer; color: var(--gray-700); font-size: 20px; }
+.hamburger { display: flex; align-items: center; background: none; border: none; cursor: pointer; color: var(--gray-700); font-size: 20px; }
 .content { flex: 1; padding: 24px; max-width: 1200px; width: 100%; }
 
 /* ── CARDS ── */
@@ -319,6 +319,14 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .emb-tpl-title { font-size: 11px; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
 .emb-tpl-text { font-size: 13px; color: var(--gray-800); white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 10px; }
 .emb-del { background: none; border: none; color: var(--red); font-size: 13px; font-weight: 700; cursor: pointer; padding: 8px 0; margin-top: 10px; }
+.emb-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.emb-move.sec { background: var(--gray-100); color: var(--gray-600); }
+.emb-move.sec:hover { color: var(--red); }
+/* Menú izquierdo oculto en computador: más espacio para el tablero */
+.main { transition: margin-left .3s; }
+body.sb-hidden .sidebar { transform: translateX(-100%); }
+body.sb-hidden .main { margin-left: 0; }
+body.sb-hidden .content { max-width: none; }
 @media (max-width: 520px) { .emb-row { grid-template-columns: 1fr; } .emb-col { flex-basis: 78vw; } }
 
 /* ── REPORT ── */
@@ -927,9 +935,16 @@ function renderSidebar() {
 }
 
 function toggleSidebar() {
+  // En computador oculta o muestra el menú y recuerda la elección; en móvil lo despliega encima.
+  if (window.innerWidth > 768) {
+    const oculto = document.body.classList.toggle('sb-hidden');
+    try { localStorage.setItem('atocha_sb_hidden', oculto ? '1' : '0'); } catch (e) {}
+    return;
+  }
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('show');
 }
+try { if (localStorage.getItem('atocha_sb_hidden') === '1') document.body.classList.add('sb-hidden'); } catch (e) {}
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
@@ -1405,9 +1420,19 @@ const EMB_STAGES = [
   { id: 'contactado', name: 'Contactado',     color: '#3B82F6', guide: 'Primer mensaje enviado.' },
   { id: 'reunion',    name: 'Reunión',        color: '#06B6D4', guide: 'Diagnóstico de 20 minutos.' },
   { id: 'propuesta',  name: 'Propuesta',      color: '#F59E0B', guide: 'Paquete mensual enviado.' },
-  { id: 'activo',     name: 'Cliente activo', color: '#10B981', guide: 'Pagando mensualidad.' }
+  { id: 'negociacion', name: 'Negociación y cierre', color: '#F97316', guide: 'Ajustes de precio o alcance, y firma.' },
+  { id: 'arranque',   name: 'Arranque',       color: '#EC4899', guide: 'Primer pago hecho, primera semana de trabajo.' },
+  { id: 'activo',     name: 'Cliente activo', color: '#10B981', guide: 'Pagando mensualidad.' },
+  { id: 'perdido',    name: 'Perdido o pausado', color: '#EF4444', guide: 'Dijo no o más adelante. Anota el motivo.' }
 ];
 let embEditId = null;
+
+// Siguiente etapa del camino principal. Perdido no es un paso: se llega con "Marcar perdido".
+function embNext(etapa) {
+  const i = EMB_STAGES.findIndex(s => s.id === etapa);
+  const n = EMB_STAGES[i + 1];
+  return n && n.id !== 'perdido' ? n : null;
+}
 
 function embList() { if (!state.prospects) state.prospects = []; return state.prospects; }
 function embAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
@@ -1425,7 +1450,10 @@ function embTemplate(stageId, empresa, contacto) {
     contactado: `Buen día, ${c}. Soy [tu nombre] de Atocha. Ayudamos a empresas como DPS Productos de aseo a vender más con trabajo virtual, marketing y apps, por una mensualidad fija. Me gustaría mostrarle en 15 minutos cómo se vería para ${e}. ¿Qué día le queda bien?`,
     reunion: `Preguntas para el diagnóstico con ${e}:\n1. ¿A quién le venden hoy y por qué canales?\n2. ¿Qué parte de las ventas o los pedidos les consume más tiempo?\n3. ¿Tienen redes, catálogo o app? ¿Quién las maneja?\n4. ¿Qué resultado les haría pagar ${fee} al mes sin dudar?\nCierra acordando la fecha para enviar la propuesta.`,
     propuesta: `Buen día, ${c}. Gracias por la reunión. Le comparto la propuesta para ${e}: trabajo virtual, marketing y apps por ${fee} al mes, con informe mensual de resultados. Si le parece bien, empezamos esta semana. ¿Le resuelvo alguna duda?`,
-    activo: `Seguimiento mensual de ${e}:\n1. Enviar el informe de resultados del mes.\n2. Confirmar el pago de la mensualidad.\n3. Preguntar qué necesitan para el mes siguiente.`
+    negociacion: `Cierre con ${e}:\n1. Anota qué piden cambiar (precio, alcance o plazo) y qué estás dispuesto a ajustar.\n2. Responde con una sola propuesta final por escrito, con fecha de inicio.\n3. Acuerda la forma de pago: fecha del primer pago y día de cobro de cada mes.\n4. Confirma por escrito que aceptan.\nCuando paguen el primer mes, pásalo a Arranque.`,
+    arranque: `Primera semana con ${e}:\n1. Pedir acceso a sus redes, catálogo y cuentas.\n2. Reunión de arranque de 30 minutos: objetivos del mes y quién es el contacto del día a día.\n3. Entregar el primer contenido o avance, aunque sea pequeño.\n4. Confirmar la fecha de pago de cada mes.\nCuando la primera semana salga bien, pásalo a Cliente activo.`,
+    activo: `Seguimiento mensual de ${e}:\n1. Enviar el informe de resultados del mes.\n2. Confirmar el pago de la mensualidad.\n3. Preguntar qué necesitan para el mes siguiente.`,
+    perdido: `Buen día, ${c}. Gracias por su tiempo. Entiendo que por ahora no es el momento para ${e}. Para mejorar, ¿me cuenta en una frase qué pesó más en la decisión? Y si le parece, le escribo de nuevo en unos meses para mostrarle los resultados de otros clientes.\n\nDespués anota el motivo en la ficha y deja una fecha para volver a escribirle.`
   };
   return t[stageId] || '';
 }
@@ -1438,8 +1466,8 @@ function renderEmbudo() {
   let activo = 0, embudo = 0;
   list.forEach(p => {
     const m = Number(p.mensualidad) || 0;
-    if (p.etapa === 'activo') activo += m;
-    else if (p.etapa !== 'diseno') embudo += m;
+    if (p.etapa === 'activo' || p.etapa === 'arranque') activo += m;
+    else if (p.etapa !== 'diseno' && p.etapa !== 'perdido') embudo += m;
   });
   const pendientes = (state.modules || []).filter(m => !list.some(p => p.moduleId === m.id)).length;
 
@@ -1451,6 +1479,8 @@ function renderEmbudo() {
     </div>
     <div class="emb-actions">
       ${list.length && pendientes ? `<button class="edit-btn" onclick="embImportModules()">⬇️ Importar ${pendientes} desde Módulos</button>` : ''}
+      ${list.length ? `<button class="edit-btn" onclick="embExportCsv()" title="Se abre en Excel">📥 Descargar en PC</button>` : ''}
+      <button class="edit-btn" onclick="embFullscreen()" title="Oculta el menú y usa toda la pantalla">⛶ Pantalla completa</button>
       <button class="btn-add" onclick="embOpen()">+ Nuevo prospecto</button>
     </div>
   </div>`;
@@ -1479,7 +1509,7 @@ function renderEmbudo() {
     <div class="emb-col">
       <div class="emb-col-head">
         <div class="emb-col-title"><span class="emb-dot" style="background:${s.color}"></span>${s.name}<span class="emb-count">${items.length}</span></div>
-        ${s.id !== 'diseno' ? `<div class="emb-col-sum">${fmtCOP(suma)} / mes</div>` : ''}
+        ${s.id !== 'diseno' && s.id !== 'perdido' ? `<div class="emb-col-sum">${fmtCOP(suma)} / mes</div>` : ''}
         <div class="emb-col-guide">${s.guide}</div>
       </div>
       ${items.length ? items.map(p => embCard(p, idx)).join('') : '<div class="emb-empty">Sin empresas en esta etapa</div>'}
@@ -1493,8 +1523,9 @@ function embCard(p, idx) {
   const m = Number(p.mensualidad) || 0;
   const v = Number(p.valorProyecto) || 0;
   const late = p.fechaAccion && p.fechaAccion < embToday() && p.etapa !== 'activo';
-  const next = EMB_STAGES[idx + 1];
+  const next = embNext(p.etapa);
   const id = embAttr(p.id);
+  const puedePerder = ['prospecto', 'contactado', 'reunion', 'propuesta', 'negociacion'].indexOf(p.etapa) >= 0;
   return `
   <div class="emb-card">
     <button class="emb-name" onclick="embOpen('${id}')">${escHtml(p.nombre)}</button>
@@ -1505,8 +1536,57 @@ function embCard(p, idx) {
     </div>
     ${p.servicios && p.servicios.length ? `<div class="emb-chips">${p.servicios.map(s => `<span class="emb-chip">${escHtml(s)}</span>`).join('')}</div>` : ''}
     ${p.proximaAccion || p.fechaAccion ? `<div class="emb-next${late ? ' late' : ''}"><b>${p.fechaAccion ? formatDate(p.fechaAccion) + (late ? ' (vencida)' : '') : 'Siguiente'}</b>${p.proximaAccion ? ' · ' + escHtml(p.proximaAccion) : ''}</div>` : ''}
-    ${next ? `<button class="emb-move" onclick="embMove('${id}','${next.id}')">Pasar a ${next.name} →</button>` : ''}
+    ${p.etapa === 'perdido' && p.motivoPerdido ? `<div class="emb-rubro"><b>Motivo:</b> ${escHtml(p.motivoPerdido)}</div>` : ''}
+    <div class="emb-btns">
+      ${next ? `<button class="emb-move" onclick="embMove('${id}','${next.id}')">Pasar a ${next.name} →</button>` : ''}
+      ${puedePerder ? `<button class="emb-move sec" onclick="embOpen('${id}','perdido')">Marcar perdido</button>` : ''}
+      ${p.etapa === 'perdido' ? `<button class="emb-move" onclick="embMove('${id}','prospecto')">Reabrir como Prospecto</button>` : ''}
+    </div>
   </div>`;
+}
+
+// Descarga todos los prospectos como CSV (UTF-8 con separador ";") para abrirlo directo en Excel.
+function embExportCsv() {
+  const list = embList();
+  if (!list.length) { showToast('No hay prospectos para descargar'); return; }
+  const etapaNombre = id => (EMB_STAGES.find(s => s.id === id) || { name: id || '' }).name;
+  const cel = v => {
+    let s = String(v == null ? '' : v);
+    if (/^[=@]|^[+\-](?!\d)/.test(s)) s = "'" + s;
+    return '"' + s.replace(/"/g, '""') + '"';
+  };
+  const cab = ['Empresa', 'Qué fabrica o vende', 'Etapa', 'Mensualidad (COP)', 'Valor del proyecto (COP)', 'Servicios',
+    'Contacto', 'WhatsApp o teléfono', 'Correo', 'Ciudad o país', 'Próxima acción', 'Fecha', 'Motivo si se perdió', 'Notas'];
+  const filas = list.map(p => [
+    p.nombre, p.rubro, etapaNombre(p.etapa), Number(p.mensualidad) || 0, Number(p.valorProyecto) || 0,
+    (p.servicios || []).join(', '), p.contacto, p.telefono, p.email, p.ciudad,
+    p.proximaAccion, p.fechaAccion, p.motivoPerdido, p.notas
+  ]);
+  const csv = '﻿' + [cab].concat(filas).map(f => f.map(cel).join(';')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const nombre = (state.company || 'negocio').trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  a.download = `embudo_${nombre}_${embToday()}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  showToast('📥 Descargado: ' + a.download);
+}
+
+// Oculta el menú izquierdo y pide pantalla completa al navegador (si lo permite).
+function embFullscreen() {
+  if (window.innerWidth > 768) {
+    document.body.classList.add('sb-hidden');
+    try { localStorage.setItem('atocha_sb_hidden', '1'); } catch (e) {}
+  }
+  try {
+    if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+  } catch (e) {}
+  showToast('Usa ☰ arriba a la izquierda para ver el menú');
 }
 
 function embMove(id, etapa) {
@@ -1543,11 +1623,11 @@ function embImportModules() {
   renderEmbudo();
 }
 
-function embOpen(id) {
+function embOpen(id, etapaForzada) {
   embEditId = id || null;
   const p = id ? embList().find(x => x.id === id) : null;
   const v = (k, d) => embAttr(p && p[k] != null ? p[k] : (d == null ? '' : d));
-  const etapa = p ? p.etapa : 'prospecto';
+  const etapa = etapaForzada || (p ? p.etapa : 'prospecto');
   const mens = p ? (Number(p.mensualidad) || 0) : EMB_FEE;
   const proy = p && Number(p.valorProyecto) ? Number(p.valorProyecto) : 0;
   const servs = p ? (p.servicios || []) : EMB_SERVICES;
@@ -1577,6 +1657,7 @@ function embOpen(id) {
       <div class="modal-field"><label>Próxima acción</label><input type="text" id="emb-accion" value="${v('proximaAccion')}"></div>
       <div class="modal-field"><label>Fecha</label><input type="date" id="emb-fecha" value="${v('fechaAccion')}"></div>
     </div>
+    <div class="modal-field"><label>Motivo si se perdió o pausó</label><input type="text" id="emb-motivo" value="${v('motivoPerdido')}" placeholder="Ej: precio, no es prioridad, ya tiene proveedor"></div>
     <div class="modal-field"><label>Notas</label><textarea id="emb-notas" rows="3">${escHtml(p ? p.notas : '')}</textarea></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
@@ -1590,7 +1671,7 @@ function embOpen(id) {
     </div>`;
   embRefreshTpl();
   document.getElementById('modal').style.display = 'flex';
-  document.getElementById('emb-nombre').focus();
+  document.getElementById(etapaForzada === 'perdido' ? 'emb-motivo' : 'emb-nombre').focus();
 }
 
 function embRefreshTpl() {
@@ -1632,6 +1713,7 @@ function embSave() {
     ciudad: document.getElementById('emb-ciudad').value.trim(),
     proximaAccion: document.getElementById('emb-accion').value.trim(),
     fechaAccion: document.getElementById('emb-fecha').value,
+    motivoPerdido: document.getElementById('emb-motivo').value.trim(),
     notas: document.getElementById('emb-notas').value.trim()
   };
   const list = embList();
