@@ -286,6 +286,8 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .emb-top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 20px; margin-bottom: 18px; }
 .emb-sub { font-size: 13px; color: var(--gray-600); margin-top: 4px; max-width: 560px; }
 .emb-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.emb-hint { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
+@media (max-width: 768px) { .emb-hint { display: none; } }
 .emb-board { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 14px; align-items: flex-start; }
 .emb-col { flex: 0 0 262px; background: var(--gray-100); border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
 .emb-col-head { padding: 4px 4px 2px; }
@@ -1481,6 +1483,7 @@ function renderEmbudo() {
     <div>
       <div class="section-title">Embudo de prospectos</div>
       <div class="emb-sub">Un solo camino para todas las empresas: cada una avanza por las mismas etapas hasta pagar su mensualidad.</div>
+      <div class="emb-hint">⌨️ Con el teclado: ← → te mueven entre columnas y ↑ ↓ suben y bajan la página.</div>
     </div>
     <div class="emb-actions">
       ${list.length && pendientes ? `<button class="edit-btn" onclick="embImportModules()">⬇️ Importar ${pendientes} desde Módulos</button>` : ''}
@@ -1593,6 +1596,27 @@ function embFullscreen() {
   } catch (e) {}
   showToast('Usa ☰ arriba a la izquierda para ver el menú');
 }
+
+// Flechas ← → mueven el tablero una columna; ↑ ↓ siguen subiendo y bajando la página.
+// No actúa si hay una ventana abierta o si estás escribiendo en un campo.
+function embTeclas(e) {
+  if (currentPage !== 'embudo') return;
+  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  const modal = document.getElementById('modal');
+  if (modal && modal.style.display === 'flex') return;
+  const t = e.target;
+  const tag = t && t.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+  const board = document.querySelector('.emb-board');
+  if (!board) return;
+  const col = board.querySelector('.emb-col');
+  const paso = (col ? col.getBoundingClientRect().width : 262) + 12;
+  const quieto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  e.preventDefault();
+  board.scrollBy({ left: e.key === 'ArrowRight' ? paso : -paso, behavior: quieto ? 'auto' : 'smooth' });
+}
+document.addEventListener('keydown', embTeclas);
 
 function embMove(id, etapa) {
   const p = embList().find(x => x.id === id);
