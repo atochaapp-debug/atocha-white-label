@@ -126,6 +126,9 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .btn-cloud { background: var(--blue-600); color: white; }
 .btn-cloud:hover { background: var(--blue-700); }
 .btn-save { background: var(--gold); color: var(--blue-900); }
+.btn-app { background: var(--blue-50); color: var(--blue-700); }
+.dark .btn-app { background: var(--gray-700); color: var(--gray-900); }
+@media (max-width: 768px) { .btn-app { display: none; } }
 .btn-save:hover { background: #D97706; }
 .btn-icon { background: var(--gray-100); color: var(--gray-700); width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
 .hamburger { display: flex; align-items: center; background: none; border: none; cursor: pointer; color: var(--gray-700); font-size: 20px; }
@@ -556,6 +559,7 @@ body.sb-hidden .content { max-width: none; }
       <div class="nav-item" onclick="goPage('sync')" id="nav-sync">☁️ Sincronización</div>
       <div class="nav-item" onclick="goPage('backup')" id="nav-backup">📦 Backup</div>
       <div class="nav-section">Opciones</div>
+      <div class="nav-item" onclick="installApp()" id="nav-app">📲 Descargar app</div>
       <div class="nav-item" onclick="toggleDark()" id="nav-dark">🌙 Modo Oscuro</div>
       <div class="nav-item" onclick="goPage('config')" id="nav-config">⚙️ Configuración</div>
     </div>
@@ -568,6 +572,7 @@ body.sb-hidden .content { max-width: none; }
         <span class="tt-company" id="tt-company">—</span>
         <span class="tt-page" id="tt-page">Dashboard</span>
       </div>
+      <button class="topbar-btn btn-app" id="btn-app" onclick="installApp()" title="Instalar la app en este dispositivo">📲 Descargar app</button>
       <button class="topbar-btn btn-cloud" onclick="syncUp()">☁️ Subir</button>
       <button class="topbar-btn btn-save" onclick="saveLocal()">💾 Guardar</button>
       <button class="topbar-btn btn-icon" onclick="printReport()" title="Imprimir reporte">🖨️</button>
@@ -2054,34 +2059,13 @@ function closeModal(e) {
   document.getElementById('apple-icon').href = iconDataURL;
   document.getElementById('apple-icon').rel = 'apple-touch-icon';
 
-  // Build manifest
-  const manifest = {
-    name: 'Atocha',
-    short_name: 'Atocha',
-    description: 'Planificación Estratégica',
-    start_url: './',
-    display: 'standalone',
-    background_color: '#1E3A8A',
-    theme_color: '#1E3A8A',
-    orientation: 'portrait-primary',
-    icons: [
-      { src: iconDataURL, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
-      { src: iconDataURL, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
-    ]
-  };
-  const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-  document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
-
-  // Service worker
+  // El manifest (manifest.json) y los íconos son archivos reales del sitio:
+  // el navegador solo ofrece instalar la app si los encuentra en su dirección.
+  // Service worker real (sw.js): primero la red, y lo último guardado si no hay internet.
   if ('serviceWorker' in navigator) {
-    const swCode = `
-const CACHE = 'atocha-v1';
-self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html']))));
-self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('./index.html')))));
-    `;
-    const swBlob = new Blob([swCode], {type:'application/javascript'});
-    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
+  if (isStandalone()) ocultarBotonesApp();
 })();
 
 // Install prompt
@@ -2093,15 +2077,43 @@ window.addEventListener('beforeinstallprompt', e => {
 });
 window.addEventListener('appinstalled', () => {
   document.getElementById('install-banner').classList.remove('show');
+  ocultarBotonesApp();
   showToast('✅ Atocha instalada correctamente');
 });
+function isStandalone() {
+  return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+}
+function ocultarBotonesApp() {
+  ['btn-app', 'nav-app'].forEach(id => { const b = document.getElementById(id); if (b) b.style.display = 'none'; });
+}
 function installApp() {
+  if (isStandalone()) { showToast('Ya estás usando la app instalada'); return; }
   if (deferredPrompt) {
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
-  } else {
-    showToast('En iOS: Safari → Compartir → Añadir a pantalla de inicio');
+    return;
   }
+  // El navegador no ofreció instalar solo: mostramos cómo hacerlo a mano.
+  const ua = navigator.userAgent || '';
+  const ios = /iphone|ipad|ipod/i.test(ua);
+  const android = /android/i.test(ua);
+  const edge = /edg\//i.test(ua);
+  let pasos;
+  if (ios) {
+    pasos = ['Abre esta página en <b>Safari</b>.', 'Toca el botón <b>Compartir</b> (el cuadrado con una flecha hacia arriba).', 'Elige <b>Añadir a pantalla de inicio</b> y toca <b>Añadir</b>.'];
+  } else if (android) {
+    pasos = ['Toca el menú <b>⋮</b> de Chrome, arriba a la derecha.', 'Elige <b>Instalar aplicación</b> (o <b>Añadir a pantalla de inicio</b>).', 'Confirma con <b>Instalar</b>.'];
+  } else if (edge) {
+    pasos = ['Busca el icono de instalar a la derecha de la barra de direcciones y tócalo.', 'Si no aparece, abre el menú <b>⋯</b> de Edge → <b>Aplicaciones</b> → <b>Instalar este sitio como una aplicación</b>.', 'Confirma con <b>Instalar</b>.'];
+  } else {
+    pasos = ['Busca el icono de instalar (un monitor con una flecha) a la derecha de la barra de direcciones y tócalo.', 'Si no aparece, abre el menú <b>⋮</b> de Chrome → <b>Transmitir, guardar y compartir</b> → <b>Instalar página como aplicación</b>.', 'Confirma con <b>Instalar</b>. Se abrirá en su propia ventana y quedará un icono en tu escritorio o menú de inicio.'];
+  }
+  document.getElementById('modal-body').innerHTML = `
+    <h3>📲 Descargar la app</h3>
+    <ol style="margin:0 0 14px 20px;font-size:14px;line-height:1.7;color:var(--gray-700);">${pasos.map(p => `<li>${p}</li>`).join('')}</ol>
+    <p style="font-size:12px;color:var(--gray-400);line-height:1.5;">Si no ves la opción, recarga la página con Ctrl + Shift + R y vuelve a intentarlo.${ios ? ' En iPhone la app instalada empieza vacía: entra a Sincronización y toca “Descargar de nube”.' : ''}</p>
+    <div class="modal-actions"><button class="btn-confirm" onclick="closeModal()">Entendido</button></div>`;
+  document.getElementById('modal').style.display = 'flex';
 }
 
 // Cloud banner on load
