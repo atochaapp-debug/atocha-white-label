@@ -148,6 +148,34 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .stat-sub { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
 
 .filter-bar { display: flex; flex-wrap: wrap; gap: 6px; }
+.emb-hint { font-weight: 500; font-size: 11px; color: var(--gray-400); margin-left: 6px; }
+.emb-doc-area { width: 100%; padding: 10px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; color: var(--gray-900); background: white; resize: vertical; }
+.dark .emb-doc-area { background: var(--gray-700); border-color: var(--gray-600); }
+.emb-doc-open { flex: 1; min-width: 0; text-align: left; background: none; border: none; font-size: 14px; font-weight: 700; color: var(--blue-700); cursor: pointer; padding: 4px 0; font-family: inherit; overflow-wrap: anywhere; }
+.emb-doc-open:hover { text-decoration: underline; }
+.emb-file { cursor: pointer; display: inline-flex; align-items: center; }
+#doc-viewer { position: fixed; inset: 0; z-index: 900; background: var(--gray-100); display: flex; flex-direction: column; }
+.dv-bar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: white; box-shadow: var(--shadow); flex-shrink: 0; }
+.dark .dv-bar { background: var(--gray-800); }
+.dv-title { flex: 1; min-width: 0; font-size: 15px; font-weight: 800; color: var(--gray-900); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dv-title small { font-weight: 500; color: var(--gray-400); margin-left: 8px; }
+.dv-btn { padding: 8px 14px; background: var(--gray-100); color: var(--gray-700); border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; flex-shrink: 0; }
+.dark .dv-btn { background: var(--gray-700); }
+.dv-close { background: var(--blue-700); color: white; }
+.dv-body { flex: 1; overflow-y: auto; padding: 24px 16px 60px; outline: none; }
+.dv-doc { max-width: 820px; margin: 0 auto; background: white; border-radius: 14px; padding: 36px 40px; box-shadow: var(--shadow); color: var(--gray-900); font-size: 16px; line-height: 1.65; }
+.dark .dv-doc { background: var(--gray-800); }
+.dv-doc h1 { font-size: 26px; margin: 0 0 14px; } .dv-doc h2 { font-size: 21px; margin: 28px 0 10px; color: var(--blue-700); }
+.dv-doc h3 { font-size: 18px; margin: 24px 0 8px; } .dv-doc h4 { font-size: 16px; margin: 18px 0 6px; }
+.dv-doc p { margin: 0 0 12px; } .dv-doc ul { margin: 0 0 14px; padding-left: 22px; } .dv-doc li { margin-bottom: 5px; }
+.dv-doc li.chk { list-style: none; margin-left: -18px; }
+.dv-doc hr { border: none; border-top: 1px solid var(--gray-200); margin: 22px 0; }
+.dv-doc code { background: var(--gray-100); padding: 1px 6px; border-radius: 5px; font-size: 14px; }
+.dark .dv-doc code { background: var(--gray-700); }
+.dv-doc table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 14px; }
+.dv-doc th, .dv-doc td { border: 1px solid var(--gray-200); padding: 7px 10px; text-align: left; } .dv-doc th { background: var(--gray-100); }
+.dark .dv-doc th { background: var(--gray-700); }
+@media (max-width: 640px) { .dv-doc { padding: 22px 18px; font-size: 15px; } .dv-title small { display: none; } }
 .ali-tag { display: inline-block; font-size: 10px; font-weight: 800; color: white; padding: 2px 7px; border-radius: 999px; letter-spacing: .3px; text-transform: uppercase; vertical-align: 1px; }
 .ali-pick { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 14px; margin-bottom: 10px; background: var(--gray-100); border: 1.5px solid transparent; border-radius: 12px; cursor: pointer; font-family: inherit; color: var(--gray-900); }
 .dark .ali-pick { background: var(--gray-700); }
@@ -735,7 +763,8 @@ function ensureDefaults() {
 // ═══════════════════════════════════════════
 //  PERSIST
 // ═══════════════════════════════════════════
-function saveLocal() {
+function saveLocal(sinMarcar) {
+  if (!sinMarcar) state.cambiosSinSubir = true;   // se apaga al subir o descargar de la nube
   if (profilesData.activeId) {
     profilesData.profiles[profilesData.activeId] = state;
     localStorage.setItem('atocha_profiles_v1', JSON.stringify(profilesData));
@@ -1220,6 +1249,7 @@ function dashAbrir(clave) {
     }).join('') : '<div class="empty-panel">Sin tareas</div>';
     titulo += ` <span style="color:var(--gray-400);font-weight:600">(${lista.length})</span>`;
   }
+  modalFijo(false);
   const m = document.getElementById('modal-body');
   m.innerHTML = `<h3>${titulo}</h3>${cuerpo}<div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cerrar</button></div>`;
   m.style.maxWidth = '560px';
@@ -1245,6 +1275,7 @@ function aliEstadoNombre(id) { const e = ALI_ESTADOS.find(x => x.id === id); ret
 
 function aliElegirTipo() {
   const b = (icono, nombre, desc, accion) => `<button class="ali-pick" onclick="${accion}"><span class="ali-pick-i">${icono}</span><span><b>${nombre}</b><small>${desc}</small></span></button>`;
+  modalFijo(false);
   const m = document.getElementById('modal-body');
   m.style.maxWidth = '';
   m.innerHTML = `<h3>¿Qué quieres crear?</h3>
@@ -1278,6 +1309,7 @@ function aliLista() {
       <div class="ti-meta">${datos}</div>
     </div>`;
   }).join('') : `<div class="empty-panel">${todos.length ? 'No hay aliados de este tipo' : 'Aún no hay aliados. Agrega el primero.'}</div>`;
+  modalFijo(false);
   const m = document.getElementById('modal-body');
   m.style.maxWidth = '560px';
   m.innerHTML = `<h3>🤝 Aliados <span style="color:var(--gray-400);font-weight:600">(${todos.length})</span></h3>
@@ -1327,6 +1359,7 @@ function aliOpen(id, tipo) {
       <button class="btn-cancel" onclick="aliVolver()">Cancelar</button>
       <button class="btn-confirm" onclick="aliGuardar()">Guardar</button>
     </div>`;
+  modalFijo(true);
   document.getElementById('modal').style.display = 'flex';
   aliRefreshWa();
 }
@@ -1430,6 +1463,7 @@ function openModuleModal(mod = null) {
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
       <button class="btn-confirm" onclick="saveModule('${isEdit ? mod.id : ''}')">${isEdit ? 'Guardar' : 'Crear'}</button>
     </div>`;
+  modalFijo(true);
   document.getElementById('modal').style.display = 'flex';
   window._selEmoji = selEmoji;
 }
@@ -1497,7 +1531,7 @@ function renderModule(id) {
     <div class="mod-action-bar">
       <button class="btn-mod-save" onclick="saveLocal();showToast('💾 Guardado')">💾 Guardar</button>
       <button class="btn-mod-sync" onclick="syncUp()">☁️ Subir a nube</button>
-      <button class="btn-mod-sync" style="background:var(--green)" onclick="syncDown()">⬇️ Descargar nube</button>
+      <button class="btn-mod-sync" style="background:var(--green)" onclick="syncDownSeguro()">⬇️ Descargar nube</button>
     </div>
     <div class="task-form">
       <input type="text" id="tf-name-${id}" placeholder="Nueva tarea..." onkeydown="if(event.key==='Enter')addTask('${id}')">
@@ -1945,6 +1979,8 @@ function embCard(p, idx) {
     al.nivel ? `<span class="emb-tag ${al.nivel === 2 ? 'red' : 'amber'}">⏱ ${al.dias} días sin novedad</span>` : '',
     nc ? `<span class="emb-tag">📞 ${nc} ${nc === 1 ? 'contacto' : 'contactos'}</span>` : '',
     ne ? `<span class="emb-tag">🔗 ${ne}</span>` : '',
+    (p.documentos || []).length ? `<span class="emb-tag">📄 ${p.documentos.length}</span>` : '',
+    p.notas ? `<span class="emb-tag" title="${embAttr(String(p.notas).slice(0, 200))}">📝 Nota</span>` : '',
     p.responsable ? `<span class="emb-tag">👤 ${escHtml(p.responsable)}</span>` : '',
     wa ? `<a class="emb-tag wa" href="${embAttr(wa)}" target="_blank" rel="noopener noreferrer" title="Abrir WhatsApp">💬 WhatsApp</a>` : ''
   ].filter(Boolean).join('');
@@ -2035,6 +2071,7 @@ function embTeclas(e) {
   if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
   const modal = document.getElementById('modal');
   if (modal && modal.style.display === 'flex') return;
+  if (document.getElementById('doc-viewer')) return;
   const t = e.target;
   const tag = t && t.tagName;
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
@@ -2144,6 +2181,16 @@ function embOpen(id, etapaForzada) {
         <button class="btn-add" type="button" onclick="embAddEnl()">+ Agregar</button>
       </div>
       <div id="emb-enls">${embEnlHtml(p)}</div>
+    </div>
+    <div class="emb-sec">
+      <div class="emb-sec-title">📄 Documentos <span class="emb-hint">se guardan aquí dentro y se abren en pantalla completa</span></div>
+      <div id="emb-docs">${embDocsHtml(p)}</div>
+      <div class="emb-addrow" style="margin-top:10px">
+        <input type="text" id="emb-doc-nombre" placeholder="Nombre del documento (ej: Plan de trabajo)">
+        <label class="edit-btn emb-file" title="Carga un archivo .txt o .md">📎 Cargar archivo<input type="file" id="emb-doc-file" accept=".txt,.md,.markdown,.csv,text/plain,text/markdown" style="display:none" onchange="embDocArchivo(this)"></label>
+      </div>
+      <textarea id="emb-doc-texto" rows="4" class="emb-doc-area" placeholder="…o pega aquí el texto del documento"></textarea>
+      <button class="btn-add" type="button" onclick="embAddDoc()" style="margin-top:8px">+ Agregar documento</button>
     </div>` : `<div class="emb-sec"><div class="emb-none">Guarda el prospecto y se abrirá de nuevo para que agregues sus actividades y novedades.</div></div>`}
     <div class="modal-field"><label>Motivo si se perdió o pausó</label><input type="text" id="emb-motivo" value="${v('motivoPerdido')}" placeholder="Ej: precio, no es prioridad, ya tiene proveedor"></div>
     <div class="modal-field"><label>Notas</label><textarea id="emb-notas" rows="3">${escHtml(p ? p.notas : '')}</textarea></div>
@@ -2159,6 +2206,7 @@ function embOpen(id, etapaForzada) {
     </div>`;
   embRefreshTpl();
   embRefreshWa();
+  modalFijo(true);
   document.getElementById('modal').style.display = 'flex';
   document.getElementById(etapaForzada === 'perdido' ? 'emb-motivo' : 'emb-nombre').focus();
 }
@@ -2259,6 +2307,7 @@ function embSecciones(p) {
   if (a) a.innerHTML = embActsHtml(p);
   if (b) b.innerHTML = embBitsHtml(p);
   if (e) e.innerHTML = embEnlHtml(p);
+  const dc = document.getElementById('emb-docs'); if (dc) dc.innerHTML = embDocsHtml(p);
   renderSidebar();   // el número rojo del menú cuenta las actividades pendientes
 }
 function embActual() { return embEditId ? embList().find(x => x.id === embEditId) : null; }
@@ -2314,6 +2363,107 @@ function embAddEnl() {
   n.value = ''; u.value = '';
   saveLocal(); embSecciones(p); renderEmbudo(); n.focus();
 }
+// ── Documentos dentro de cada prospecto ──
+const EMB_DOC_MAX = 300000;   // caracteres por documento (para no hacer pesada la sincronización)
+function embDocsHtml(p) {
+  const lista = p.documentos || [];
+  if (!lista.length) return '<div class="emb-none">Sin documentos. Carga un archivo .txt o .md, o pega el texto abajo.</div>';
+  return lista.map(d => `<div class="emb-act">
+      <button class="emb-doc-open" type="button" onclick="docVer('${embAttr(d.id)}')">📄 ${escHtml(d.nombre)}</button>
+      <span class="emb-act-date">${Math.max(1, Math.round(String(d.texto || '').length / 1000))} KB</span>
+      <button class="emb-x" type="button" title="Eliminar" onclick="embConfirmX(this,'doc','${embAttr(d.id)}')">×</button>
+    </div>`).join('');
+}
+function embDocArchivo(inp) {
+  const f = inp.files && inp.files[0]; if (!f) return;
+  if (f.size > EMB_DOC_MAX * 3) { showToast('⚠️ El archivo es muy grande (máximo ~300 mil caracteres)'); inp.value = ''; return; }
+  const r = new FileReader();
+  r.onload = () => {
+    document.getElementById('emb-doc-texto').value = String(r.result || '');
+    const n = document.getElementById('emb-doc-nombre');
+    if (!n.value.trim()) n.value = f.name.replace(/\.[^.]+$/, '');
+    showToast('📎 Archivo cargado: ahora presiona "Agregar documento"');
+  };
+  r.onerror = () => showToast('⚠️ No se pudo leer el archivo');
+  r.readAsText(f, 'UTF-8');
+  inp.value = '';
+}
+function embAddDoc() {
+  const p = embActual(); if (!p) return;
+  const n = document.getElementById('emb-doc-nombre'), t = document.getElementById('emb-doc-texto');
+  const texto = t.value.replace(/\r\n?/g, '\n').trim();
+  if (!texto) { showToast('⚠️ Pega el texto o carga un archivo'); t.focus(); return; }
+  if (texto.length > EMB_DOC_MAX) { showToast('⚠️ El documento es muy largo (máximo ~300 mil caracteres)'); return; }
+  if (!p.documentos) p.documentos = [];
+  p.documentos.push({ id: embId('d'), nombre: n.value.trim() || 'Documento ' + (p.documentos.length + 1), texto, fecha: new Date().toISOString() });
+  n.value = ''; t.value = '';
+  saveLocal(); embSecciones(p); renderEmbudo();
+}
+// Convierte texto tipo Markdown en HTML. Primero se escapa TODO, y solo después se agregan las etiquetas propias.
+function docMd(texto) {
+  const inline = x => x.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>').replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  const out = []; let lista = null, tabla = null;
+  const cerrar = () => { if (lista) { out.push('</ul>'); lista = null; } if (tabla) { out.push('<table>' + tabla.join('') + '</table>'); tabla = null; } };
+  String(texto || '').replace(/\r\n?/g, '\n').split('\n').forEach(raw => {
+    const l = escHtml(raw);
+    let m;
+    if (/^\s*\|.*\|\s*$/.test(raw)) {
+      if (/^\s*\|[\s:\-|]+\|\s*$/.test(raw)) return;
+      if (lista) { out.push('</ul>'); lista = null; }
+      const celdas = l.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+      const esPrimera = !tabla; if (!tabla) tabla = [];
+      tabla.push('<tr>' + celdas.map(c => `<${esPrimera ? 'th' : 'td'}>${inline(c)}</${esPrimera ? 'th' : 'td'}>`).join('') + '</tr>');
+      return;
+    }
+    if (tabla) cerrar();
+    if ((m = /^\s*[-*]\s+\[( |x|X)\]\s+(.*)$/.exec(l))) { if (!lista) { out.push('<ul>'); lista = true; } out.push(`<li class="chk">${m[1] === ' ' ? '☐' : '☑'} ${inline(m[2])}</li>`); return; }
+    if ((m = /^\s*[-*]\s+(.*)$/.exec(l))) { if (!lista) { out.push('<ul>'); lista = true; } out.push(`<li>${inline(m[1])}</li>`); return; }
+    cerrar();
+    if ((m = /^(#{1,4})\s+(.*)$/.exec(l))) { const n = Math.min(m[1].length + 0, 4); out.push(`<h${n}>${inline(m[2])}</h${n}>`); return; }
+    if (/^\s*(-{3,}|\*{3,})\s*$/.test(raw)) { out.push('<hr>'); return; }
+    if (!l.trim()) return;
+    out.push(`<p>${inline(l)}</p>`);
+  });
+  cerrar();
+  return out.join('\n');
+}
+// Visor grande, a pantalla completa de la ventana. Se cierra con ✕ o con Escape.
+function docVer(id) {
+  const p = embActual(); if (!p) return;
+  const d = (p.documentos || []).find(x => x.id === id); if (!d) return;
+  docCerrar();
+  const v = document.createElement('div');
+  v.id = 'doc-viewer';
+  v.innerHTML = `<div class="dv-bar">
+      <div class="dv-title">📄 ${escHtml(d.nombre)} <small>${escHtml(p.nombre)}</small></div>
+      <button class="dv-btn" type="button" onclick="docPantallaCompleta()" title="Pantalla completa del navegador">⛶</button>
+      <button class="dv-btn" type="button" onclick="docCopiar('${embAttr(d.id)}')" title="Copiar el texto">📋 Copiar</button>
+      <button class="dv-btn dv-close" type="button" onclick="docCerrar()" title="Cerrar (Esc)">✕ Cerrar</button>
+    </div>
+    <div class="dv-body"><article class="dv-doc">${docMd(d.texto)}</article></div>`;
+  document.body.appendChild(v);
+  document.body.style.overflow = 'hidden';
+  v.querySelector('.dv-body').focus();
+}
+function docCerrar() {
+  const v = document.getElementById('doc-viewer');
+  if (v) v.remove();
+  document.body.style.overflow = '';
+  try { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen(); } catch (e) {}
+}
+function docPantallaCompleta() {
+  const v = document.getElementById('doc-viewer'); if (!v) return;
+  try {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (v.requestFullscreen) v.requestFullscreen();
+  } catch (e) {}
+}
+function docCopiar(id) {
+  const p = embActual(); const d = p && (p.documentos || []).find(x => x.id === id); if (!d) return;
+  try { navigator.clipboard.writeText(d.texto).then(() => showToast('📋 Texto copiado'), () => showToast('No se pudo copiar')); }
+  catch (e) { showToast('No se pudo copiar'); }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('doc-viewer')) { e.preventDefault(); docCerrar(); } });
 function embRefreshWa() {
   const slot = document.getElementById('emb-wa-slot'), tel = document.getElementById('emb-tel');
   if (!slot || !tel) return;
@@ -2330,6 +2480,7 @@ function embConfirmX(btn, tipo, id) {
   const p = embActual(); if (!p) return;
   if (tipo === 'act') p.actividades = p.actividades.filter(x => x.id !== id);
   else if (tipo === 'enl') p.enlaces = p.enlaces.filter(x => x.id !== id);
+  else if (tipo === 'doc') p.documentos = (p.documentos || []).filter(x => x.id !== id);
   else p.bitacora = p.bitacora.filter(x => x.id !== id);
   saveLocal(); embSecciones(p); renderEmbudo();
 }
@@ -2365,7 +2516,7 @@ function renderSync() {
     </div>
     <div class="sync-actions">
       <button class="btn-sync-up" onclick="syncUp()">☁️ Subir a la nube</button>
-      <button class="btn-sync-down" onclick="syncDown()">⬇️ Descargar de nube</button>
+      <button class="btn-sync-down" onclick="syncDownSeguro()">⬇️ Descargar de nube</button>
     </div>
     <div class="sync-form" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:18px;">
       <label style="font-size:13px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">Código de sincronización de este negocio</label>
@@ -2420,7 +2571,8 @@ async function syncUp() {
     });
     if (res.ok || res.status === 201 || res.status === 200) {
       state.lastSync = new Date().toISOString();
-      saveLocal(); showToast('☁️ Subido a la nube');
+      state.cambiosSinSubir = false;
+      saveLocal(true); showToast('☁️ Subido a la nube');
     } else { showToast('❌ Error al subir (código ' + res.status + ')'); }
   } catch(e) { showToast('❌ Error de conexión: no se pudo llegar a Supabase'); }
 }
@@ -2441,7 +2593,8 @@ async function syncDown() {
       const cid = state.clientId;
       state = { ...remote, sync: syncCfg, clientId: cid };
       state.lastSync = new Date().toISOString();
-      saveLocal(); renderSidebar(); goPage(currentPage);
+      state.cambiosSinSubir = false;
+      saveLocal(true); renderSidebar(); goPage(currentPage);
       showToast('⬇️ Datos descargados');
       return true;
     }
@@ -2665,8 +2818,12 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 function closeModal(e) {
-  if (!e || e.target.id === 'modal') { document.getElementById('modal').style.display = 'none'; document.getElementById('modal-body').style.maxWidth = ''; }
+  const mb = document.getElementById('modal-body');
+  // En los formularios, un clic fuera de la ventana no cierra (así no se pierde lo escrito).
+  if (e && mb.dataset && mb.dataset.fijo === '1') return;
+  if (!e || e.target.id === 'modal') { document.getElementById('modal').style.display = 'none'; mb.style.maxWidth = ''; if (mb.dataset) mb.dataset.fijo = ''; }
 }
+function modalFijo(si) { const mb = document.getElementById('modal-body'); if (mb.dataset) mb.dataset.fijo = si ? '1' : ''; }
 
 // ═══════════════════════════════════════════
 //  PWA — MANIFEST + SERVICE WORKER + INSTALL
@@ -2769,7 +2926,13 @@ function hideBanner() {
   document.getElementById('cloud-banner').style.display = 'none';
   document.querySelector('.main').style.paddingTop = '0';
 }
+// Descargar de la nube reemplaza lo de este equipo: si hay cambios sin subir, se pregunta antes.
+async function syncDownSeguro() {
+  if (state.cambiosSinSubir && !confirm('Tienes cambios en este equipo que NO se han subido a la nube (por ejemplo notas o prospectos nuevos). Si descargas ahora, se perderán.\n\nPulsa Cancelar y usa primero "Subir". ¿Descargar de todos modos?')) return;
+  await syncDown();
+}
 async function bannerSyncDown() {
+  if (state.cambiosSinSubir && !confirm('Tienes cambios en este equipo que NO se han subido a la nube. Si descargas ahora, se perderán.\n\nPulsa Cancelar y usa primero "Subir". ¿Descargar de todos modos?')) return;
   hideBanner();
   await syncDown();
 }
