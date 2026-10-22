@@ -287,6 +287,31 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .emb-sub { font-size: 13px; color: var(--gray-600); margin-top: 4px; max-width: 560px; }
 .emb-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .emb-hint { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
+.emb-more { font-size: 11px; font-weight: 700; color: var(--gray-400); }
+.emb-last { font-size: 12px; color: var(--gray-600); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.emb-sec { margin: 4px 0 16px; padding: 14px; background: var(--gray-100); border-radius: 10px; }
+.emb-sec-title { font-size: 13px; font-weight: 800; color: var(--gray-900); margin-bottom: 10px; }
+.emb-addrow { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.emb-addrow input { padding: 9px 10px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; background: white; color: var(--gray-900); font-family: inherit; outline: none; }
+.emb-addrow input:focus { border-color: var(--blue-600); }
+.dark .emb-addrow input { background: var(--gray-700); border-color: var(--gray-600); }
+.emb-addrow input[type="text"] { flex: 1 1 180px; min-width: 0; }
+.emb-act { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-top: 1px solid var(--gray-200); }
+.emb-actl { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; cursor: pointer; }
+.emb-actl input { width: auto; flex-shrink: 0; }
+.emb-act-txt { font-size: 14px; color: var(--gray-900); overflow-wrap: anywhere; }
+.emb-act.done .emb-act-txt { text-decoration: line-through; color: var(--gray-400); }
+.emb-act-date { font-size: 12px; font-weight: 700; color: var(--gray-600); white-space: nowrap; }
+.emb-act-date.late { color: var(--red); }
+.emb-x { background: none; border: none; color: var(--gray-400); font-size: 16px; cursor: pointer; padding: 2px 6px; border-radius: 6px; flex-shrink: 0; }
+.emb-x:hover, .emb-x.armed { color: var(--red); }
+.emb-x.armed { font-size: 12px; font-weight: 700; }
+.emb-sub2 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-400); margin: 10px 0 2px; }
+.emb-none { font-size: 13px; color: var(--gray-400); }
+#emb-bits { max-height: 240px; overflow-y: auto; }
+.emb-bit { padding: 8px 0; border-top: 1px solid var(--gray-200); }
+.emb-bit-head { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--gray-400); }
+.emb-bit-txt { font-size: 14px; color: var(--gray-900); white-space: pre-wrap; overflow-wrap: anywhere; }
 @media (max-width: 768px) { .emb-hint { display: none; } }
 .emb-board { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 14px; align-items: flex-start; }
 .emb-col { flex: 0 0 262px; background: var(--gray-100); border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
@@ -1441,7 +1466,46 @@ function embNext(etapa) {
   return n && n.id !== 'perdido' ? n : null;
 }
 
-function embList() { if (!state.prospects) state.prospects = []; return state.prospects; }
+function embList() {
+  if (!state.prospects) state.prospects = [];
+  state.prospects.forEach(embMigrar);
+  return state.prospects;
+}
+function embId(pref) { return pref + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6); }
+// Convierte la antigua "próxima acción + fecha" en la primera actividad de la lista.
+function embMigrar(p) {
+  if (!Array.isArray(p.actividades)) {
+    p.actividades = [];
+    if (p.proximaAccion || p.fechaAccion) {
+      p.actividades.push({ id: embId('a'), texto: p.proximaAccion || 'Seguimiento', fecha: p.fechaAccion || '', hecha: false, fechaHecha: '' });
+    }
+    delete p.proximaAccion; delete p.fechaAccion;
+  }
+  if (!Array.isArray(p.bitacora)) p.bitacora = [];
+  return p;
+}
+// Actividades sin hacer, la más próxima primero; las que no tienen fecha van al final.
+function embPendientes(p) {
+  return (p.actividades || []).filter(a => !a.hecha).sort((a, b) => {
+    const fa = a.fecha || '9999-99-99', fb = b.fecha || '9999-99-99';
+    return fa < fb ? -1 : fa > fb ? 1 : 0;
+  });
+}
+function embFechaHora(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return '';
+  return d.toLocaleString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function embFechaCorta(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return '';
+  return d.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit' });
+}
+function embLog(p, texto) {
+  if (!Array.isArray(p.bitacora)) p.bitacora = [];
+  p.bitacora.push({ id: embId('b'), fecha: new Date().toISOString(), texto });
+}
+function embNombreEtapa(id) { return (EMB_STAGES.find(s => s.id === id) || { name: id || '' }).name; }
 function embAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
 function embToday() {
   const d = new Date();
@@ -1524,13 +1588,20 @@ function renderEmbudo() {
     </div>`;
   }).join('');
 
+  const viejo = document.querySelector('.emb-board');
+  const izq = viejo ? viejo.scrollLeft : 0;
   document.getElementById('page-content').innerHTML = header + stats + `<div class="emb-board">${cols}</div>`;
+  const nuevo = document.querySelector('.emb-board');
+  if (nuevo && izq) nuevo.scrollLeft = izq;   // el tablero no vuelve al inicio al guardar algo
 }
 
 function embCard(p, idx) {
   const m = Number(p.mensualidad) || 0;
   const v = Number(p.valorProyecto) || 0;
-  const late = p.fechaAccion && p.fechaAccion < embToday() && p.etapa !== 'activo';
+  const pend = embPendientes(p);
+  const sig = pend[0];
+  const late = !!(sig && sig.fecha && sig.fecha < embToday());
+  const ultima = (p.bitacora || []).length ? p.bitacora[p.bitacora.length - 1] : null;
   const next = embNext(p.etapa);
   const id = embAttr(p.id);
   const puedePerder = ['prospecto', 'contactado', 'reunion', 'propuesta', 'negociacion'].indexOf(p.etapa) >= 0;
@@ -1543,7 +1614,8 @@ function embCard(p, idx) {
       ${v ? `<span class="emb-proj">Proyecto ${fmtCOP(v)}</span>` : ''}
     </div>
     ${p.servicios && p.servicios.length ? `<div class="emb-chips">${p.servicios.map(s => `<span class="emb-chip">${escHtml(s)}</span>`).join('')}</div>` : ''}
-    ${p.proximaAccion || p.fechaAccion ? `<div class="emb-next${late ? ' late' : ''}"><b>${p.fechaAccion ? formatDate(p.fechaAccion) + (late ? ' (vencida)' : '') : 'Siguiente'}</b>${p.proximaAccion ? ' · ' + escHtml(p.proximaAccion) : ''}</div>` : ''}
+    ${sig ? `<div class="emb-next${late ? ' late' : ''}">✅ <b>${sig.fecha ? formatDate(sig.fecha) + (late ? ' (vencida)' : '') : 'Pendiente'}</b> · ${escHtml(sig.texto)}${pend.length > 1 ? ` <span class="emb-more">+${pend.length - 1} más</span>` : ''}</div>` : ''}
+    ${ultima ? `<div class="emb-last">📝 ${embFechaCorta(ultima.fecha)} · ${escHtml(ultima.texto)}</div>` : ''}
     ${p.etapa === 'perdido' && p.motivoPerdido ? `<div class="emb-rubro"><b>Motivo:</b> ${escHtml(p.motivoPerdido)}</div>` : ''}
     <div class="emb-btns">
       ${next ? `<button class="emb-move" onclick="embMove('${id}','${next.id}')">Pasar a ${next.name} →</button>` : ''}
@@ -1564,12 +1636,20 @@ function embExportCsv() {
     return '"' + s.replace(/"/g, '""') + '"';
   };
   const cab = ['Empresa', 'Qué fabrica o vende', 'Etapa', 'Mensualidad (COP)', 'Valor del proyecto (COP)', 'Servicios',
-    'Contacto', 'WhatsApp o teléfono', 'Correo', 'Ciudad o país', 'Próxima acción', 'Fecha', 'Motivo si se perdió', 'Notas'];
-  const filas = list.map(p => [
-    p.nombre, p.rubro, etapaNombre(p.etapa), Number(p.mensualidad) || 0, Number(p.valorProyecto) || 0,
-    (p.servicios || []).join(', '), p.contacto, p.telefono, p.email, p.ciudad,
-    p.proximaAccion, p.fechaAccion, p.motivoPerdido, p.notas
-  ]);
+    'Contacto', 'WhatsApp o teléfono', 'Correo', 'Ciudad o país', 'Próxima actividad', 'Fecha de la próxima actividad',
+    'Actividades pendientes', 'Novedades (la más nueva primero)', 'Motivo si se perdió', 'Notas'];
+  const filas = list.map(p => {
+    const pend = embPendientes(p);
+    const sig = pend[0];
+    return [
+      p.nombre, p.rubro, etapaNombre(p.etapa), Number(p.mensualidad) || 0, Number(p.valorProyecto) || 0,
+      (p.servicios || []).join(', '), p.contacto, p.telefono, p.email, p.ciudad,
+      sig ? sig.texto : '', sig ? sig.fecha : '',
+      pend.map(a => (a.fecha ? a.fecha + ': ' : '') + a.texto).join(' | '),
+      (p.bitacora || []).slice().reverse().map(x => embFechaHora(x.fecha) + ': ' + x.texto).join(' | '),
+      p.motivoPerdido, p.notas
+    ];
+  });
   const csv = '﻿' + [cab].concat(filas).map(f => f.map(cel).join(';')).join('\r\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
@@ -1621,6 +1701,7 @@ document.addEventListener('keydown', embTeclas);
 function embMove(id, etapa) {
   const p = embList().find(x => x.id === id);
   if (!p) return;
+  embLog(p, 'Etapa: ' + embNombreEtapa(p.etapa) + ' → ' + embNombreEtapa(etapa));
   p.etapa = etapa;
   saveLocal(); renderEmbudo();
 }
@@ -1643,7 +1724,7 @@ function embImportModules() {
       etapa, mensualidad, valorProyecto,
       servicios: etapa === 'diseno' ? [] : EMB_SERVICES.slice(),
       contacto: '', telefono: '', email: '', ciudad: '',
-      proximaAccion: '', fechaAccion: '', notas: ''
+      actividades: [], bitacora: [], notas: ''
     });
     n++;
   });
@@ -1682,10 +1763,24 @@ function embOpen(id, etapaForzada) {
       <div class="modal-field"><label>Correo</label><input type="email" id="emb-email" value="${v('email')}"></div>
       <div class="modal-field"><label>Ciudad o país</label><input type="text" id="emb-ciudad" value="${v('ciudad')}"></div>
     </div>
-    <div class="emb-row">
-      <div class="modal-field"><label>Próxima acción</label><input type="text" id="emb-accion" value="${v('proximaAccion')}"></div>
-      <div class="modal-field"><label>Fecha</label><input type="date" id="emb-fecha" value="${v('fechaAccion')}"></div>
+    ${p ? `
+    <div class="emb-sec">
+      <div class="emb-sec-title">✅ Actividades por hacer</div>
+      <div class="emb-addrow">
+        <input type="text" id="emb-act-texto" placeholder="Ej: Llamar para agendar la reunión" onkeydown="if(event.key==='Enter'){event.preventDefault();embAddAct();}">
+        <input type="date" id="emb-act-fecha" title="Fecha límite (opcional)">
+        <button class="btn-add" type="button" onclick="embAddAct()">+ Agregar</button>
+      </div>
+      <div id="emb-acts">${embActsHtml(p)}</div>
     </div>
+    <div class="emb-sec">
+      <div class="emb-sec-title">📝 Novedades</div>
+      <div class="emb-addrow">
+        <input type="text" id="emb-bit-texto" placeholder="Ej: Pidió rebaja del 10%" onkeydown="if(event.key==='Enter'){event.preventDefault();embAddBit();}">
+        <button class="btn-add" type="button" onclick="embAddBit()">+ Agregar</button>
+      </div>
+      <div id="emb-bits">${embBitsHtml(p)}</div>
+    </div>` : `<div class="emb-sec"><div class="emb-none">Guarda el prospecto y se abrirá de nuevo para que agregues sus actividades y novedades.</div></div>`}
     <div class="modal-field"><label>Motivo si se perdió o pausó</label><input type="text" id="emb-motivo" value="${v('motivoPerdido')}" placeholder="Ej: precio, no es prioridad, ya tiene proveedor"></div>
     <div class="modal-field"><label>Notas</label><textarea id="emb-notas" rows="3">${escHtml(p ? p.notas : '')}</textarea></div>
     <div class="modal-actions">
@@ -1740,18 +1835,101 @@ function embSave() {
     telefono: document.getElementById('emb-tel').value.trim(),
     email: document.getElementById('emb-email').value.trim(),
     ciudad: document.getElementById('emb-ciudad').value.trim(),
-    proximaAccion: document.getElementById('emb-accion').value.trim(),
-    fechaAccion: document.getElementById('emb-fecha').value,
     motivoPerdido: document.getElementById('emb-motivo').value.trim(),
     notas: document.getElementById('emb-notas').value.trim()
   };
   const list = embList();
   const cur = embEditId ? list.find(x => x.id === embEditId) : null;
-  if (cur) Object.assign(cur, data);
-  else list.push(Object.assign({ id: 'p_' + Date.now() }, data));
+  let nuevoId = null;
+  if (cur) {
+    if (cur.etapa !== data.etapa) {
+      embLog(cur, 'Etapa: ' + embNombreEtapa(cur.etapa) + ' → ' + embNombreEtapa(data.etapa) +
+        (data.etapa === 'perdido' && data.motivoPerdido ? '. Motivo: ' + data.motivoPerdido : ''));
+    }
+    Object.assign(cur, data);
+  } else {
+    nuevoId = 'p_' + Date.now();
+    list.push(Object.assign({ id: nuevoId, actividades: [], bitacora: [] }, data));
+  }
+  saveLocal(); renderEmbudo();
+  if (nuevoId) {            // un prospecto nuevo se vuelve a abrir para cargarle actividades
+    embOpen(nuevoId);
+    showToast('✅ Prospecto creado: ya puedes agregar actividades');
+    return;
+  }
   document.getElementById('modal').style.display = 'none';
   embEditId = null;
-  saveLocal(); renderEmbudo();
+}
+
+// ── Actividades y novedades de cada prospecto (se guardan al instante) ──
+function embActsHtml(p) {
+  const pend = embPendientes(p);
+  const hechas = (p.actividades || []).filter(a => a.hecha)
+    .sort((a, b) => (a.fechaHecha || '') < (b.fechaHecha || '') ? 1 : -1);
+  if (!pend.length && !hechas.length) return '<div class="emb-none">Sin actividades. Agrega la primera arriba.</div>';
+  const hoy = embToday();
+  const fila = a => {
+    const late = !a.hecha && a.fecha && a.fecha < hoy;
+    const aid = embAttr(a.id);
+    return `<div class="emb-act${a.hecha ? ' done' : ''}">
+      <label class="emb-actl"><input type="checkbox"${a.hecha ? ' checked' : ''} onchange="embToggleAct('${aid}')"><span class="emb-act-txt">${escHtml(a.texto)}</span></label>
+      ${a.fecha ? `<span class="emb-act-date${late ? ' late' : ''}">${formatDate(a.fecha)}${late ? ' (vencida)' : ''}</span>` : ''}
+      <button class="emb-x" type="button" title="Eliminar" onclick="embConfirmX(this,'act','${aid}')">×</button>
+    </div>`;
+  };
+  return pend.map(fila).join('') +
+    (hechas.length ? `<div class="emb-sub2">Hechas (${hechas.length})</div>` + hechas.slice(0, 10).map(fila).join('') : '');
+}
+function embBitsHtml(p) {
+  const lista = (p.bitacora || []).slice().reverse();
+  if (!lista.length) return '<div class="emb-none">Sin novedades todavía. Anota cada llamada, mensaje o respuesta.</div>';
+  return lista.map(x => `<div class="emb-bit">
+    <div class="emb-bit-head"><span>${embFechaHora(x.fecha)}</span><button class="emb-x" type="button" title="Eliminar" onclick="embConfirmX(this,'bit','${embAttr(x.id)}')">×</button></div>
+    <div class="emb-bit-txt">${escHtml(x.texto)}</div>
+  </div>`).join('');
+}
+function embSecciones(p) {
+  const a = document.getElementById('emb-acts'), b = document.getElementById('emb-bits');
+  if (a) a.innerHTML = embActsHtml(p);
+  if (b) b.innerHTML = embBitsHtml(p);
+}
+function embActual() { return embEditId ? embList().find(x => x.id === embEditId) : null; }
+function embAddAct() {
+  const p = embActual(); if (!p) return;
+  const t = document.getElementById('emb-act-texto'), f = document.getElementById('emb-act-fecha');
+  const texto = t.value.trim();
+  if (!texto) { showToast('Escribe la actividad'); t.focus(); return; }
+  p.actividades.push({ id: embId('a'), texto, fecha: f.value, hecha: false, fechaHecha: '' });
+  t.value = ''; f.value = '';
+  saveLocal(); embSecciones(p); renderEmbudo(); t.focus();
+}
+function embToggleAct(aid) {
+  const p = embActual(); if (!p) return;
+  const a = p.actividades.find(x => x.id === aid); if (!a) return;
+  a.hecha = !a.hecha;
+  a.fechaHecha = a.hecha ? embToday() : '';
+  saveLocal(); embSecciones(p); renderEmbudo();
+}
+function embAddBit() {
+  const p = embActual(); if (!p) return;
+  const t = document.getElementById('emb-bit-texto');
+  const texto = t.value.trim();
+  if (!texto) { showToast('Escribe la novedad'); t.focus(); return; }
+  embLog(p, texto);
+  t.value = '';
+  saveLocal(); embSecciones(p); renderEmbudo(); t.focus();
+}
+// Eliminar pide un segundo toque para evitar borrar por error.
+function embConfirmX(btn, tipo, id) {
+  if (!btn.dataset.armed) {
+    btn.dataset.armed = '1'; btn.textContent = '¿Eliminar?'; btn.classList.add('armed');
+    setTimeout(() => { if (btn.isConnected) { btn.dataset.armed = ''; btn.textContent = '×'; btn.classList.remove('armed'); } }, 3000);
+    return;
+  }
+  const p = embActual(); if (!p) return;
+  if (tipo === 'act') p.actividades = p.actividades.filter(x => x.id !== id);
+  else p.bitacora = p.bitacora.filter(x => x.id !== id);
+  saveLocal(); embSecciones(p); renderEmbudo();
 }
 
 function embDelete() {
