@@ -183,6 +183,21 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .ali-pick-i { font-size: 26px; }
 .ali-pick b { display: block; font-size: 15px; }
 .ali-pick small { display: block; font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+.dash-aviso { background: #FEF3C7; color: #92400E; border-radius: 10px; padding: 10px 12px; font-size: 13px; margin-bottom: 12px; }
+.dark .dash-aviso { background: #78350F; color: #FDE68A; }
+.dash-prog { height: 10px; background: var(--gray-100); border-radius: 6px; overflow: hidden; }
+.dark .dash-prog { background: var(--gray-700); }
+.dash-prog > div { height: 100%; border-radius: 6px; transition: width .4s; }
+.dash-prog-sm { height: 5px; margin-top: 8px; }
+.dash-prog-txt { font-size: 12px; color: var(--gray-400); margin: 6px 0 4px; }
+.dash-sub { font-size: 12px; font-weight: 800; color: var(--gray-700); text-transform: uppercase; letter-spacing: .4px; margin: 18px 0 4px; }
+.dash-click-fila { cursor: pointer; border-radius: 6px; } .dash-click-fila:hover { background: var(--gray-100); }
+.dark .dash-click-fila:hover { background: var(--gray-700); }
+.dash-proy-top { display: flex; align-items: center; gap: 10px; }
+.dash-proy-i { font-size: 20px; flex: none; }
+.dash-proy-n { flex: 1; min-width: 0; font-weight: 700; color: var(--gray-900); font-size: 14px; overflow-wrap: anywhere; }
+.dash-proy-m { color: var(--blue-700); font-size: 14px; white-space: nowrap; }
+.dash-proy-bot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .dash-click { cursor: pointer; transition: transform .15s, box-shadow .15s; position: relative; }
 .dash-click:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 .dash-click:focus-visible { outline: 2px solid var(--blue-600); outline-offset: 2px; }
@@ -1146,17 +1161,9 @@ function renderDashboard() {
     ${tarjeta('cump', '✅ Tareas cumplidas', done.length, 'de ' + all.length + ' en total', 'var(--green)')}
     ${tarjeta('pend', 'Tareas pendientes', all.filter(t=>!t.done).length, soon.length + ' por vencer esta semana', 'var(--orange)')}
     ${tarjeta('venc', '🔴 Tareas vencidas', overdue.length, overdue.length ? 'requieren atención' : 'todo al día', overdue.length ? 'var(--red)' : '')}
-    <div class="stat-card">
-      <div class="stat-label">Meta Total</div>
-      <div class="stat-value" style="font-size:20px">${fmtCOP(state.metaTotal)}</div>
-      <div class="stat-sub">Plan estratégico</div>
-    </div>
+    ${tarjeta('meta', 'Meta Total', fmtCOP(state.metaTotal), 'Plan estratégico', '', true)}
     ${tarjeta('asig', 'Asignado', fmtCOP(assigned), pct + '% del total · distribución', 'var(--blue-600)', true)}
-    <div class="stat-card">
-      <div class="stat-label">Proyectos</div>
-      <div class="stat-value">${state.modules.length}</div>
-      <div class="stat-sub">${state.modules.filter(m=>m.status==='marcha').length} en marcha</div>
-    </div>
+    ${tarjeta('proy', 'Proyectos', state.modules.length, state.modules.filter(m=>m.status==='marcha').length + ' en marcha', '')}
     ${tarjeta('ali', '🤝 Aliados', aliList().length, aliList().length ? ['partner','socio','inversor'].map(k => aliList().filter(a => a.tipo === k).length + ' ' + ALI_TIPOS[k].pl).join(' · ') : 'Agrega el primero', '')}
     <div class="stat-card dash-click" role="button" tabindex="0" onclick="goPage('embudo')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('embudo')}">
       <div class="stat-label">🧲 Embudo · ingreso mensual</div>
@@ -1210,6 +1217,8 @@ function dashAbrir(clave) {
   const porFecha = (x, y) => (x.date || '9999').localeCompare(y.date || '9999');
   let titulo = '', cuerpo = '';
   if (clave === 'ali') { aliLista(); return; }
+  if (clave === 'meta') { dashMeta(); return; }
+  if (clave === 'proy') { dashProyectos(); return; }
   if (clave === 'asig') {
     const assigned = state.modules.reduce((s,m) => s + (m.meta||0), 0);
     const meta = state.metaTotal || 0;
@@ -1418,6 +1427,81 @@ function aliEliminar() {
   showToast('Aliado eliminado');
   if (currentPage === 'dashboard') renderDashboard();
   aliVolver();
+}
+
+// Detalle de la Meta Total: de qué está hecha la cifra
+function dashMeta() {
+  const meta = state.metaTotal || 0;
+  const mods = state.modules || [];
+  const asignado = mods.reduce((t, m) => t + (m.meta || 0), 0);
+  const libre = meta - asignado;
+  const pct = meta ? Math.round(asignado / meta * 100) : 0;
+  const pctDe = v => meta ? (Math.round((v || 0) / meta * 1000) / 10).toLocaleString('es-CO') + '%' : '—';
+  const porEstado = STATUSES.map(st => {
+    const g = mods.filter(m => m.status === st.key);
+    return { st, n: g.length, total: g.reduce((t, m) => t + (m.meta || 0), 0) };
+  }).filter(x => x.n);
+  const orden = mods.map((m, i) => ({ m, i })).sort((a, b) => (b.m.meta || 0) - (a.m.meta || 0));
+  setModal(`<h3>🎯 Meta Total</h3>
+    ${meta ? '' : '<div class="dash-aviso">Aún no has definido la Meta Total. Se cambia en Configuración.</div>'}
+    <div class="dash-resumen">
+      <div><span>Meta total</span><b>${fmtCOP(meta)}</b></div>
+      <div><span>Asignado a proyectos</span><b style="color:var(--blue-600)">${fmtCOP(asignado)}</b></div>
+      <div><span>${libre < 0 ? 'Excede la meta' : 'Sin asignar'}</span><b style="color:${libre < 0 ? 'var(--red)' : 'var(--green)'}">${fmtCOP(Math.abs(libre))}</b></div>
+    </div>
+    <div class="dash-prog" title="${pct}% de la meta asignado"><div style="width:${Math.min(100, pct)}%;background:${pct > 100 ? 'var(--red)' : 'var(--blue-600)'}"></div></div>
+    <div class="dash-prog-txt">${pct.toLocaleString('es-CO')}% de la meta está asignada a proyectos${pct > 100 ? ' — los proyectos suman más que la meta' : ''}</div>
+    ${porEstado.length ? `<div class="dash-sub">Por estado</div>
+      ${porEstado.map(x => `<div class="dash-fila"><span class="status-badge ${x.st.cls}">${x.st.label}</span><span class="dash-fila-n">${x.n} ${x.n === 1 ? 'proyecto' : 'proyectos'}</span><span class="dash-fila-p">${pctDe(x.total)}</span><b>${fmtCOP(x.total)}</b></div>`).join('')}` : ''}
+    <div class="dash-sub">Por proyecto (de mayor a menor)</div>
+    ${orden.length ? orden.map(({ m, i }) => `<div class="dash-fila dash-click-fila" onclick="closeModal();goPage('mod_${m.id}')">
+        <div style="width:10px;height:10px;border-radius:3px;flex:none;background:${COLORS[i % COLORS.length]}"></div>
+        <span class="dash-fila-n">${escHtml(m.name)}</span><span class="dash-fila-p">${pctDe(m.meta)}</span><b>${fmtCOP(m.meta)}</b>
+      </div>`).join('') : '<div class="empty-panel">Aún no hay proyectos</div>'}
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cerrar</button>
+      <button class="btn-confirm" onclick="closeModal();goPage('config')">Cambiar la meta</button>
+    </div>`);
+}
+
+// Lista detallada de todos los proyectos
+function dashProyectos() {
+  const mods = state.modules || [];
+  const cuenta = k => mods.filter(m => m.status === k).length;
+  const filas = mods.map(m => {
+    const st = STATUSES.find(x => x.key === m.status) || STATUSES[0];
+    const tot = (m.tasks || []).length, hechas = (m.tasks || []).filter(t => t.done).length, pend = tot - hechas;
+    const av = tot ? Math.round(hechas / tot * 100) : 0;
+    return `<div class="task-item dash-tarea dash-proy" onclick="closeModal();goPage('mod_${m.id}')">
+      <div class="dash-proy-top">
+        <span class="dash-proy-i">${m.icon || '📁'}</span>
+        <span class="dash-proy-n">${escHtml(m.name)}</span>
+        <b class="dash-proy-m">${fmtCOP(m.meta)}</b>
+      </div>
+      ${m.desc ? `<div class="ti-meta" style="margin:2px 0 6px">${escHtml(m.desc)}</div>` : ''}
+      <div class="dash-proy-bot">
+        <span class="status-badge ${st.cls}">${st.label}</span>
+        <span class="ti-meta">${tot ? hechas + ' de ' + tot + ' tareas · ' + av + '%' : 'Sin tareas'}${pend ? ' · <b style="color:var(--orange)">' + pend + ' pendientes</b>' : ''}</span>
+      </div>
+      ${tot ? `<div class="dash-prog dash-prog-sm"><div style="width:${av}%;background:var(--green)"></div></div>` : ''}
+    </div>`;
+  }).join('');
+  const chips = STATUSES.filter(x => cuenta(x.key)).map(x => `<span class="status-badge ${x.cls}">${x.label}: ${cuenta(x.key)}</span>`).join(' ');
+  setModal(`<h3>📁 Proyectos <span style="color:var(--gray-400);font-weight:600">(${mods.length})</span></h3>
+    ${chips ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">${chips}</div>` : ''}
+    ${filas || '<div class="empty-panel">Aún no hay proyectos</div>'}
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cerrar</button>
+      <button class="btn-confirm" onclick="closeModal();openAddModule()">+ Nuevo proyecto</button>
+    </div>`);
+}
+// Abre la ventana de detalle (ancha) con el contenido dado
+function setModal(html) {
+  modalFijo(false);
+  const m = document.getElementById('modal-body');
+  m.innerHTML = html;
+  m.style.maxWidth = '600px';
+  document.getElementById('modal').style.display = 'flex';
 }
 
 function moduleCard(m) {
