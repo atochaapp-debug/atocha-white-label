@@ -147,6 +147,22 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .stat-value { font-size: 26px; font-weight: 800; color: var(--gray-900); letter-spacing: -0.5px; }
 .stat-sub { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
 
+.dash-click { cursor: pointer; transition: transform .15s, box-shadow .15s; position: relative; }
+.dash-click:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.dash-click:focus-visible { outline: 2px solid var(--blue-600); outline-offset: 2px; }
+.dash-ver { font-size: 11px; font-weight: 700; color: var(--blue-600); margin-top: 8px; opacity: .75; }
+.dash-resumen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.dash-resumen div { background: var(--gray-100); border-radius: 10px; padding: 10px; }
+.dark .dash-resumen div { background: var(--gray-700); }
+.dash-resumen span { display: block; font-size: 11px; color: var(--gray-400); margin-bottom: 2px; }
+.dash-resumen b { font-size: 13px; color: var(--gray-900); }
+.dash-fila { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+.dark .dash-fila { border-color: var(--gray-700); }
+.dash-fila-n { flex: 1; color: var(--gray-700); }
+.dash-fila-p { color: var(--gray-400); font-size: 12px; }
+.dash-tarea { cursor: pointer; }
+.dash-tarea:hover { background: var(--gray-200); }
+.dark .dash-tarea:hover { background: var(--gray-600); }
 .task-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; }
 .task-panel { background: white; border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
 .dark .task-panel { background: var(--gray-800); }
@@ -292,9 +308,9 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .emb-sec { margin: 4px 0 16px; padding: 14px; background: var(--gray-100); border-radius: 10px; }
 .emb-sec-title { font-size: 13px; font-weight: 800; color: var(--gray-900); margin-bottom: 10px; }
 .emb-addrow { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-.emb-addrow input { padding: 9px 10px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; background: white; color: var(--gray-900); font-family: inherit; outline: none; }
-.emb-addrow input:focus { border-color: var(--blue-600); }
-.dark .emb-addrow input { background: var(--gray-700); border-color: var(--gray-600); }
+.emb-addrow input:not([type="checkbox"]) { padding: 9px 10px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; background: white; color: var(--gray-900); font-family: inherit; outline: none; }
+.emb-addrow input:not([type="checkbox"]):focus { border-color: var(--blue-600); }
+.dark .emb-addrow input:not([type="checkbox"]) { background: var(--gray-700); border-color: var(--gray-600); }
 .emb-addrow input[type="text"] { flex: 1 1 180px; min-width: 0; }
 .emb-act { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-top: 1px solid var(--gray-200); }
 .emb-actl { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; cursor: pointer; }
@@ -311,6 +327,22 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 #emb-bits { max-height: 240px; overflow-y: auto; }
 .emb-bit { padding: 8px 0; border-top: 1px solid var(--gray-200); }
 .emb-bit-head { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--gray-400); }
+.emb-meta { display: flex; flex-wrap: wrap; gap: 4px; }
+.emb-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--gray-100); color: var(--gray-600); text-decoration: none; }
+.emb-tag.amber { background: #FEF3C7; color: #92400E; }
+.emb-tag.red { background: #FEE2E2; color: #991B1B; }
+.emb-tag.wa { background: #DCFCE7; color: #166534; }
+.dark .emb-tag.amber { background: #78350F; color: #FDE68A; }
+.dark .emb-tag.red { background: #7F1D1D; color: #FECACA; }
+.dark .emb-tag.wa { background: #14532D; color: #BBF7D0; }
+.emb-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.emb-filters label { font-size: 13px; font-weight: 600; color: var(--gray-700); display: flex; align-items: center; gap: 6px; }
+.emb-filters select { padding: 7px 10px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; background: white; color: var(--gray-900); }
+.dark .emb-filters select { background: var(--gray-700); border-color: var(--gray-600); }
+.edit-btn.on { background: var(--blue-700); color: white; }
+.emb-wa { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 700; color: #166534; background: #DCFCE7; padding: 4px 10px; border-radius: 999px; text-decoration: none; }
+.emb-link { font-size: 14px; font-weight: 600; color: var(--blue-700); overflow-wrap: anywhere; flex: 1; min-width: 0; }
+.emb-checkc { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--gray-600); cursor: pointer; }
 .emb-bit-txt { font-size: 14px; color: var(--gray-900); white-space: pre-wrap; overflow-wrap: anywhere; }
 @media (max-width: 768px) { .emb-hint { display: none; } }
 .emb-board { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 14px; align-items: flex-start; }
@@ -1037,6 +1069,13 @@ function getAllTasks() {
   let all = [];
   state.modules.forEach(m => m.tasks.forEach(t => all.push({...t, projectName: m.name, projectId: m.id})));
   state.checklist.forEach(t => all.push({...t, projectName: 'Checklist Maestro', projectId: null}));
+  // Actividades del Embudo: se reflejan aquí (Checklist, Dashboard y aviso rojo del menú),
+  // pero viven dentro de cada prospecto. Los textos se escapan porque estas listas usan HTML.
+  embList().forEach(p => (p.actividades || []).forEach(a => all.push({
+    id: a.id, name: escHtml(a.texto), date: a.fecha || '', priority: 'media',
+    done: !!a.hecha, doneDate: a.fechaHecha || null,
+    projectName: escHtml('Embudo · ' + p.nombre), projectId: 'emb:' + p.id
+  })));
   return all;
 }
 
@@ -1052,56 +1091,30 @@ function renderDashboard() {
   const assigned = state.modules.reduce((s,m) => s + (m.meta||0), 0);
   const pct = state.metaTotal ? Math.round(assigned / state.metaTotal * 100) : 0;
 
+  const tarjeta = (clave, etiqueta, valor, sub, color, grande) => `
+    <div class="stat-card dash-click" role="button" tabindex="0" onclick="dashAbrir('${clave}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();dashAbrir('${clave}')}">
+      <div class="stat-label">${etiqueta}</div>
+      <div class="stat-value" style="${grande ? 'font-size:20px;' : ''}${color ? 'color:' + color : ''}">${valor}</div>
+      <div class="stat-sub">${sub}</div>
+      <div class="dash-ver">Ver detalle ›</div>
+    </div>`;
+
   let html = `
   <div class="dash-stats">
+    ${tarjeta('cump', '✅ Tareas cumplidas', done.length, 'de ' + all.length + ' en total', 'var(--green)')}
+    ${tarjeta('pend', 'Tareas pendientes', all.filter(t=>!t.done).length, soon.length + ' por vencer esta semana', 'var(--orange)')}
+    ${tarjeta('venc', '🔴 Tareas vencidas', overdue.length, overdue.length ? 'requieren atención' : 'todo al día', overdue.length ? 'var(--red)' : '')}
     <div class="stat-card">
       <div class="stat-label">Meta Total</div>
       <div class="stat-value" style="font-size:20px">${fmtCOP(state.metaTotal)}</div>
       <div class="stat-sub">Plan estratégico</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Asignado</div>
-      <div class="stat-value" style="font-size:20px;color:var(--blue-600)">${fmtCOP(assigned)}</div>
-      <div class="stat-sub">${pct}% del total</div>
-    </div>
+    ${tarjeta('asig', 'Asignado', fmtCOP(assigned), pct + '% del total · distribución', 'var(--blue-600)', true)}
     <div class="stat-card">
       <div class="stat-label">Proyectos</div>
       <div class="stat-value">${state.modules.length}</div>
       <div class="stat-sub">${state.modules.filter(m=>m.status==='marcha').length} en marcha</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Tareas pendientes</div>
-      <div class="stat-value" style="color:var(--orange)">${all.filter(t=>!t.done).length}</div>
-      <div class="stat-sub">${done.length} completadas</div>
-    </div>
-  </div>`;
-
-  // Distribution bar
-  if (state.modules.length) {
-    html += `<div class="card" style="margin-bottom:20px;">
-      <div class="card-title">📊 Distribución por proyecto</div>
-      <div class="dist-bar">
-        ${state.modules.map((m,i) => {
-          const w = state.metaTotal ? Math.max((m.meta/state.metaTotal)*100, 1) : 0;
-          return `<div class="dist-seg" style="flex:${w};background:${COLORS[i%COLORS.length]}" title="${m.name}: ${fmtCOP(m.meta)}"></div>`;
-        }).join('')}
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:10px;">
-        ${state.modules.map((m,i) => `<div style="display:flex;align-items:center;gap:6px;font-size:12px;">
-          <div style="width:10px;height:10px;border-radius:3px;background:${COLORS[i%COLORS.length]}"></div>
-          <span style="color:var(--gray-600)">${m.name}</span>
-          <span style="font-weight:700;color:var(--gray-900)">${fmtCOP(m.meta)}</span>
-        </div>`).join('')}
-      </div>
-    </div>`;
-  }
-
-  // Task panels
-  html += `<div class="task-panels">
-    ${taskPanel('🔴 Vencidas', 'var(--red)', overdue, true)}
-    ${taskPanel('🟡 Por vencer (7 días)', 'var(--gold)', soon, false)}
-    ${taskPanel('🔵 Próximas (30 días)', 'var(--blue-500)', upcoming, false)}
-    ${taskPanel('✅ Cumplidas', 'var(--green)', done, false, true)}
   </div>`;
 
   // Modules grid
@@ -1112,6 +1125,12 @@ function renderDashboard() {
   <div class="modules-grid">
     ${state.modules.map(m => moduleCard(m)).join('')}
     ${state.modules.length === 0 ? `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400);">Agrega tu primer proyecto →</div>` : ''}
+  </div>`;
+
+  // Debajo de los módulos: lo que viene
+  html += `<div class="task-panels" style="margin-top:24px;">
+    ${taskPanel('🟡 Por vencer (7 días)', 'var(--gold)', soon, false)}
+    ${taskPanel('🔵 Próximas (30 días)', 'var(--blue-500)', upcoming, false)}
   </div>`;
 
   document.getElementById('page-content').innerHTML = html;
@@ -1133,6 +1152,57 @@ function taskPanel(title, color, tasks, isOverdue = false, isDone = false) {
       (tasks.length > 5 ? `<div style="text-align:center;font-size:12px;color:var(--gray-400);margin-top:6px;">+${tasks.length-5} más</div>` : '')
     }
   </div>`;
+}
+
+// Detalle que se abre al hacer clic en las tarjetas de arriba del Dashboard
+function dashAbrir(clave) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const all = getAllTasks();
+  const porFecha = (x, y) => (x.date || '9999').localeCompare(y.date || '9999');
+  let titulo = '', cuerpo = '';
+  if (clave === 'asig') {
+    const assigned = state.modules.reduce((s,m) => s + (m.meta||0), 0);
+    const meta = state.metaTotal || 0;
+    const libre = meta - assigned;
+    titulo = '📊 Distribución del proyecto';
+    cuerpo = `
+      <div class="dash-resumen">
+        <div><span>Meta total</span><b>${fmtCOP(meta)}</b></div>
+        <div><span>Asignado</span><b style="color:var(--blue-600)">${fmtCOP(assigned)}</b></div>
+        <div><span>${libre < 0 ? 'Excedido' : 'Sin asignar'}</span><b style="color:${libre < 0 ? 'var(--red)' : 'var(--green)'}">${fmtCOP(Math.abs(libre))}</b></div>
+      </div>
+      ${state.modules.length ? `
+      <div class="dist-bar">
+        ${state.modules.map((m,i) => {
+          const w = meta ? Math.max((m.meta/meta)*100, 1) : 0;
+          return `<div class="dist-seg" style="flex:${w};background:${COLORS[i%COLORS.length]}" title="${m.name}: ${fmtCOP(m.meta)}"></div>`;
+        }).join('')}
+      </div>
+      ${state.modules.map((m,i) => `<div class="dash-fila">
+        <div style="width:10px;height:10px;border-radius:3px;flex:none;background:${COLORS[i%COLORS.length]}"></div>
+        <span class="dash-fila-n">${m.name}</span>
+        <span class="dash-fila-p">${meta ? Math.round((m.meta||0)/meta*100) : 0}%</span>
+        <b>${fmtCOP(m.meta)}</b>
+      </div>`).join('')}` : '<div class="empty-panel">Aún no hay proyectos</div>'}`;
+  } else {
+    let lista;
+    if (clave === 'cump') { titulo = '✅ Tareas cumplidas'; lista = all.filter(t => t.done).sort((x,y) => (y.doneDate||'').localeCompare(x.doneDate||'')); }
+    else if (clave === 'venc') { titulo = '🔴 Tareas vencidas'; lista = all.filter(t => !t.done && t.date && new Date(t.date) < today).sort(porFecha); }
+    else { titulo = 'Tareas pendientes'; lista = all.filter(t => !t.done).sort(porFecha); }
+    cuerpo = lista.length ? lista.map(t => {
+      const venc = !t.done && t.date && new Date(t.date) < today;
+      const destino = t.projectId === null ? 'checklist' : String(t.projectId).startsWith('emb:') ? 'embudo' : 'mod_' + t.projectId;
+      return `<div class="task-item dash-tarea" onclick="closeModal();goPage('${destino}')">
+        <div class="ti-name">${t.name}</div>
+        <div class="ti-meta">${t.projectName}${t.date ? ' · <span style="' + (venc ? 'color:var(--red);font-weight:700' : '') + '">' + formatDate(t.date) + '</span>' : ''}${t.done && t.doneDate ? ' · ✅ ' + formatDate(t.doneDate) : ''}</div>
+      </div>`;
+    }).join('') : '<div class="empty-panel">Sin tareas</div>';
+    titulo += ` <span style="color:var(--gray-400);font-weight:600">(${lista.length})</span>`;
+  }
+  const m = document.getElementById('modal-body');
+  m.innerHTML = `<h3>${titulo}</h3>${cuerpo}<div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cerrar</button></div>`;
+  m.style.maxWidth = '560px';
+  document.getElementById('modal').style.display = 'flex';
 }
 
 function moduleCard(m) {
@@ -1381,6 +1451,16 @@ function addChecklistTask() {
 }
 function toggleCL(projectId, id) {
   let t;
+  if (projectId && projectId.indexOf('emb:') === 0) {      // actividad del Embudo
+    const p = embList().find(x => x.id === projectId.slice(4));
+    t = p && p.actividades.find(x => x.id === id);
+    if (!t) return;
+    t.hecha = !t.hecha;
+    t.fechaHecha = t.hecha ? embToday() : '';
+    saveLocal(); renderSidebar();
+    document.getElementById('cl-list').innerHTML = renderChecklistItems();
+    return;
+  }
   if (projectId) {
     const m = state.modules.find(x => x.id === projectId);
     t = m && m.tasks.find(x => x.id === id);
@@ -1394,6 +1474,13 @@ function toggleCL(projectId, id) {
   document.getElementById('cl-list').innerHTML = renderChecklistItems();
 }
 function deleteCL(projectId, id) {
+  if (projectId && projectId.indexOf('emb:') === 0) {      // actividad del Embudo
+    const p = embList().find(x => x.id === projectId.slice(4));
+    if (p) p.actividades = p.actividades.filter(x => x.id !== id);
+    saveLocal(); renderSidebar();
+    document.getElementById('cl-list').innerHTML = renderChecklistItems();
+    return;
+  }
   if (projectId) {
     const m = state.modules.find(x => x.id === projectId);
     if (m) m.tasks = m.tasks.filter(x => x.id !== id);
@@ -1446,6 +1533,10 @@ function deleteNote(id) {
 // ═══════════════════════════════════════════
 const EMB_FEE = 2500000;
 const EMB_SERVICES = ['Trabajo virtual', 'Marketing', 'Apps'];
+const EMB_DIAS_ALERTA = 7;    // amarillo desde 7 días sin novedad
+const EMB_DIAS_ROJO = 14;     // rojo desde 14
+const EMB_ETAPAS_ALERTA = ['prospecto', 'contactado', 'reunion', 'propuesta', 'negociacion'];
+let embFiltroResp = '', embSoloAlerta = false;
 const EMB_STAGES = [
   { id: 'diseno',     name: 'En diseño',      color: '#8B5CF6', guide: 'Definir alcance y valor del proyecto.' },
   { id: 'prospecto',  name: 'Prospecto',      color: '#6B7280', guide: 'Identificar al decisor y su contacto.' },
@@ -1482,6 +1573,8 @@ function embMigrar(p) {
     delete p.proximaAccion; delete p.fechaAccion;
   }
   if (!Array.isArray(p.bitacora)) p.bitacora = [];
+  if (!Array.isArray(p.enlaces)) p.enlaces = [];
+  if (!p.desde) p.desde = new Date().toISOString();   // desde cuándo se le hace seguimiento
   return p;
 }
 // Actividades sin hacer, la más próxima primero; las que no tienen fecha van al final.
@@ -1501,11 +1594,60 @@ function embFechaCorta(iso) {
   if (isNaN(d)) return '';
   return d.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit' });
 }
-function embLog(p, texto) {
+function embLog(p, texto, contacto) {
   if (!Array.isArray(p.bitacora)) p.bitacora = [];
-  p.bitacora.push({ id: embId('b'), fecha: new Date().toISOString(), texto });
+  p.bitacora.push({ id: embId('b'), fecha: new Date().toISOString(), texto, contacto: !!contacto });
 }
 function embNombreEtapa(id) { return (EMB_STAGES.find(s => s.id === id) || { name: id || '' }).name; }
+
+// Días desde la última novedad (o desde que empezó el seguimiento, si no hay ninguna).
+function embDiasSinNovedad(p) {
+  const ref = (p.bitacora || []).reduce((m, x) => (x.fecha && x.fecha > m ? x.fecha : m), p.desde || '');
+  const t = Date.parse(ref);
+  if (isNaN(t)) return 0;
+  return Math.max(0, Math.floor((Date.now() - t) / 86400000));
+}
+// nivel 0 = sin alerta, 1 = amarillo (7+ días), 2 = rojo (14+). Solo aplica entre Prospecto y Negociación.
+function embAlerta(p) {
+  if (EMB_ETAPAS_ALERTA.indexOf(p.etapa) < 0) return { dias: 0, nivel: 0 };
+  const dias = embDiasSinNovedad(p);
+  return { dias, nivel: dias >= EMB_DIAS_ROJO ? 2 : dias >= EMB_DIAS_ALERTA ? 1 : 0 };
+}
+function embContactos(p) { return (p.bitacora || []).filter(x => x.contacto).length; }
+function embResponsables() {
+  return Array.from(new Set(embList().map(p => (p.responsable || '').trim()).filter(Boolean)))
+    .sort((a, b) => a.localeCompare(b, 'es'));
+}
+function embPasaFiltros(p) {
+  const r = (p.responsable || '').trim();
+  if (embFiltroResp === '__none' ? r : (embFiltroResp && r !== embFiltroResp)) return false;
+  if (embSoloAlerta && embAlerta(p).nivel === 0) return false;
+  return true;
+}
+function embSetResp(v) { embFiltroResp = v; renderEmbudo(); }
+function embToggleAlerta() { embSoloAlerta = !embSoloAlerta; renderEmbudo(); }
+
+// Enlace directo a WhatsApp. Un celular colombiano de 10 dígitos recibe el 57;
+// un número de otro país debe traer su código. Devuelve '' si el número no sirve.
+function embWa(tel) {
+  const d = String(tel || '').replace(/\D/g, '');
+  if (!d) return '';
+  let n = d;
+  if (/^3\d{9}$/.test(d)) n = '57' + d;
+  else if (/^57\d{10}$/.test(d)) n = d;
+  else if (d.length < 11 || d.length > 15) return '';
+  return 'https://wa.me/' + n;
+}
+// Solo se aceptan enlaces http o https (nunca javascript: ni otros esquemas).
+function embUrlSegura(raw) {
+  let s = String(raw || '').trim();
+  if (!s) return '';
+  if (!/^[a-z][a-z0-9+.\-]*:/i.test(s)) s = 'https://' + s;
+  try {
+    const u = new URL(s);
+    return (u.protocol === 'https:' || u.protocol === 'http:') ? u.href : '';
+  } catch (e) { return ''; }
+}
 function embAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
 function embToday() {
   const d = new Date();
@@ -1533,7 +1675,11 @@ function renderEmbudo() {
   const list = embList();
   const by = {};
   EMB_STAGES.forEach(s => by[s.id] = []);
-  list.forEach(p => (by[p.etapa] || by.prospecto).push(p));
+  const responsables = embResponsables();
+  if (embFiltroResp && embFiltroResp !== '__none' && responsables.indexOf(embFiltroResp) < 0) embFiltroResp = '';
+  const conAlerta = list.filter(p => embAlerta(p).nivel > 0);
+  if (embSoloAlerta && !conAlerta.length) embSoloAlerta = false;
+  list.filter(p => embPasaFiltros(p)).forEach(p => (by[p.etapa] || by.prospecto).push(p));
   let activo = 0, embudo = 0;
   list.forEach(p => {
     const m = Number(p.mensualidad) || 0;
@@ -1570,7 +1716,7 @@ function renderEmbudo() {
   <div class="dash-stats">
     <div class="stat-card"><div class="stat-label">Ingreso activo</div><div class="stat-value">${fmtCOP(activo)}</div><div class="stat-sub">por mes, clientes que ya pagan</div></div>
     <div class="stat-card"><div class="stat-label">En el embudo</div><div class="stat-value">${fmtCOP(embudo)}</div><div class="stat-sub">por mes, si cierran todos</div></div>
-    <div class="stat-card"><div class="stat-label">Proyectos en diseño</div><div class="stat-value">${by.diseno.length}</div><div class="stat-sub">aún sin mensualidad definida</div></div>
+    <div class="stat-card"><div class="stat-label">Proyectos en diseño</div><div class="stat-value">${list.filter(p => p.etapa === 'diseno').length}</div><div class="stat-sub">aún sin mensualidad definida</div></div>
   </div>`;
 
   const cols = EMB_STAGES.map((s, idx) => {
@@ -1590,7 +1736,17 @@ function renderEmbudo() {
 
   const viejo = document.querySelector('.emb-board');
   const izq = viejo ? viejo.scrollLeft : 0;
-  document.getElementById('page-content').innerHTML = header + stats + `<div class="emb-board">${cols}</div>`;
+  const filtros = (responsables.length || conAlerta.length) ? `
+  <div class="emb-filters">
+    ${responsables.length ? `<label>👤 Responsable
+      <select onchange="embSetResp(this.value)">
+        <option value="">Todos</option>
+        ${responsables.map(r => `<option value="${embAttr(r)}"${embFiltroResp === r ? ' selected' : ''}>${escHtml(r)}</option>`).join('')}
+        <option value="__none"${embFiltroResp === '__none' ? ' selected' : ''}>Sin responsable</option>
+      </select></label>` : ''}
+    ${conAlerta.length ? `<button class="edit-btn${embSoloAlerta ? ' on' : ''}" type="button" onclick="embToggleAlerta()">⏱ ${conAlerta.length} ${conAlerta.length === 1 ? 'empresa lleva' : 'empresas llevan'} ${EMB_DIAS_ALERTA}+ días sin novedad${embSoloAlerta ? ' · quitar filtro' : ' · ver solo ' + (conAlerta.length === 1 ? 'esa' : 'esas')}</button>` : ''}
+  </div>` : '';
+  document.getElementById('page-content').innerHTML = header + stats + filtros + `<div class="emb-board">${cols}</div>`;
   const nuevo = document.querySelector('.emb-board');
   if (nuevo && izq) nuevo.scrollLeft = izq;   // el tablero no vuelve al inicio al guardar algo
 }
@@ -1602,6 +1758,14 @@ function embCard(p, idx) {
   const sig = pend[0];
   const late = !!(sig && sig.fecha && sig.fecha < embToday());
   const ultima = (p.bitacora || []).length ? p.bitacora[p.bitacora.length - 1] : null;
+  const al = embAlerta(p), nc = embContactos(p), ne = (p.enlaces || []).length, wa = embWa(p.telefono);
+  const meta = [
+    al.nivel ? `<span class="emb-tag ${al.nivel === 2 ? 'red' : 'amber'}">⏱ ${al.dias} días sin novedad</span>` : '',
+    nc ? `<span class="emb-tag">📞 ${nc} ${nc === 1 ? 'contacto' : 'contactos'}</span>` : '',
+    ne ? `<span class="emb-tag">🔗 ${ne}</span>` : '',
+    p.responsable ? `<span class="emb-tag">👤 ${escHtml(p.responsable)}</span>` : '',
+    wa ? `<a class="emb-tag wa" href="${embAttr(wa)}" target="_blank" rel="noopener noreferrer" title="Abrir WhatsApp">💬 WhatsApp</a>` : ''
+  ].filter(Boolean).join('');
   const next = embNext(p.etapa);
   const id = embAttr(p.id);
   const puedePerder = ['prospecto', 'contactado', 'reunion', 'propuesta', 'negociacion'].indexOf(p.etapa) >= 0;
@@ -1614,6 +1778,7 @@ function embCard(p, idx) {
       ${v ? `<span class="emb-proj">Proyecto ${fmtCOP(v)}</span>` : ''}
     </div>
     ${p.servicios && p.servicios.length ? `<div class="emb-chips">${p.servicios.map(s => `<span class="emb-chip">${escHtml(s)}</span>`).join('')}</div>` : ''}
+    ${meta ? `<div class="emb-meta">${meta}</div>` : ''}
     ${sig ? `<div class="emb-next${late ? ' late' : ''}">✅ <b>${sig.fecha ? formatDate(sig.fecha) + (late ? ' (vencida)' : '') : 'Pendiente'}</b> · ${escHtml(sig.texto)}${pend.length > 1 ? ` <span class="emb-more">+${pend.length - 1} más</span>` : ''}</div>` : ''}
     ${ultima ? `<div class="emb-last">📝 ${embFechaCorta(ultima.fecha)} · ${escHtml(ultima.texto)}</div>` : ''}
     ${p.etapa === 'perdido' && p.motivoPerdido ? `<div class="emb-rubro"><b>Motivo:</b> ${escHtml(p.motivoPerdido)}</div>` : ''}
@@ -1636,17 +1801,20 @@ function embExportCsv() {
     return '"' + s.replace(/"/g, '""') + '"';
   };
   const cab = ['Empresa', 'Qué fabrica o vende', 'Etapa', 'Mensualidad (COP)', 'Valor del proyecto (COP)', 'Servicios',
-    'Contacto', 'WhatsApp o teléfono', 'Correo', 'Ciudad o país', 'Próxima actividad', 'Fecha de la próxima actividad',
-    'Actividades pendientes', 'Novedades (la más nueva primero)', 'Motivo si se perdió', 'Notas'];
+    'Contacto', 'WhatsApp o teléfono', 'Correo', 'Ciudad o país', 'Responsable', 'Próxima actividad', 'Fecha de la próxima actividad',
+    'Actividades pendientes', 'Novedades (la más nueva primero)', 'Días sin novedad', 'Contactos hechos', 'Enlaces',
+    'Motivo si se perdió', 'Notas'];
   const filas = list.map(p => {
     const pend = embPendientes(p);
     const sig = pend[0];
     return [
       p.nombre, p.rubro, etapaNombre(p.etapa), Number(p.mensualidad) || 0, Number(p.valorProyecto) || 0,
-      (p.servicios || []).join(', '), p.contacto, p.telefono, p.email, p.ciudad,
+      (p.servicios || []).join(', '), p.contacto, p.telefono, p.email, p.ciudad, p.responsable,
       sig ? sig.texto : '', sig ? sig.fecha : '',
       pend.map(a => (a.fecha ? a.fecha + ': ' : '') + a.texto).join(' | '),
       (p.bitacora || []).slice().reverse().map(x => embFechaHora(x.fecha) + ': ' + x.texto).join(' | '),
+      EMB_ETAPAS_ALERTA.indexOf(p.etapa) >= 0 ? embDiasSinNovedad(p) : '', embContactos(p),
+      (p.enlaces || []).map(x => (x.nombre ? x.nombre + ': ' : '') + x.url).join(' | '),
       p.motivoPerdido, p.notas
     ];
   });
@@ -1724,7 +1892,7 @@ function embImportModules() {
       etapa, mensualidad, valorProyecto,
       servicios: etapa === 'diseno' ? [] : EMB_SERVICES.slice(),
       contacto: '', telefono: '', email: '', ciudad: '',
-      actividades: [], bitacora: [], notas: ''
+      desde: new Date().toISOString(), actividades: [], bitacora: [], enlaces: [], notas: ''
     });
     n++;
   });
@@ -1757,11 +1925,15 @@ function embOpen(id, etapaForzada) {
     </div>
     <div class="emb-row">
       <div class="modal-field"><label>Persona de contacto</label><input type="text" id="emb-contacto" value="${v('contacto')}" oninput="embRefreshTpl()"></div>
-      <div class="modal-field"><label>WhatsApp o teléfono</label><input type="tel" id="emb-tel" value="${v('telefono')}"></div>
+      <div class="modal-field"><label>WhatsApp o teléfono</label><input type="tel" id="emb-tel" value="${v('telefono')}" oninput="embRefreshWa()"><div id="emb-wa-slot"></div></div>
     </div>
     <div class="emb-row">
       <div class="modal-field"><label>Correo</label><input type="email" id="emb-email" value="${v('email')}"></div>
       <div class="modal-field"><label>Ciudad o país</label><input type="text" id="emb-ciudad" value="${v('ciudad')}"></div>
+    </div>
+    <div class="modal-field"><label>Responsable</label>
+      <input type="text" id="emb-resp" list="emb-resp-list" value="${v('responsable')}" placeholder="Quién le hace el seguimiento" autocomplete="off">
+      <datalist id="emb-resp-list">${embResponsables().map(r => `<option value="${embAttr(r)}">`).join('')}</datalist>
     </div>
     ${p ? `
     <div class="emb-sec">
@@ -1777,9 +1949,19 @@ function embOpen(id, etapaForzada) {
       <div class="emb-sec-title">📝 Novedades</div>
       <div class="emb-addrow">
         <input type="text" id="emb-bit-texto" placeholder="Ej: Pidió rebaja del 10%" onkeydown="if(event.key==='Enter'){event.preventDefault();embAddBit();}">
+        <label class="emb-checkc" title="Cuenta en el contador de contactos de la tarjeta"><input type="checkbox" id="emb-bit-contacto"> 📞 Fue un contacto</label>
         <button class="btn-add" type="button" onclick="embAddBit()">+ Agregar</button>
       </div>
       <div id="emb-bits">${embBitsHtml(p)}</div>
+    </div>
+    <div class="emb-sec">
+      <div class="emb-sec-title">🔗 Enlaces y documentos</div>
+      <div class="emb-addrow">
+        <input type="text" id="emb-enl-nombre" placeholder="Nombre: Propuesta, Drive, Chat…">
+        <input type="text" id="emb-enl-url" placeholder="Dirección: https://…" onkeydown="if(event.key==='Enter'){event.preventDefault();embAddEnl();}">
+        <button class="btn-add" type="button" onclick="embAddEnl()">+ Agregar</button>
+      </div>
+      <div id="emb-enls">${embEnlHtml(p)}</div>
     </div>` : `<div class="emb-sec"><div class="emb-none">Guarda el prospecto y se abrirá de nuevo para que agregues sus actividades y novedades.</div></div>`}
     <div class="modal-field"><label>Motivo si se perdió o pausó</label><input type="text" id="emb-motivo" value="${v('motivoPerdido')}" placeholder="Ej: precio, no es prioridad, ya tiene proveedor"></div>
     <div class="modal-field"><label>Notas</label><textarea id="emb-notas" rows="3">${escHtml(p ? p.notas : '')}</textarea></div>
@@ -1794,6 +1976,7 @@ function embOpen(id, etapaForzada) {
       <button class="edit-btn" onclick="embCopyTpl()">Copiar mensaje</button>
     </div>`;
   embRefreshTpl();
+  embRefreshWa();
   document.getElementById('modal').style.display = 'flex';
   document.getElementById(etapaForzada === 'perdido' ? 'emb-motivo' : 'emb-nombre').focus();
 }
@@ -1835,6 +2018,7 @@ function embSave() {
     telefono: document.getElementById('emb-tel').value.trim(),
     email: document.getElementById('emb-email').value.trim(),
     ciudad: document.getElementById('emb-ciudad').value.trim(),
+    responsable: document.getElementById('emb-resp').value.trim(),
     motivoPerdido: document.getElementById('emb-motivo').value.trim(),
     notas: document.getElementById('emb-notas').value.trim()
   };
@@ -1849,7 +2033,7 @@ function embSave() {
     Object.assign(cur, data);
   } else {
     nuevoId = 'p_' + Date.now();
-    list.push(Object.assign({ id: nuevoId, actividades: [], bitacora: [] }, data));
+    list.push(Object.assign({ id: nuevoId, desde: new Date().toISOString(), actividades: [], bitacora: [], enlaces: [] }, data));
   }
   saveLocal(); renderEmbudo();
   if (nuevoId) {            // un prospecto nuevo se vuelve a abrir para cargarle actividades
@@ -1884,14 +2068,16 @@ function embBitsHtml(p) {
   const lista = (p.bitacora || []).slice().reverse();
   if (!lista.length) return '<div class="emb-none">Sin novedades todavía. Anota cada llamada, mensaje o respuesta.</div>';
   return lista.map(x => `<div class="emb-bit">
-    <div class="emb-bit-head"><span>${embFechaHora(x.fecha)}</span><button class="emb-x" type="button" title="Eliminar" onclick="embConfirmX(this,'bit','${embAttr(x.id)}')">×</button></div>
+    <div class="emb-bit-head"><span>${x.contacto ? '📞 Contacto · ' : ''}${embFechaHora(x.fecha)}</span><button class="emb-x" type="button" title="Eliminar" onclick="embConfirmX(this,'bit','${embAttr(x.id)}')">×</button></div>
     <div class="emb-bit-txt">${escHtml(x.texto)}</div>
   </div>`).join('');
 }
 function embSecciones(p) {
-  const a = document.getElementById('emb-acts'), b = document.getElementById('emb-bits');
+  const a = document.getElementById('emb-acts'), b = document.getElementById('emb-bits'), e = document.getElementById('emb-enls');
   if (a) a.innerHTML = embActsHtml(p);
   if (b) b.innerHTML = embBitsHtml(p);
+  if (e) e.innerHTML = embEnlHtml(p);
+  renderSidebar();   // el número rojo del menú cuenta las actividades pendientes
 }
 function embActual() { return embEditId ? embList().find(x => x.id === embEditId) : null; }
 function embAddAct() {
@@ -1915,9 +2101,42 @@ function embAddBit() {
   const t = document.getElementById('emb-bit-texto');
   const texto = t.value.trim();
   if (!texto) { showToast('Escribe la novedad'); t.focus(); return; }
-  embLog(p, texto);
+  const c = document.getElementById('emb-bit-contacto');
+  embLog(p, texto, c && c.checked);
+  if (c) c.checked = false;
   t.value = '';
   saveLocal(); embSecciones(p); renderEmbudo(); t.focus();
+}
+function embEnlHtml(p) {
+  const lista = p.enlaces || [];
+  if (!lista.length) return '<div class="emb-none">Sin enlaces. Guarda aquí la propuesta, la carpeta de Drive o el chat de esta empresa.</div>';
+  return lista.map(x => {
+    const href = embUrlSegura(x.url);
+    let host = '';
+    try { host = href ? new URL(href).hostname.replace(/^www\./, '') : ''; } catch (e) {}
+    return `<div class="emb-act">
+      ${href ? `<a class="emb-link" href="${embAttr(href)}" target="_blank" rel="noopener noreferrer">${escHtml(x.nombre || host)}</a>` : `<span class="emb-act-txt">${escHtml(x.nombre)}</span>`}
+      ${host ? `<span class="emb-act-date">${escHtml(host)}</span>` : ''}
+      <button class="emb-x" type="button" title="Eliminar" onclick="embConfirmX(this,'enl','${embAttr(x.id)}')">×</button>
+    </div>`;
+  }).join('');
+}
+function embAddEnl() {
+  const p = embActual(); if (!p) return;
+  const n = document.getElementById('emb-enl-nombre'), u = document.getElementById('emb-enl-url');
+  const href = embUrlSegura(u.value);
+  if (!href) { showToast('⚠️ Escribe una dirección válida (https://…)'); u.focus(); return; }
+  let host = '';
+  try { host = new URL(href).hostname.replace(/^www\./, ''); } catch (e) {}
+  p.enlaces.push({ id: embId('e'), nombre: n.value.trim() || host, url: href });
+  n.value = ''; u.value = '';
+  saveLocal(); embSecciones(p); renderEmbudo(); n.focus();
+}
+function embRefreshWa() {
+  const slot = document.getElementById('emb-wa-slot'), tel = document.getElementById('emb-tel');
+  if (!slot || !tel) return;
+  const u = embWa(tel.value);
+  slot.innerHTML = u ? `<a class="emb-wa" href="${embAttr(u)}" target="_blank" rel="noopener noreferrer">💬 Abrir WhatsApp</a>` : '';
 }
 // Eliminar pide un segundo toque para evitar borrar por error.
 function embConfirmX(btn, tipo, id) {
@@ -1928,6 +2147,7 @@ function embConfirmX(btn, tipo, id) {
   }
   const p = embActual(); if (!p) return;
   if (tipo === 'act') p.actividades = p.actividades.filter(x => x.id !== id);
+  else if (tipo === 'enl') p.enlaces = p.enlaces.filter(x => x.id !== id);
   else p.bitacora = p.bitacora.filter(x => x.id !== id);
   saveLocal(); embSecciones(p); renderEmbudo();
 }
@@ -1936,6 +2156,7 @@ function embDelete() {
   const b = document.getElementById('emb-del');
   if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Toca otra vez para confirmar'; return; }
   state.prospects = embList().filter(x => x.id !== embEditId);
+  renderSidebar();
   document.getElementById('modal').style.display = 'none';
   embEditId = null;
   saveLocal(); renderEmbudo();
@@ -2262,7 +2483,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 function closeModal(e) {
-  if (!e || e.target.id === 'modal') document.getElementById('modal').style.display = 'none';
+  if (!e || e.target.id === 'modal') { document.getElementById('modal').style.display = 'none'; document.getElementById('modal-body').style.maxWidth = ''; }
 }
 
 // ═══════════════════════════════════════════
