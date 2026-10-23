@@ -183,6 +183,52 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .ali-pick-i { font-size: 26px; }
 .ali-pick b { display: block; font-size: 15px; }
 .ali-pick small { display: block; font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+.dash-carr { margin-bottom: 4px; }
+.dash-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.dash-track::-webkit-scrollbar { display: none; }
+.dash-track.arrastrando { scroll-snap-type: none; cursor: grabbing; user-select: none; }
+.dash-page { flex: 0 0 100%; scroll-snap-align: start; scroll-snap-stop: always; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; padding: 4px 2px 14px; box-sizing: border-box; align-content: start; }
+.dash-dots { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 22px; }
+.dash-dot { width: 9px; height: 9px; border-radius: 5px; border: none; background: var(--gray-200); cursor: pointer; padding: 0; transition: width .25s, background .25s; }
+.dark .dash-dot { background: var(--gray-600); }
+.dash-dot.on { width: 24px; background: var(--blue-600); }
+.dash-flecha { width: 30px; height: 30px; border-radius: 50%; border: none; background: white; box-shadow: 0 0 0 1px var(--gray-200); font-size: 18px; line-height: 1; cursor: pointer; color: var(--gray-700); font-family: inherit; padding: 0; }
+.dark .dash-flecha { background: var(--gray-800); box-shadow: 0 0 0 1px var(--gray-600); }
+.dash-flecha:disabled { opacity: .35; cursor: default; }
+.dash-flecha:not(:disabled):hover { background: var(--blue-50); }
+@media (max-width: 760px) { .dash-page { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } }
+@media (max-width: 760px) { .dash-page .stat-value { font-size: clamp(14px, 4.1vw, 18px); letter-spacing: -0.8px; white-space: nowrap; } .dash-page .stat-card { padding: 14px; } }
+.dash-resumen4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 560px) { .dash-resumen4 { grid-template-columns: repeat(2, 1fr); } .dash-resumen { gap: 8px; } }
+.dash-n { display: inline-block; min-width: 18px; padding: 0 6px; margin-left: 4px; border-radius: 999px; background: var(--gray-100); color: var(--gray-600); font-size: 11px; font-weight: 800; text-align: center; letter-spacing: 0; text-transform: none; }
+.dark .dash-n { background: var(--gray-700); }
+.dash-grupo { margin-bottom: 10px; }
+.dash-grupo-t { font-size: 13px; font-weight: 800; color: var(--gray-900); margin: 10px 0 6px; }
+.dt-hecha .ti-name { text-decoration: line-through; color: var(--gray-400); }
+.ig-mes { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.ig-monto { color: var(--green); font-size: 14px; white-space: nowrap; flex: none; }
+.dc-add input[type="date"], .dc-add select { flex: none; }
+.dt-item { padding: 8px 10px; }
+.dt-fila { display: flex; align-items: center; gap: 8px; }
+.dt-main { flex: 1; min-width: 0; cursor: pointer; }
+.dt-main:hover .ti-name { text-decoration: underline; }
+.dt-acts { display: flex; gap: 4px; flex: none; }
+.dt-btn { border: none; background: white; border-radius: 8px; padding: 6px 8px; font-size: 14px; cursor: pointer; line-height: 1; box-shadow: 0 0 0 1px var(--gray-200); font-family: inherit; color: var(--gray-700); }
+.dark .dt-btn { background: var(--gray-800); box-shadow: 0 0 0 1px var(--gray-600); }
+.dt-btn:hover { background: var(--blue-50); }
+.dt-del.armed { background: #FEE2E2; color: var(--red); font-size: 12px; font-weight: 700; box-shadow: 0 0 0 1px var(--red); }
+.dt-panel:not(:empty) { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--gray-200); }
+.dt-rapidos { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.dt-chip { padding: 6px 12px; border-radius: 999px; border: 1.5px solid var(--gray-200); background: white; font-size: 12px; font-weight: 700; cursor: pointer; color: var(--gray-700); font-family: inherit; }
+.dark .dt-chip { background: var(--gray-800); border-color: var(--gray-600); }
+.dt-chip:hover { border-color: var(--blue-600); color: var(--blue-700); }
+.dt-form { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.dt-form input, .dt-form select { padding: 8px 10px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; background: white; color: var(--gray-900); font-family: inherit; outline: none; }
+.dark .dt-form input, .dark .dt-form select { background: var(--gray-700); border-color: var(--gray-600); }
+.dt-edit input[type="text"] { flex: 1 1 100%; }
+.mod-tag { display: inline-block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .3px; padding: 2px 7px; border-radius: 999px; background: var(--gray-100); color: var(--gray-600); margin-left: 6px; vertical-align: 2px; white-space: nowrap; }
+.mod-tag.cap { background: #FEF3C7; color: #92400E; }
+.dark .mod-tag { background: var(--gray-700); } .dark .mod-tag.cap { background: #78350F; color: #FDE68A; }
 .dash-aviso { background: #FEF3C7; color: #92400E; border-radius: 10px; padding: 10px 12px; font-size: 13px; margin-bottom: 12px; }
 .dark .dash-aviso { background: #78350F; color: #FDE68A; }
 .dash-prog { height: 10px; background: var(--gray-100); border-radius: 6px; overflow: hidden; }
@@ -416,6 +462,19 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .emb-proj { font-size: 11px; font-weight: 700; color: #8B5CF6; }
 .emb-chips { display: flex; flex-wrap: wrap; gap: 4px; }
 .emb-chip { font-size: 10px; font-weight: 700; background: var(--gray-100); color: var(--gray-600); border-radius: 999px; padding: 2px 8px; }
+.emb-tareas { border-top: 1px solid var(--gray-200); padding-top: 7px; display: flex; flex-direction: column; gap: 5px; }
+.emb-tarea { display: flex; align-items: flex-start; gap: 6px; font-size: 12px; color: var(--gray-600); overflow-wrap: anywhere; }
+.emb-tarea b { color: var(--gray-900); }
+.emb-tarea.late, .emb-tarea.late b { color: var(--red); }
+.emb-tarea-t { cursor: pointer; flex: 1; min-width: 0; }
+.emb-tarea-t:hover { text-decoration: underline; }
+.emb-ok { flex: none; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--gray-400); background: white; color: transparent; font-size: 11px; line-height: 1; cursor: pointer; padding: 0; margin-top: 1px; }
+.dark .emb-ok { background: var(--gray-800); }
+.emb-ok:hover { border-color: var(--green); color: var(--green); background: #DCFCE7; }
+.emb-vermas { align-self: flex-start; background: none; border: none; padding: 2px 0; font-size: 12px; font-weight: 700; color: var(--blue-600); cursor: pointer; font-family: inherit; }
+.emb-vermas:hover { text-decoration: underline; }
+.emb-act-wrap + .emb-act-wrap { }
+.emb-act-wrap .dt-panel:not(:empty) { margin: 0 0 8px; }
 .emb-next { font-size: 12px; color: var(--gray-600); border-top: 1px solid var(--gray-200); padding-top: 7px; overflow-wrap: anywhere; }
 .emb-next b { color: var(--gray-900); }
 .emb-next.late, .emb-next.late b { color: var(--red); }
@@ -748,6 +807,30 @@ const STATUSES = [
   {key:'exploracion',label:'Exploración',  cls:'status-exploracion'},
   {key:'concepto',  label:'Concepto',      cls:'status-concepto'},
 ];
+// Tipo de cifra de cada proyecto: lo que significa el número de su "Objetivo (COP)".
+const MOD_TIPOS = {
+  ingreso: { n: 'Ingreso esperado (total)', ayuda: 'Lo que esperas ganar con este proyecto. Cuenta en la Meta Total.' },
+  mensual: { n: 'Ingreso mensual (se cuenta × 12 meses)', ayuda: 'La mensualidad. En la Meta Total se cuenta por 12 meses.' },
+  venta:   { n: 'Venta aspirada (total)', ayuda: 'Lo que aspiras vender en total. Cuenta en la Meta Total.' },
+  capital: { n: 'Capital que necesito', ayuda: 'Dinero que necesitas reunir (compra, inversión). NO cuenta como ingreso: se sigue aparte en "Capital requerido".' }
+};
+function modTipo(m) { return MOD_TIPOS[m && m.tipo] ? m.tipo : 'ingreso'; }
+function modEsCapital(m) { return modTipo(m) === 'capital'; }
+// Lo que el proyecto aporta a la Meta Total (el capital no cuenta; lo mensual se multiplica por 12).
+function modAporte(m) {
+  if (modEsCapital(m)) return 0;
+  const v = Number(m.meta) || 0;
+  return modTipo(m) === 'mensual' ? v * 12 : v;
+}
+function totalAsignado() { return (state.modules || []).reduce((t, m) => t + modAporte(m), 0); }
+function totalCapital() { return (state.modules || []).filter(modEsCapital).reduce((t, m) => t + (Number(m.meta) || 0), 0); }
+function capitalAportado(estado) { return aliList().filter(a => a.tipo === 'inversor' && a.estado === estado).reduce((t, a) => t + (Number(a.monto) || 0), 0); }
+function modTag(m) {
+  const t = modTipo(m);
+  if (t === 'ingreso') return '';
+  return `<span class="mod-tag${t === 'capital' ? ' cap' : ''}">${{ mensual: 'por mes', venta: 'venta', capital: 'capital' }[t]}</span>`;
+}
+function modEtiquetaCifra(m) { return { capital: 'Capital requerido', mensual: 'Ingreso mensual', venta: 'Venta aspirada' }[modTipo(m)] || 'Objetivo'; }
 const COLORS = ['#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#EC4899','#06B6D4','#F97316'];
 const MAX_PROJECTS = 22;
 const DEFAULT_SUPABASE = {
@@ -771,6 +854,7 @@ function ensureDefaults() {
   if (!state.notes) state.notes = [];
   if (!state.prospects) state.prospects = [];
   if (!state.aliados) state.aliados = [];
+  if (!state.ingresos) state.ingresos = [];
   if (!state.modules) state.modules = [];
   if (state.dark === undefined) state.dark = false;
 }
@@ -966,7 +1050,7 @@ function renderProfileSwitcher() {
     const active = id === profilesData.activeId;
     return `<div class="profile-menu-item ${active?'active':''}" onclick="switchProfile('${id}')">
       <div class="pm-icon">${initials(p.company)}</div>
-      <div class="pm-name">${p.company || 'Sin nombre'}</div>
+      <div class="pm-name">${escHtml(p.company || 'Sin nombre')}</div>
       ${active ? '<span class="pm-check">✓</span>' : ''}
     </div>`;
   }).join('');
@@ -1028,7 +1112,7 @@ function startNewBusiness() {
 // ═══════════════════════════════════════════
 function renderSidebar() {
   document.getElementById('sb-company').textContent = state.company;
-  const assigned = state.modules.reduce((s,m) => s + (m.meta||0), 0);
+  const assigned = totalAsignado();
   const pct = state.metaTotal ? Math.round(assigned / state.metaTotal * 100) : 0;
   document.getElementById('sb-pct').textContent = pct + '%';
   document.getElementById('sb-bar').style.width = Math.min(pct, 100) + '%';
@@ -1045,7 +1129,7 @@ function renderSidebar() {
   mods.innerHTML = state.modules.map(m => {
     const p = m.tasks.filter(t => !t.done).length;
     return `<div class="nav-item" onclick="goPage('mod_${m.id}')" id="nav-mod_${m.id}">
-      ${m.icon} ${m.name}
+      ${escHtml(m.icon)} ${escHtml(m.name)}
       ${p > 0 ? `<span class="badge">${p}</span>` : ''}
     </div>`;
   }).join('');
@@ -1118,10 +1202,15 @@ function getPageTitle(page) {
 // ═══════════════════════════════════════════
 //  DASHBOARD
 // ═══════════════════════════════════════════
+// 'AAAA-MM-DD' como medianoche LOCAL (new Date('2026-10-22') la toma como UTC y en Colombia cae el día anterior).
+function fechaLocal(s) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s || ''));
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(NaN);
+}
 function getAllTasks() {
   let all = [];
-  state.modules.forEach(m => m.tasks.forEach(t => all.push({...t, projectName: m.name, projectId: m.id})));
-  state.checklist.forEach(t => all.push({...t, projectName: 'Checklist Maestro', projectId: null}));
+  state.modules.forEach(m => m.tasks.forEach(t => all.push({...t, name: escHtml(t.name), projectName: escHtml(m.name), projectId: m.id})));
+  state.checklist.forEach(t => all.push({...t, name: escHtml(t.name), projectName: 'Checklist Maestro', projectId: null}));
   // Actividades del Embudo: se reflejan aquí (Checklist, Dashboard y aviso rojo del menú),
   // pero viven dentro de cada prospecto. Los textos se escapan porque estas listas usan HTML.
   embList().forEach(p => (p.actividades || []).forEach(a => all.push({
@@ -1137,11 +1226,11 @@ function renderDashboard() {
   const in7 = new Date(today); in7.setDate(in7.getDate() + 7);
   const in30 = new Date(today); in30.setDate(in30.getDate() + 30);
   const all = getAllTasks();
-  const overdue = all.filter(t => !t.done && t.date && new Date(t.date) < today);
-  const soon = all.filter(t => !t.done && t.date && new Date(t.date) >= today && new Date(t.date) <= in7);
-  const upcoming = all.filter(t => !t.done && t.date && new Date(t.date) > in7 && new Date(t.date) <= in30);
+  const overdue = all.filter(t => !t.done && t.date && fechaLocal(t.date) < today);
+  const soon = all.filter(t => !t.done && t.date && fechaLocal(t.date) >= today && fechaLocal(t.date) <= in7);
+  const upcoming = all.filter(t => !t.done && t.date && fechaLocal(t.date) > in7 && fechaLocal(t.date) <= in30);
   const done = all.filter(t => t.done);
-  const assigned = state.modules.reduce((s,m) => s + (m.meta||0), 0);
+  const assigned = totalAsignado();
   const pct = state.metaTotal ? Math.round(assigned / state.metaTotal * 100) : 0;
 
   const embAll = embList();
@@ -1156,21 +1245,43 @@ function renderDashboard() {
       <div class="dash-ver">Ver detalle ›</div>
     </div>`;
 
-  let html = `
-  <div class="dash-stats">
-    ${tarjeta('cump', '✅ Tareas cumplidas', done.length, 'de ' + all.length + ' en total', 'var(--green)')}
-    ${tarjeta('pend', 'Tareas pendientes', all.filter(t=>!t.done).length, soon.length + ' por vencer esta semana', 'var(--orange)')}
-    ${tarjeta('venc', '🔴 Tareas vencidas', overdue.length, overdue.length ? 'requieren atención' : 'todo al día', overdue.length ? 'var(--red)' : '')}
-    ${tarjeta('meta', 'Meta Total', fmtCOP(state.metaTotal), 'Plan estratégico', '', true)}
-    ${tarjeta('asig', 'Asignado', fmtCOP(assigned), pct + '% del total · distribución', 'var(--blue-600)', true)}
-    ${tarjeta('proy', 'Proyectos', state.modules.length, state.modules.filter(m=>m.status==='marcha').length + ' en marcha', '')}
-    ${tarjeta('ali', '🤝 Aliados', aliList().length, aliList().length ? ['partner','socio','inversor'].map(k => aliList().filter(a => a.tipo === k).length + ' ' + ALI_TIPOS[k].pl).join(' · ') : 'Agrega el primero', '')}
+  const hoyS = embToday();
+  const paraHoy = all.filter(t => !t.done && t.date === hoyS);
+  const hechasHoy = all.filter(t => t.done && t.doneDate === hoyS);
+  const ingMesAct = ingList().filter(i => String(i.fecha || '').slice(0, 7) === ingMesActual());
+  const ingHoyN = ingSuma(ingList().filter(i => i.fecha === hoyS));
+  const cardEmb = `
     <div class="stat-card dash-click" role="button" tabindex="0" onclick="goPage('embudo')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('embudo')}">
       <div class="stat-label">🧲 Embudo · ingreso mensual</div>
       <div class="stat-value" style="font-size:20px;color:var(--green)">${fmtCOP(embIngresoActivo)}</div>
       <div class="stat-sub">${embEnCurso} en embudo · ${embClientes} clientes activos</div>
       <div class="dash-ver">Abrir embudo ›</div>
-    </div>
+    </div>`;
+  const cards = [
+    tarjeta('hoy', '📅 Tareas de hoy', paraHoy.length, overdue.length + ' vencidas · ' + hechasHoy.length + ' cumplidas hoy', 'var(--blue-600)'),
+    tarjeta('pend', 'Tareas pendientes', all.filter(t=>!t.done).length, soon.length + ' por vencer esta semana', 'var(--orange)'),
+    tarjeta('venc', '🔴 Tareas vencidas', overdue.length, overdue.length ? 'requieren atención' : 'todo al día', overdue.length ? 'var(--red)' : ''),
+    tarjeta('cump', '✅ Tareas cumplidas', done.length, 'de ' + all.length + ' en total', 'var(--green)'),
+    tarjeta('meta', 'Meta Total', fmtCOP(state.metaTotal), 'Ingresos y ventas', '', true),
+    tarjeta('asig', 'Asignado', fmtCOP(assigned), pct + '% de la meta · solo ingresos', 'var(--blue-600)', true),
+    tarjeta('ing', '💰 Ingresos del mes', fmtCOP(ingSuma(ingMesAct)), 'Hoy: ' + fmtCOP(ingHoyN) + ' · ' + ingMesAct.length + (ingMesAct.length === 1 ? ' registro' : ' registros'), 'var(--green)', true),
+    totalCapital() ? tarjeta('cap', '🏦 Capital requerido', fmtCOP(totalCapital()), 'Aportado: ' + fmtCOP(capitalAportado('activo')) + ' (' + Math.round(capitalAportado('activo') / totalCapital() * 100) + '%)', 'var(--orange)', true) : '',
+    tarjeta('proy', 'Proyectos', state.modules.length, state.modules.filter(m=>m.status==='marcha').length + ' en marcha', ''),
+    tarjeta('ali', '🤝 Aliados', aliList().length, aliList().length ? ['partner','socio','inversor'].map(k => aliList().filter(a => a.tipo === k).length + ' ' + ALI_TIPOS[k].pl).join(' · ') : 'Agrega el primero', ''),
+    cardEmb,
+    tarjeta('chk', '☑️ Checklist', all.length, all.filter(t=>!t.done).length + ' pendientes · ' + done.length + ' cumplidas', '')
+  ].filter(Boolean);
+  const paginas = [];
+  for (let i = 0; i < cards.length; i += 4) paginas.push(cards.slice(i, i + 4));
+  if (dashPagina >= paginas.length) dashPagina = 0;
+  let html = `
+  <div class="dash-carr" aria-roledescription="carrusel">
+    <div class="dash-track" id="dash-track">${paginas.map(pg => `<div class="dash-page">${pg.join('')}</div>`).join('')}</div>
+  </div>
+  <div class="dash-dots">
+    <button type="button" class="dash-flecha" id="dash-izq" onclick="dashDesliza(-1)" aria-label="Bloque anterior">‹</button>
+    ${paginas.map((_, k) => `<button type="button" class="dash-dot${k === dashPagina ? ' on' : ''}" onclick="dashIr(${k})" aria-label="Bloque ${k + 1}"></button>`).join('')}
+    <button type="button" class="dash-flecha" id="dash-der" onclick="dashDesliza(1)" aria-label="Bloque siguiente">›</button>
   </div>`;
 
   // Modules grid
@@ -1190,7 +1301,70 @@ function renderDashboard() {
   </div>`;
 
   document.getElementById('page-content').innerHTML = html;
+  dashCarruselInit();
 }
+
+// ── Carrusel del Dashboard: 4 tarjetas por bloque, se desliza a izquierda y derecha ──
+let dashPagina = 0, dashArrastre = null, dashSuprimir = false;
+function dashNumPaginas() { return document.querySelectorAll('#dash-track .dash-page').length; }
+function dashPuntos() {
+  document.querySelectorAll('.dash-dot').forEach((x, k) => x.classList.toggle('on', k === dashPagina));
+  const iz = document.getElementById('dash-izq'), de = document.getElementById('dash-der');
+  if (iz) iz.disabled = dashPagina <= 0;
+  if (de) de.disabled = dashPagina >= dashNumPaginas() - 1;
+}
+function dashIr(i, suave) {
+  const t = document.getElementById('dash-track'); if (!t) return;
+  i = Math.max(0, Math.min(dashNumPaginas() - 1, i));
+  dashPagina = i;
+  t.scrollTo({ left: i * t.clientWidth, behavior: suave === false ? 'auto' : 'smooth' });
+  dashPuntos();
+}
+function dashDesliza(d) { dashIr(dashPagina + d); }
+function dashCarruselInit() {
+  const t = document.getElementById('dash-track'); if (!t) return;
+  t.scrollTo({ left: dashPagina * t.clientWidth, behavior: 'auto' });
+  dashPuntos();
+  let tmr = null;
+  t.addEventListener('scroll', () => {   // el deslizar con el dedo o el trackpad actualiza los puntos
+    clearTimeout(tmr);
+    tmr = setTimeout(() => { if (!dashArrastre && t.clientWidth) { dashPagina = Math.round(t.scrollLeft / t.clientWidth); dashPuntos(); } }, 60);
+  }, { passive: true });
+  // En el computador: también se puede arrastrar con el mouse
+  t.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    dashArrastre = { x: e.clientX, sl: t.scrollLeft, desde: dashPagina, mov: false };
+  });
+  t.addEventListener('pointermove', e => {
+    const a = dashArrastre; if (!a) return;
+    const dx = e.clientX - a.x;
+    if (!a.mov && Math.abs(dx) > 6) { a.mov = true; t.classList.add('arrastrando'); try { t.setPointerCapture(e.pointerId); } catch (x) {} }
+    if (a.mov) t.scrollLeft = a.sl - dx;
+  });
+  const soltar = e => {
+    const a = dashArrastre; if (!a) return;
+    dashArrastre = null; t.classList.remove('arrastrando');
+    if (a.mov) {
+      dashSuprimir = true; setTimeout(() => { dashSuprimir = false; }, 0);
+      const dx = e.clientX - a.x, w = t.clientWidth;
+      dashIr(Math.abs(dx) > w * 0.12 ? a.desde + (dx < 0 ? 1 : -1) : a.desde);
+    }
+  };
+  t.addEventListener('pointerup', soltar);
+  t.addEventListener('pointercancel', soltar);
+  t.addEventListener('click', e => { if (dashSuprimir) { e.stopPropagation(); e.preventDefault(); } }, true);
+}
+document.addEventListener('keydown', e => {
+  if (currentPage !== 'dashboard' || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+  if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  const modal = document.getElementById('modal');
+  if (modal && modal.style.display === 'flex') return;
+  const t = e.target, tag = t && t.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+  e.preventDefault();
+  dashDesliza(e.key === 'ArrowRight' ? 1 : -1);
+});
+window.addEventListener('resize', () => { if (currentPage === 'dashboard') dashIr(dashPagina, false); });
 
 function taskPanel(title, color, tasks, isOverdue = false, isDone = false) {
   return `<div class="task-panel">
@@ -1219,10 +1393,16 @@ function dashAbrir(clave) {
   if (clave === 'ali') { aliLista(); return; }
   if (clave === 'meta') { dashMeta(); return; }
   if (clave === 'proy') { dashProyectos(); return; }
+  if (clave === 'cap') { dashCapital(); return; }
+  if (clave === 'hoy') { dashHoy(); return; }
+  if (clave === 'ing') { dashIngresos(); return; }
+  if (clave === 'chk') { dashChecklist(); return; }
+  if (clave === 'venc' || clave === 'pend' || clave === 'cump') { dashTareasLista(clave); return; }
   if (clave === 'asig') {
-    const assigned = state.modules.reduce((s,m) => s + (m.meta||0), 0);
+    const assigned = totalAsignado();
     const meta = state.metaTotal || 0;
     const libre = meta - assigned;
+    const ing = state.modules.filter(m => !modEsCapital(m));
     titulo = '📊 Distribución del proyecto';
     cuerpo = `
       <div class="dash-resumen">
@@ -1230,33 +1410,19 @@ function dashAbrir(clave) {
         <div><span>Asignado</span><b style="color:var(--blue-600)">${fmtCOP(assigned)}</b></div>
         <div><span>${libre < 0 ? 'Excedido' : 'Sin asignar'}</span><b style="color:${libre < 0 ? 'var(--red)' : 'var(--green)'}">${fmtCOP(Math.abs(libre))}</b></div>
       </div>
-      ${state.modules.length ? `
+      ${ing.length ? `
       <div class="dist-bar">
-        ${state.modules.map((m,i) => {
-          const w = meta ? Math.max((m.meta/meta)*100, 1) : 0;
-          return `<div class="dist-seg" style="flex:${w};background:${COLORS[i%COLORS.length]}" title="${m.name}: ${fmtCOP(m.meta)}"></div>`;
+        ${ing.map((m,i) => {
+          const w = meta ? Math.max((modAporte(m)/meta)*100, 1) : 0;
+          return `<div class="dist-seg" style="flex:${w};background:${COLORS[i%COLORS.length]}" title="${embAttr(m.name)}: ${fmtCOP(modAporte(m))}"></div>`;
         }).join('')}
       </div>
-      ${state.modules.map((m,i) => `<div class="dash-fila">
+      ${ing.map((m,i) => `<div class="dash-fila">
         <div style="width:10px;height:10px;border-radius:3px;flex:none;background:${COLORS[i%COLORS.length]}"></div>
-        <span class="dash-fila-n">${m.name}</span>
-        <span class="dash-fila-p">${meta ? Math.round((m.meta||0)/meta*100) : 0}%</span>
-        <b>${fmtCOP(m.meta)}</b>
+        <span class="dash-fila-n">${escHtml(m.name)}</span>
+        <span class="dash-fila-p">${meta ? Math.round(modAporte(m)/meta*100) : 0}%</span>
+        <b>${fmtCOP(modAporte(m))}</b>
       </div>`).join('')}` : '<div class="empty-panel">Aún no hay proyectos</div>'}`;
-  } else {
-    let lista;
-    if (clave === 'cump') { titulo = '✅ Tareas cumplidas'; lista = all.filter(t => t.done).sort((x,y) => (y.doneDate||'').localeCompare(x.doneDate||'')); }
-    else if (clave === 'venc') { titulo = '🔴 Tareas vencidas'; lista = all.filter(t => !t.done && t.date && new Date(t.date) < today).sort(porFecha); }
-    else { titulo = 'Tareas pendientes'; lista = all.filter(t => !t.done).sort(porFecha); }
-    cuerpo = lista.length ? lista.map(t => {
-      const venc = !t.done && t.date && new Date(t.date) < today;
-      const destino = t.projectId === null ? 'checklist' : String(t.projectId).startsWith('emb:') ? 'embudo' : 'mod_' + t.projectId;
-      return `<div class="task-item dash-tarea" onclick="closeModal();goPage('${destino}')">
-        <div class="ti-name">${t.name}</div>
-        <div class="ti-meta">${t.projectName}${t.date ? ' · <span style="' + (venc ? 'color:var(--red);font-weight:700' : '') + '">' + formatDate(t.date) + '</span>' : ''}${t.done && t.doneDate ? ' · ✅ ' + formatDate(t.doneDate) : ''}</div>
-      </div>`;
-    }).join('') : '<div class="empty-panel">Sin tareas</div>';
-    titulo += ` <span style="color:var(--gray-400);font-weight:600">(${lista.length})</span>`;
   }
   modalFijo(false);
   const m = document.getElementById('modal-body');
@@ -1429,19 +1595,382 @@ function aliEliminar() {
   aliVolver();
 }
 
+// ═══════════════════════════════════════════
+//  MOTOR DE TAREAS: completar, editar, reprogramar y eliminar
+//  (lo usan el Dashboard, las páginas de proyecto y la ficha del Embudo)
+// ═══════════════════════════════════════════
+function fechaMasDias(dias) {
+  const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + dias);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function hoyLocal() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+function isoALocal(iso) {
+  const d = new Date(iso); if (isNaN(d)) return '';
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+// Actividades de un prospecto con la misma forma que una tarea de proyecto
+function tkDeEmb(p) {
+  return (p.actividades || []).map(a => ({
+    id: a.id, name: escHtml(a.texto), date: a.fecha || '', priority: 'media',
+    done: !!a.hecha, doneDate: a.fechaHecha || null,
+    projectName: escHtml('Embudo · ' + p.nombre), projectId: 'emb:' + p.id
+  }));
+}
+function tkDeMod(m) {
+  return (m.tasks || []).map(t => ({ ...t, name: escHtml(t.name), projectName: escHtml(m.name), projectId: m.id }));
+}
+function tkOrden(lista) {
+  return lista.slice().sort((x, y) => (x.done - y.done) || (x.date || '9999').localeCompare(y.date || '9999'));
+}
+const tkListas = {}, tkRefresco = {};
+function tkRegistrar(ctx, lista, fn) { tkListas[ctx] = lista.map(t => ({ pid: t.projectId, id: t.id })); tkRefresco[ctx] = fn; }
+function tkRef(ctx, n) {
+  const r = (tkListas[ctx] || [])[n]; if (!r) return null;
+  if (r.pid && String(r.pid).indexOf('emb:') === 0) {
+    const p = embList().find(x => x.id === String(r.pid).slice(4));
+    const a = p && (p.actividades || []).find(x => x.id === r.id);
+    return a ? { tipo: 'emb', obj: a, dueno: p } : null;
+  }
+  if (r.pid) {
+    const m = state.modules.find(x => x.id === r.pid);
+    const t = m && m.tasks.find(x => x.id === r.id);
+    return t ? { tipo: 'mod', obj: t, dueno: m } : null;
+  }
+  const t = state.checklist.find(x => x.id === r.id);
+  return t ? { tipo: 'cl', obj: t, dueno: null } : null;
+}
+function tkRefrescar(ctx) {
+  saveLocal(); renderSidebar();
+  if (currentPage === 'dashboard') renderDashboard();
+  if (tkRefresco[ctx]) tkRefresco[ctx]();
+}
+// Una fila de tarea con sus botones
+function tkFila(ctx, t, n, hoy, o) {
+  o = o || {};
+  const venc = !t.done && t.date && fechaLocal(t.date) < hoy;
+  const destino = t.projectId === null ? 'checklist' : String(t.projectId).startsWith('emb:') ? 'embudo' : 'mod_' + t.projectId;
+  const meta = `${t.projectName}${t.date ? ' · <span style="' + (venc ? 'color:var(--red);font-weight:700' : '') + '">' + formatDate(t.date) + '</span>' : ' · sin fecha'}${t.done && t.doneDate ? ' · ✅ ' + formatDate(t.doneDate) : ''}`;
+  const nav = o.nav === false ? ' style="cursor:default"' : ` onclick="closeModal();goPage('${destino}')" title="Ir allí"`;
+  return `<div class="task-item dt-item${t.done ? ' dt-hecha' : ''}">
+    <div class="dt-fila">
+      <div class="dt-main"${nav}>
+        <div class="ti-name">${t.name}</div>
+        <div class="ti-meta">${o.sinOrigen ? (t.date ? (venc ? '<span style="color:var(--red);font-weight:700">' + formatDate(t.date) + ' (vencida)</span>' : formatDate(t.date)) : 'sin fecha') : meta}${o.prio && t.priority ? ' · <span class="task-priority p-' + t.priority + '">' + t.priority + '</span>' : ''}${o.sinOrigen && t.done && t.doneDate ? ' · ✅ ' + formatDate(t.doneDate) : ''}</div>
+      </div>
+      <div class="dt-acts">
+        <button type="button" class="dt-btn" title="${t.done ? 'Reabrir' : 'Marcar como cumplida'}" onclick="tkAccion('${ctx}','hecha',${n})">${t.done ? '↩' : '✓'}</button>
+        ${t.done ? '' : `<button type="button" class="dt-btn" title="Reprogramar" onclick="tkAccion('${ctx}','fecha',${n})">📅</button>`}
+        <button type="button" class="dt-btn" title="Editar" onclick="tkAccion('${ctx}','editar',${n})">✏️</button>
+        <button type="button" class="dt-btn dt-del" title="Eliminar" onclick="tkBorrar(this,'${ctx}',${n})">🗑</button>
+      </div>
+    </div>
+    <div class="dt-panel" id="tk-panel-${ctx}-${n}"></div>
+  </div>`;
+}
+function tkAccion(ctx, accion, n) {
+  const ref = tkRef(ctx, n); if (!ref) { if (tkRefresco[ctx]) tkRefresco[ctx](); return; }
+  const o = ref.obj, emb = ref.tipo === 'emb';
+  if (accion === 'hecha') {
+    const hecha = emb ? !!o.hecha : !!o.done;
+    if (emb) { o.hecha = !hecha; o.fechaHecha = hecha ? '' : embToday(); } else { o.done = !hecha; o.doneDate = hecha ? null : embToday(); }
+    showToast(hecha ? '↩ Tarea reabierta' : '✅ Tarea cumplida');
+    tkRefrescar(ctx); return;
+  }
+  const panel = document.getElementById('tk-panel-' + ctx + '-' + n); if (!panel) return;
+  const abierto = panel.dataset.modo === accion;
+  document.querySelectorAll('.dt-panel').forEach(x => { x.innerHTML = ''; x.dataset.modo = ''; });
+  if (abierto) { if (ctx === 'dash') modalFijo(false); return; }
+  if (ctx === 'dash') modalFijo(true);   // con un panel abierto, un clic fuera ya no cierra la ventana
+  panel.dataset.modo = accion;
+  const id = ctx + '-' + n;
+  const nombre = emb ? o.texto : o.name, fecha = (emb ? o.fecha : o.date) || '';
+  if (accion === 'fecha') {
+    panel.innerHTML = `<div class="dt-rapidos">
+        <button type="button" class="dt-chip" onclick="tkFecha('${ctx}',${n},0)">Hoy</button>
+        <button type="button" class="dt-chip" onclick="tkFecha('${ctx}',${n},1)">Mañana</button>
+        <button type="button" class="dt-chip" onclick="tkFecha('${ctx}',${n},3)">+3 días</button>
+        <button type="button" class="dt-chip" onclick="tkFecha('${ctx}',${n},7)">+1 semana</button>
+        <button type="button" class="dt-chip" onclick="tkFecha('${ctx}',${n},30)">+1 mes</button>
+      </div>
+      <div class="dt-form">
+        <input type="date" id="tk-fecha-${id}" value="${embAttr(fecha)}">
+        <button type="button" class="btn-add" onclick="tkFecha('${ctx}',${n},null)">Guardar fecha</button>
+      </div>`;
+  } else {
+    panel.innerHTML = `<div class="dt-form dt-edit">
+        <input type="text" id="tk-nombre-${id}" value="${embAttr(nombre)}" placeholder="Nombre de la tarea" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();tkGuardar('${ctx}',${n});}">
+        <input type="date" id="tk-fecha-${id}" value="${embAttr(fecha)}">
+        ${emb ? '' : `<select id="tk-pri-${id}">${['alta', 'media', 'baja'].map(x => `<option value="${x}" ${o.priority === x ? 'selected' : ''}>${{ alta: 'Prioridad alta', media: 'Prioridad media', baja: 'Prioridad baja' }[x]}</option>`).join('')}</select>`}
+        <button type="button" class="btn-add" onclick="tkGuardar('${ctx}',${n})">Guardar</button>
+        <button type="button" class="dt-chip" onclick="tkAccion('${ctx}','editar',${n})">Cancelar</button>
+      </div>`;
+    const i = document.getElementById('tk-nombre-' + id); if (i) i.focus();
+  }
+}
+function tkFecha(ctx, n, dias) {
+  const ref = tkRef(ctx, n); if (!ref) { if (tkRefresco[ctx]) tkRefresco[ctx](); return; }
+  let f;
+  if (dias === null) {
+    f = document.getElementById('tk-fecha-' + ctx + '-' + n).value;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(f)) { showToast('⚠️ Elige una fecha'); return; }
+  } else f = fechaMasDias(dias);
+  if (ref.tipo === 'emb') ref.obj.fecha = f; else ref.obj.date = f;
+  showToast('📅 Reprogramada para el ' + formatDate(f));
+  tkRefrescar(ctx);
+}
+function tkGuardar(ctx, n) {
+  const ref = tkRef(ctx, n); if (!ref) { if (tkRefresco[ctx]) tkRefresco[ctx](); return; }
+  const id = ctx + '-' + n;
+  const nombre = document.getElementById('tk-nombre-' + id).value.trim();
+  if (!nombre) { showToast('⚠️ Escribe el nombre de la tarea'); return; }
+  const f = document.getElementById('tk-fecha-' + id).value;
+  if (ref.tipo === 'emb') { ref.obj.texto = nombre; ref.obj.fecha = f; }
+  else {
+    ref.obj.name = nombre; ref.obj.date = f;
+    const pr = document.getElementById('tk-pri-' + id); if (pr && ['alta', 'media', 'baja'].indexOf(pr.value) >= 0) ref.obj.priority = pr.value;
+  }
+  showToast('💾 Tarea actualizada');
+  tkRefrescar(ctx);
+}
+// Eliminar pide un segundo toque para evitar borrar por error.
+function tkBorrar(btn, ctx, n) {
+  if (!btn.dataset.armed) {
+    btn.dataset.armed = '1'; btn.textContent = '¿Eliminar?'; btn.classList.add('armed');
+    setTimeout(() => { if (btn.isConnected) { btn.dataset.armed = ''; btn.textContent = '🗑'; btn.classList.remove('armed'); } }, 3000);
+    return;
+  }
+  const ref = tkRef(ctx, n); if (!ref) { if (tkRefresco[ctx]) tkRefresco[ctx](); return; }
+  const id = ref.obj.id;
+  if (ref.tipo === 'emb') ref.dueno.actividades = ref.dueno.actividades.filter(x => x.id !== id);
+  else if (ref.tipo === 'mod') ref.dueno.tasks = ref.dueno.tasks.filter(x => x.id !== id);
+  else state.checklist = state.checklist.filter(x => x.id !== id);
+  showToast('Tarea eliminada');
+  tkRefrescar(ctx);
+}
+
+// ── Listas de tareas del Dashboard (Pendientes, Vencidas, Cumplidas) ──
+function dashTareasLista(clave) {
+  const hoy = embToday(), hoyD = hoyLocal(), all = getAllTasks();
+  let titulo, lista;
+  if (clave === 'cump') { titulo = '✅ Tareas cumplidas'; lista = all.filter(t => t.done).sort((x, y) => (y.doneDate || '').localeCompare(x.doneDate || '')); }
+  else if (clave === 'venc') { titulo = '🔴 Tareas vencidas'; lista = all.filter(t => !t.done && t.date && t.date < hoy).sort((x, y) => x.date.localeCompare(y.date)); }
+  else { titulo = 'Tareas pendientes'; lista = all.filter(t => !t.done).sort((x, y) => (x.date || '9999').localeCompare(y.date || '9999')); }
+  tkRegistrar('dash', lista, () => dashAbrir(clave));
+  setModal(`<h3>${titulo} <span style="color:var(--gray-400);font-weight:600">(${lista.length})</span></h3>
+    ${lista.length ? lista.map((t, n) => tkFila('dash', t, n, hoyD)).join('') : '<div class="empty-panel">Sin tareas</div>'}
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cerrar</button></div>`, 640);
+}
+
+// ── 📅 Tareas de hoy: todo lo del día en una sola ventana ──
+function dashHoy() {
+  const hoy = embToday(), hoyD = hoyLocal(), all = getAllTasks();
+  const porFecha = (a, b) => (a.date || '').localeCompare(b.date || '');
+  const venc = all.filter(t => !t.done && t.date && t.date < hoy).sort(porFecha);
+  const paraHoy = all.filter(t => !t.done && t.date === hoy);
+  const hechas = all.filter(t => t.done && t.doneDate === hoy);
+  const prox = all.filter(t => !t.done && t.date > hoy && t.date <= fechaMasDias(3)).sort(porFecha);
+  const ingHoy = ingList().filter(i => i.fecha === hoy);
+  const novedades = [];
+  embList().forEach(p => (p.bitacora || []).forEach(x => { if (isoALocal(x.fecha) === hoy) novedades.push({ p, x }); }));
+  const flat = [];
+  const fila = (t, o) => { flat.push(t); return tkFila('dash', t, flat.length - 1, hoyD, o); };
+  const sec = (titulo, n, cuerpo) => `<div class="dash-sub">${titulo} <span class="dash-n">${n}</span></div>${cuerpo}`;
+  const vacio = txt => `<div class="empty-panel">${txt}</div>`;
+  const grupos = {}, orden = [];
+  paraHoy.forEach(t => {
+    const emb = String(t.projectId).indexOf('emb:') === 0, k = t.projectId === null ? 'chk' : String(t.projectId);
+    if (!grupos[k]) { grupos[k] = { titulo: t.projectId === null ? '📋 Checklist Maestro' : (emb ? '🧲 ' + t.projectName : '📁 ' + t.projectName), tipo: t.projectId === null ? 2 : emb ? 1 : 0, items: [] }; orden.push(k); }
+    grupos[k].items.push(t);
+  });
+  orden.sort((a, b) => grupos[a].tipo - grupos[b].tipo);
+  const fecha = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' });
+  const totIng = ingHoy.reduce((t, i) => t + (Number(i.monto) || 0), 0);
+  const cuerpo = `
+    <div class="dash-resumen dash-resumen4">
+      <div><span>Para hoy</span><b style="color:var(--blue-600)">${paraHoy.length}</b></div>
+      <div><span>Vencidas</span><b style="color:${venc.length ? 'var(--red)' : 'var(--green)'}">${venc.length}</b></div>
+      <div><span>Cumplidas hoy</span><b style="color:var(--green)">${hechas.length}</b></div>
+      <div><span>Ingresos de hoy</span><b>${fmtCOP(totIng)}</b></div>
+    </div>
+    ${venc.length ? sec('🔴 Vencidas, pendientes de resolver', venc.length, venc.map(t => fila(t)).join('')) : ''}
+    ${sec('📌 Para hoy', paraHoy.length, orden.length ? orden.map(k => `<div class="dash-grupo"><div class="dash-grupo-t">${grupos[k].titulo} <span class="dash-n">${grupos[k].items.length}</span></div>${grupos[k].items.map(t => fila(t, { sinOrigen: true })).join('')}</div>`).join('') : vacio('No tienes tareas con fecha de hoy 🎉'))}
+    ${hechas.length ? sec('✅ Cumplidas hoy', hechas.length, hechas.map(t => fila(t)).join('')) : ''}
+    ${prox.length ? sec('🗓 Próximos 3 días', prox.length, prox.map(t => fila(t)).join('')) : ''}
+    ${sec('💰 Ingresos de hoy', ingHoy.length, (ingHoy.length ? ingHoy.map(i => `<div class="dash-fila"><span class="dash-fila-n">${escHtml(i.concepto || 'Ingreso')} <span class="mod-tag">${escHtml(ingNombreProy(i.pid))}</span></span><b>${fmtCOP(i.monto)}</b></div>`).join('') : vacio('Aún no registras ingresos hoy')) + `<button type="button" class="edit-btn" style="margin-top:8px" onclick="dashAbrir('ing')">+ Registrar ingreso</button>`)}
+    ${sec('📝 Novedades del Embudo hoy', novedades.length, novedades.length ? novedades.map(({ p, x }) => `<div class="dash-fila dash-click-fila" onclick="closeModal();goPage('embudo');embOpen('${embAttr(p.id)}')"><span class="dash-fila-n"><b>${escHtml(p.nombre)}</b> · ${x.contacto ? '📞 ' : ''}${escHtml(x.texto)}</span></div>`).join('') : vacio('Sin novedades registradas hoy'))}`;
+  tkRegistrar('dash', flat, () => dashAbrir('hoy'));
+  setModal(`<h3>📅 Hoy · ${escHtml(fecha.charAt(0).toUpperCase() + fecha.slice(1))}</h3>${cuerpo}
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cerrar</button></div>`, 760);
+}
+
+// ── ☑️ Checklist Maestro dentro del Dashboard ──
+let chkFiltro = 'all';
+function chkSetFiltro(f) { chkFiltro = f; dashChecklist(); }
+function dashChecklist() {
+  const hoy = embToday(), hoyD = hoyLocal(), all = getAllTasks();
+  const cuenta = { all: all.length, pending: all.filter(t => !t.done).length, done: all.filter(t => t.done).length, overdue: all.filter(t => !t.done && t.date && t.date < hoy).length };
+  let lista = chkFiltro === 'pending' ? all.filter(t => !t.done) : chkFiltro === 'done' ? all.filter(t => t.done) : chkFiltro === 'overdue' ? all.filter(t => !t.done && t.date && t.date < hoy) : all;
+  lista = tkOrden(lista);
+  tkRegistrar('dash', lista, () => dashChecklist());
+  const nombres = { all: 'Todas', pending: 'Pendientes', done: 'Cumplidas', overdue: 'Vencidas' };
+  setModal(`<h3>☑️ Checklist Maestro</h3>
+    <div class="dt-form dc-add">
+      <input type="text" id="dc-name" placeholder="Nueva tarea maestra..." autocomplete="off" style="flex:1 1 200px" onkeydown="if(event.key==='Enter'){event.preventDefault();chkAdd();}">
+      <input type="date" id="dc-date">
+      <select id="dc-pri"><option value="media">Media</option><option value="alta">Alta</option><option value="baja">Baja</option></select>
+      <button type="button" class="btn-add" onclick="chkAdd()">+ Agregar</button>
+    </div>
+    <div class="filter-bar" style="margin:12px 0">${['all', 'pending', 'done', 'overdue'].map(f => `<button type="button" class="filter-btn ${chkFiltro === f ? 'active' : ''}" onclick="chkSetFiltro('${f}')">${nombres[f]} (${cuenta[f]})</button>`).join('')}</div>
+    ${lista.length ? lista.map((t, n) => tkFila('dash', t, n, hoyD)).join('') : '<div class="empty-panel">Sin tareas en esta categoría</div>'}
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cerrar</button>
+      <button class="btn-confirm" onclick="closeModal();goPage('checklist')">Abrir la página completa</button>
+    </div>`, 700);
+}
+function chkAdd() {
+  const nombre = document.getElementById('dc-name').value.trim();
+  if (!nombre) { showToast('⚠️ Escribe el nombre de la tarea'); return; }
+  const pri = document.getElementById('dc-pri').value;
+  state.checklist.push({ id: 'cl_' + Date.now(), name: nombre, date: document.getElementById('dc-date').value, priority: ['alta', 'media', 'baja'].indexOf(pri) >= 0 ? pri : 'media', done: false, doneDate: null });
+  saveLocal(); renderSidebar();
+  if (currentPage === 'dashboard') renderDashboard();
+  dashChecklist();
+}
+
+// ── 💰 Ingresos diarios por proyecto (registro manual) ──
+let ingMes = '';
+function ingList() { if (!state.ingresos) state.ingresos = []; return state.ingresos; }
+function ingMesActual() { return embToday().slice(0, 7); }
+function ingNombreMes(ym) {
+  const [y, m] = ym.split('-').map(Number);
+  const t = new Date(y, m - 1, 1).toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+function ingNombreProy(pid) {
+  if (!pid) return 'General';
+  const m = (state.modules || []).find(x => x.id === pid);
+  return m ? m.name : '(proyecto eliminado)';
+}
+function ingSuma(lista) { return lista.reduce((t, i) => t + (Number(i.monto) || 0), 0); }
+function ingMesCambiar(d) {
+  let [y, m] = (ingMes || ingMesActual()).split('-').map(Number);
+  m += d; if (m < 1) { m = 12; y--; } if (m > 12) { m = 1; y++; }
+  ingMes = y + '-' + String(m).padStart(2, '0');
+  dashIngresos();
+}
+function ingRefrescar() {
+  saveLocal();
+  if (currentPage === 'dashboard') renderDashboard();
+  dashIngresos();
+}
+function ingOpciones(sel) {
+  return `<option value="">General (sin proyecto)</option>` + (state.modules || []).map(m => `<option value="${embAttr(m.id)}" ${sel === m.id ? 'selected' : ''}>${escHtml(m.name)}</option>`).join('');
+}
+function dashIngresos() {
+  const ym = ingMes || ingMesActual(); ingMes = ym;
+  const hoy = embToday();
+  const todos = ingList();
+  const mes = todos.filter(i => String(i.fecha || '').slice(0, 7) === ym).sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)) || String(b.id).localeCompare(String(a.id)));
+  const totMes = ingSuma(mes), totHoy = ingSuma(todos.filter(i => i.fecha === hoy)), totAnio = ingSuma(todos.filter(i => String(i.fecha || '').slice(0, 4) === ym.slice(0, 4)));
+  const porProy = {};
+  mes.forEach(i => { const k = i.pid || ''; porProy[k] = (porProy[k] || 0) + (Number(i.monto) || 0); });
+  const claves = Object.keys(porProy).sort((a, b) => porProy[b] - porProy[a]);
+  setModal(`<h3>💰 Ingresos</h3>
+    <div class="ig-mes">
+      <button type="button" class="dt-chip" onclick="ingMesCambiar(-1)" aria-label="Mes anterior">‹</button>
+      <b>${escHtml(ingNombreMes(ym))}</b>
+      <button type="button" class="dt-chip" onclick="ingMesCambiar(1)" aria-label="Mes siguiente">›</button>
+      ${ym !== ingMesActual() ? `<button type="button" class="dt-chip" onclick="ingMes='';dashIngresos()">Ir al mes actual</button>` : ''}
+    </div>
+    <div class="dash-resumen">
+      <div><span>Total del mes</span><b style="color:var(--green);font-size:16px">${fmtCOP(totMes)}</b></div>
+      <div><span>Hoy</span><b>${fmtCOP(totHoy)}</b></div>
+      <div><span>Acumulado ${escHtml(ym.slice(0, 4))}</span><b>${fmtCOP(totAnio)}</b></div>
+    </div>
+    <div class="dash-sub">Registrar un ingreso</div>
+    <div class="dt-form dc-add">
+      <input type="date" id="ig-fecha" value="${hoy}">
+      <select id="ig-proy">${ingOpciones('')}</select>
+      <input type="text" id="ig-concepto" placeholder="Concepto (ej: venta paquete 500 USD)" autocomplete="off" style="flex:1 1 180px">
+      <input type="text" id="ig-monto" placeholder="Monto en pesos" autocomplete="off" inputmode="numeric" style="width:150px" oninput="formatCOPInput(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();ingAdd();}">
+      <button type="button" class="btn-add" onclick="ingAdd()">+ Registrar</button>
+    </div>
+    ${claves.length ? `<div class="dash-sub">Por proyecto en el mes</div>` + claves.map(k => `<div class="dash-fila"><span class="dash-fila-n">${escHtml(ingNombreProy(k))}</span><span class="dash-fila-p">${totMes ? Math.round(porProy[k] / totMes * 100) : 0}%</span><b>${fmtCOP(porProy[k])}</b></div>`).join('') : ''}
+    <div class="dash-sub">Registros del mes <span class="dash-n">${mes.length}</span></div>
+    ${mes.length ? mes.map(i => `<div class="task-item dt-item">
+      <div class="dt-fila">
+        <div class="dt-main" style="cursor:default"><div class="ti-name">${escHtml(i.concepto || 'Ingreso')}</div><div class="ti-meta">${formatDate(i.fecha)} · ${escHtml(ingNombreProy(i.pid))}</div></div>
+        <b class="ig-monto">${fmtCOP(i.monto)}</b>
+        <div class="dt-acts">
+          <button type="button" class="dt-btn" title="Editar" onclick="ingPanel('${embAttr(i.id)}')">✏️</button>
+          <button type="button" class="dt-btn dt-del" title="Eliminar" onclick="ingBorrar(this,'${embAttr(i.id)}')">🗑</button>
+        </div>
+      </div>
+      <div class="dt-panel" id="ig-panel-${embAttr(i.id)}"></div>
+    </div>`).join('') : '<div class="empty-panel">Aún no hay ingresos registrados en este mes</div>'}
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cerrar</button></div>`, 720);
+}
+function ingAdd() {
+  const fecha = document.getElementById('ig-fecha').value;
+  const monto = parseCOP(document.getElementById('ig-monto').value);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) { showToast('⚠️ Elige la fecha'); return; }
+  if (!(monto > 0)) { showToast('⚠️ Escribe un monto mayor que cero'); return; }
+  ingList().push({ id: embId('g'), fecha, pid: document.getElementById('ig-proy').value, concepto: document.getElementById('ig-concepto').value.trim(), monto });
+  ingMes = fecha.slice(0, 7);
+  showToast('💰 Ingreso registrado');
+  ingRefrescar();
+}
+function ingPanel(id) {
+  const i = ingList().find(x => x.id === id); if (!i) return;
+  const panel = document.getElementById('ig-panel-' + id); if (!panel) return;
+  const abierto = panel.dataset.modo === 'e';
+  document.querySelectorAll('.dt-panel').forEach(x => { x.innerHTML = ''; x.dataset.modo = ''; });
+  if (abierto) { modalFijo(false); return; }
+  modalFijo(true); panel.dataset.modo = 'e';
+  const q = embAttr(id);
+  panel.innerHTML = `<div class="dt-form dt-edit">
+    <input type="date" id="ige-fecha-${q}" value="${embAttr(i.fecha)}">
+    <select id="ige-proy-${q}">${ingOpciones(i.pid || '')}</select>
+    <input type="text" id="ige-concepto-${q}" value="${embAttr(i.concepto || '')}" placeholder="Concepto" autocomplete="off">
+    <input type="text" id="ige-monto-${q}" value="${Number(i.monto || 0).toLocaleString('es-CO')}" inputmode="numeric" autocomplete="off" oninput="formatCOPInput(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();ingGuardar('${q}');}">
+    <button type="button" class="btn-add" onclick="ingGuardar('${q}')">Guardar</button>
+    <button type="button" class="dt-chip" onclick="ingPanel('${q}')">Cancelar</button>
+  </div>`;
+}
+function ingGuardar(id) {
+  const i = ingList().find(x => x.id === id); if (!i) return;
+  const fecha = document.getElementById('ige-fecha-' + id).value, monto = parseCOP(document.getElementById('ige-monto-' + id).value);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) { showToast('⚠️ Elige la fecha'); return; }
+  if (!(monto > 0)) { showToast('⚠️ Escribe un monto mayor que cero'); return; }
+  i.fecha = fecha; i.monto = monto; i.pid = document.getElementById('ige-proy-' + id).value; i.concepto = document.getElementById('ige-concepto-' + id).value.trim();
+  ingMes = fecha.slice(0, 7);
+  showToast('💾 Ingreso actualizado');
+  ingRefrescar();
+}
+function ingBorrar(btn, id) {
+  if (!btn.dataset.armed) {
+    btn.dataset.armed = '1'; btn.textContent = '¿Eliminar?'; btn.classList.add('armed');
+    setTimeout(() => { if (btn.isConnected) { btn.dataset.armed = ''; btn.textContent = '🗑'; btn.classList.remove('armed'); } }, 3000);
+    return;
+  }
+  state.ingresos = ingList().filter(x => x.id !== id);
+  showToast('Ingreso eliminado');
+  ingRefrescar();
+}
+
 // Detalle de la Meta Total: de qué está hecha la cifra
 function dashMeta() {
   const meta = state.metaTotal || 0;
   const mods = state.modules || [];
-  const asignado = mods.reduce((t, m) => t + (m.meta || 0), 0);
+  const asignado = totalAsignado();
   const libre = meta - asignado;
   const pct = meta ? Math.round(asignado / meta * 100) : 0;
   const pctDe = v => meta ? (Math.round((v || 0) / meta * 1000) / 10).toLocaleString('es-CO') + '%' : '—';
   const porEstado = STATUSES.map(st => {
-    const g = mods.filter(m => m.status === st.key);
-    return { st, n: g.length, total: g.reduce((t, m) => t + (m.meta || 0), 0) };
+    const g = mods.filter(m => m.status === st.key && !modEsCapital(m));
+    return { st, n: g.length, total: g.reduce((t, m) => t + modAporte(m), 0) };
   }).filter(x => x.n);
-  const orden = mods.map((m, i) => ({ m, i })).sort((a, b) => (b.m.meta || 0) - (a.m.meta || 0));
+  const orden = mods.map((m, i) => ({ m, i })).filter(x => !modEsCapital(x.m)).sort((a, b) => modAporte(b.m) - modAporte(a.m));
   setModal(`<h3>🎯 Meta Total</h3>
     ${meta ? '' : '<div class="dash-aviso">Aún no has definido la Meta Total. Se cambia en Configuración.</div>'}
     <div class="dash-resumen">
@@ -1456,11 +1985,37 @@ function dashMeta() {
     <div class="dash-sub">Por proyecto (de mayor a menor)</div>
     ${orden.length ? orden.map(({ m, i }) => `<div class="dash-fila dash-click-fila" onclick="closeModal();goPage('mod_${m.id}')">
         <div style="width:10px;height:10px;border-radius:3px;flex:none;background:${COLORS[i % COLORS.length]}"></div>
-        <span class="dash-fila-n">${escHtml(m.name)}</span><span class="dash-fila-p">${pctDe(m.meta)}</span><b>${fmtCOP(m.meta)}</b>
+        <span class="dash-fila-n">${escHtml(m.name)}${modTipo(m) === 'mensual' ? ' <span class="mod-tag">' + fmtCOP(m.meta) + ' × 12</span>' : ''}</span><span class="dash-fila-p">${pctDe(modAporte(m))}</span><b>${fmtCOP(modAporte(m))}</b>
       </div>`).join('') : '<div class="empty-panel">Aún no hay proyectos</div>'}
+    ${totalCapital() ? `<div class="dash-sub">Fuera de la meta</div>
+      <div class="dash-fila dash-click-fila" onclick="dashCapital()"><span class="dash-fila-n">🏦 Capital que necesitas reunir (no es ingreso)</span><b>${fmtCOP(totalCapital())}</b></div>` : ''}
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Cerrar</button>
       <button class="btn-confirm" onclick="closeModal();goPage('config')">Cambiar la meta</button>
+    </div>`);
+}
+
+// Capital requerido: lo que necesitas reunir vs. lo que ya aportan los inversores
+function dashCapital() {
+  const req = totalCapital(), act = capitalAportado('activo'), conv = capitalAportado('conversacion');
+  const falta = Math.max(0, req - act), pct = req ? Math.round(act / req * 100) : 0;
+  const proys = (state.modules || []).filter(modEsCapital).sort((a, b) => (b.meta || 0) - (a.meta || 0));
+  const invs = aliList().filter(a => a.tipo === 'inversor').sort((a, b) => (Number(b.monto) || 0) - (Number(a.monto) || 0));
+  setModal(`<h3>🏦 Capital requerido</h3>
+    <div class="dash-resumen">
+      <div><span>Capital requerido</span><b>${fmtCOP(req)}</b></div>
+      <div><span>Aportado (inversores activos)</span><b style="color:var(--green)">${fmtCOP(act)}</b></div>
+      <div><span>Falta por reunir</span><b style="color:${falta ? 'var(--orange)' : 'var(--green)'}">${fmtCOP(falta)}</b></div>
+    </div>
+    <div class="dash-prog"><div style="width:${Math.min(100, pct)}%;background:var(--green)"></div></div>
+    <div class="dash-prog-txt">${pct}% del capital está aportado${conv ? ' · ' + fmtCOP(conv) + ' más en conversación con inversores' : ''}</div>
+    <div class="dash-sub">Proyectos que lo necesitan</div>
+    ${proys.map(m => `<div class="dash-fila dash-click-fila" onclick="closeModal();goPage('mod_${m.id}')"><span class="dash-fila-n">${escHtml(m.name)}</span><span class="dash-fila-p">${req ? Math.round((m.meta || 0) / req * 100) : 0}%</span><b>${fmtCOP(m.meta)}</b></div>`).join('')}
+    <div class="dash-sub">Inversores</div>
+    ${invs.length ? invs.map(a => `<div class="dash-fila dash-click-fila" onclick="aliOpen('${a.id}')"><span class="dash-fila-n">${escHtml(a.nombre)}</span><span class="dash-fila-p">${aliEstadoNombre(a.estado)}</span><b>${fmtCOP(a.monto || 0)}</b></div>`).join('') : '<div class="empty-panel">Aún no hay inversores. Agrégalos con "+ Nuevo" → Inversor.</div>'}
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cerrar</button>
+      <button class="btn-confirm" onclick="aliOpen(null,'inversor')">+ Nuevo inversor</button>
     </div>`);
 }
 
@@ -1476,7 +2031,7 @@ function dashProyectos() {
       <div class="dash-proy-top">
         <span class="dash-proy-i">${m.icon || '📁'}</span>
         <span class="dash-proy-n">${escHtml(m.name)}</span>
-        <b class="dash-proy-m">${fmtCOP(m.meta)}</b>
+        <b class="dash-proy-m">${fmtCOP(m.meta)}${modTag(m)}</b>
       </div>
       ${m.desc ? `<div class="ti-meta" style="margin:2px 0 6px">${escHtml(m.desc)}</div>` : ''}
       <div class="dash-proy-bot">
@@ -1496,11 +2051,11 @@ function dashProyectos() {
     </div>`);
 }
 // Abre la ventana de detalle (ancha) con el contenido dado
-function setModal(html) {
+function setModal(html, ancho) {
   modalFijo(false);
   const m = document.getElementById('modal-body');
   m.innerHTML = html;
-  m.style.maxWidth = '600px';
+  m.style.maxWidth = (ancho || 600) + 'px';
   document.getElementById('modal').style.display = 'flex';
 }
 
@@ -1509,12 +2064,12 @@ function moduleCard(m) {
   const s = STATUSES.find(x => x.key === m.status) || STATUSES[0];
   return `<div class="module-card" onclick="goPage('mod_${m.id}')">
     ${pending > 0 ? `<div class="mc-badge-count">${pending}</div>` : ''}
-    <div class="mc-icon">${m.icon}</div>
-    <div class="mc-name">${m.name}</div>
+    <div class="mc-icon">${escHtml(m.icon)}</div>
+    <div class="mc-name">${escHtml(m.name)}</div>
     <div class="mc-desc">${m.desc || '—'}</div>
     <div class="mc-footer">
       <span class="status-badge ${s.cls}">${s.label}</span>
-      <span class="mc-amount">${fmtCOP(m.meta)}</span>
+      <span class="mc-amount">${fmtCOP(m.meta)}${modTag(m)}</span>
     </div>
   </div>`;
 }
@@ -1534,12 +2089,14 @@ function openModuleModal(mod = null) {
   const isEdit = !!mod;
   let selEmoji = mod ? mod.icon : EMOJIS[state.modules.length % EMOJIS.length];
   let selStatus = mod ? mod.status : 'planificacion';
+  const selTipo = mod ? modTipo(mod) : 'ingreso';
 
   document.getElementById('modal-body').innerHTML = `
     <h3>${isEdit ? 'Editar proyecto' : 'Nuevo proyecto'}</h3>
-    <div class="modal-field"><label>Nombre</label><input type="text" id="mf-name" value="${mod ? mod.name : ''}" placeholder="Nombre del proyecto"></div>
+    <div class="modal-field"><label>Nombre</label><input type="text" id="mf-name" value="${mod ? embAttr(mod.name) : ''}" placeholder="Nombre del proyecto"></div>
     <div class="modal-field"><label>Descripción corta</label><input type="text" id="mf-desc" value="${mod ? mod.desc : ''}" placeholder="Ej: Red Comercial & Retail"></div>
     <div class="modal-field"><label>Objetivo (COP)</label><input type="text" id="mf-meta" value="${mod && mod.meta ? mod.meta.toLocaleString('es-CO') : ''}" placeholder="0" oninput="formatCOPInput(this)"></div>
+    <div class="modal-field"><label>Tipo de cifra</label><select id="mf-tipo" onchange="modTipoAyuda()">${Object.keys(MOD_TIPOS).map(k => `<option value="${k}" ${selTipo === k ? 'selected' : ''}>${MOD_TIPOS[k].n}</option>`).join('')}</select><div id="mf-tipo-ayuda" class="emb-hint" style="margin:6px 0 0">${MOD_TIPOS[selTipo].ayuda}</div></div>
     <div class="modal-field"><label>Estado</label><select id="mf-status">${STATUSES.map(s => `<option value="${s.key}" ${selStatus===s.key?'selected':''}>${s.label}</option>`).join('')}</select></div>
     <div class="modal-field"><label>Ícono</label><div class="emoji-grid" id="eg">${EMOJIS.map(e => `<button class="emoji-btn ${e===selEmoji?'selected':''}" onclick="selectEmoji('${e}')">${e}</button>`).join('')}</div></div>
     ${isEdit ? `<button onclick="deleteModule('${mod.id}')" style="width:100%;padding:10px;background:#FEE2E2;color:var(--red);border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;">🗑 Eliminar proyecto</button>` : ''}
@@ -1551,6 +2108,10 @@ function openModuleModal(mod = null) {
   document.getElementById('modal').style.display = 'flex';
   window._selEmoji = selEmoji;
 }
+function modTipoAyuda() {
+  const t = document.getElementById('mf-tipo').value, a = document.getElementById('mf-tipo-ayuda');
+  if (a && MOD_TIPOS[t]) a.textContent = MOD_TIPOS[t].ayuda;
+}
 function selectEmoji(e) {
   window._selEmoji = e;
   document.querySelectorAll('.emoji-btn').forEach(b => b.classList.toggle('selected', b.textContent === e));
@@ -1561,11 +2122,12 @@ function saveModule(id) {
   const meta = parseCOP(document.getElementById('mf-meta').value);
   const desc = document.getElementById('mf-desc').value.trim();
   const status = document.getElementById('mf-status').value;
+  const tipo = MOD_TIPOS[document.getElementById('mf-tipo').value] ? document.getElementById('mf-tipo').value : 'ingreso';
   if (id) {
     const m = state.modules.find(x => x.id === id);
-    Object.assign(m, { name, desc, icon: window._selEmoji, status, meta });
+    Object.assign(m, { name, desc, icon: window._selEmoji, status, meta, tipo });
   } else {
-    state.modules.push({ id: 'mod_' + Date.now(), name, desc, icon: window._selEmoji, status, meta, tasks: [] });
+    state.modules.push({ id: 'mod_' + Date.now(), name, desc, icon: window._selEmoji, status, meta, tipo, tasks: [] });
   }
   closeModal(); saveLocal(); renderSidebar(); goPage(currentPage);
 }
@@ -1588,17 +2150,17 @@ function renderModule(id) {
   const html = `
   <div class="project-header">
     <div class="ph-top">
-      <div class="ph-icon">${m.icon}</div>
+      <div class="ph-icon">${escHtml(m.icon)}</div>
       <div class="ph-info">
-        <div class="ph-name">${m.name}</div>
+        <div class="ph-name">${escHtml(m.name)}</div>
         <div class="ph-desc">${m.desc || '—'}</div>
       </div>
       <button class="edit-btn" onclick="openEditModule('${m.id}')">✏️ Editar</button>
     </div>
     <div class="ph-meta">
       <div>
-        <div style="font-size:12px;color:var(--gray-400);margin-bottom:2px;">Objetivo</div>
-        <div class="ph-amount">${fmtCOP(m.meta)}</div>
+        <div style="font-size:12px;color:var(--gray-400);margin-bottom:2px;">${modEtiquetaCifra(m)}</div>
+        <div class="ph-amount">${fmtCOP(m.meta)}${modTag(m)}</div>
       </div>
       <div>
         <span class="status-badge ${s.cls}">${s.label}</span>
@@ -1632,25 +2194,41 @@ function renderModule(id) {
     </div>
   </div>`;
 
-  document.getElementById('page-content').innerHTML = html;
+  document.getElementById('page-content').innerHTML = html + modEmbudoHtml(m);
 }
 
 function renderTaskList(tasks, modId) {
-  if (!tasks.length) return `<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:14px;">Sin tareas aún. ¡Agrega la primera!</div>`;
-  const today = new Date(); today.setHours(0,0,0,0);
-  return tasks.map(t => {
-    const isOverdue = !t.done && t.date && new Date(t.date) < today;
-    return `<div class="task-row ${t.done ? 'done' : ''}">
-      <div class="task-check ${t.done ? 'checked' : ''}" onclick="toggleTask('${modId}','${t.id}')">
-        ${t.done ? '✓' : ''}
-      </div>
-      <div class="task-name">${t.name}</div>
-      ${t.date ? `<div class="task-date ${isOverdue ? 'overdue' : ''}">${formatDate(t.date)}</div>` : ''}
-      <span class="task-priority p-${t.priority}">${t.priority}</span>
-      ${t.done && t.doneDate ? `<div class="task-done-date">✅ ${formatDate(t.doneDate)}</div>` : ''}
-      <button class="task-del" onclick="deleteTask('${modId}','${t.id}')">×</button>
-    </div>`;
-  }).join('');
+  const m = state.modules.find(x => x.id === modId); if (!m) return '';
+  const items = tkOrden(tkDeMod(m));
+  tkRegistrar('modt', items, () => renderModule(modId));
+  if (!items.length) return `<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:14px;">Sin tareas aún. ¡Agrega la primera!</div>`;
+  const hoyD = hoyLocal();
+  return items.map((t, n) => tkFila('modt', t, n, hoyD, { nav: false, sinOrigen: true, prio: true })).join('');
+}
+// Actividades del prospecto vinculado a este proyecto (las mismas que ve en el Embudo)
+function modEmbudoHtml(m) {
+  const pe = embList().find(p => p.moduleId === m.id); if (!pe) return '';
+  const items = tkOrden(tkDeEmb(pe));
+  tkRegistrar('mod', items, () => renderModule(m.id));
+  const hoyD = hoyLocal();
+  return `<div class="card" style="margin-top:16px">
+    <div class="card-title">🧲 Actividades del Embudo · ${escHtml(pe.nombre)}
+      <button type="button" class="edit-btn" style="margin-left:8px" onclick="goPage('embudo');embOpen('${embAttr(pe.id)}')">Abrir la ficha</button></div>
+    <div class="emb-hint" style="margin:-4px 0 12px">Son las mismas actividades de la ficha del prospecto: lo que cambies aquí cambia allá.</div>
+    <div class="task-form">
+      <input type="text" id="ma-texto-${embAttr(m.id)}" placeholder="Nueva actividad del embudo..." autocomplete="off" onkeydown="if(event.key==='Enter')modAddAct('${embAttr(m.id)}')">
+      <input type="date" id="ma-fecha-${embAttr(m.id)}">
+      <button class="btn-add" onclick="modAddAct('${embAttr(m.id)}')">+ Agregar</button>
+    </div>
+    <div class="tasks-list">${items.length ? items.map((t, n) => tkFila('mod', t, n, hoyD, { nav: false, sinOrigen: true })).join('') : '<div style="text-align:center;padding:18px;color:var(--gray-400);font-size:14px;">Sin actividades en el embudo.</div>'}</div>
+  </div>`;
+}
+function modAddAct(modId) {
+  const m = state.modules.find(x => x.id === modId); const pe = m && embList().find(p => p.moduleId === modId); if (!pe) return;
+  const texto = document.getElementById('ma-texto-' + modId).value.trim();
+  if (!texto) { showToast('Escribe la actividad'); return; }
+  pe.actividades.push({ id: embId('a'), texto, fecha: document.getElementById('ma-fecha-' + modId).value, hecha: false, fechaHecha: '' });
+  saveLocal(); renderSidebar(); renderModule(modId);
 }
 
 function addTask(modId) {
@@ -1675,7 +2253,7 @@ function toggleTask(modId, taskId) {
   const m = state.modules.find(x => x.id === modId);
   const t = m.tasks.find(x => x.id === taskId);
   t.done = !t.done;
-  t.doneDate = t.done ? new Date().toISOString().split('T')[0] : null;
+  t.doneDate = t.done ? embToday() : null;
   saveLocal(); renderSidebar();
   document.getElementById(`tasks-list-${modId}`).innerHTML = renderTaskList(m.tasks, modId);
 }
@@ -1718,10 +2296,10 @@ function renderChecklistItems() {
   let tasks = getAllTasks();
   if (checkFilter === 'pending') tasks = tasks.filter(t => !t.done);
   else if (checkFilter === 'done') tasks = tasks.filter(t => t.done);
-  else if (checkFilter === 'overdue') tasks = tasks.filter(t => !t.done && t.date && new Date(t.date) < today);
+  else if (checkFilter === 'overdue') tasks = tasks.filter(t => !t.done && t.date && fechaLocal(t.date) < today);
   if (!tasks.length) return `<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:14px;">Sin tareas en esta categoría.</div>`;
   return tasks.map(t => {
-    const isOverdue = !t.done && t.date && new Date(t.date) < today;
+    const isOverdue = !t.done && t.date && fechaLocal(t.date) < today;
     const pid = t.projectId || '';
     return `<div class="task-row ${t.done?'done':''}">
       <div class="task-check ${t.done?'checked':''}" onclick="toggleCL('${pid}','${t.id}')">${t.done?'✓':''}</div>
@@ -1769,7 +2347,7 @@ function toggleCL(projectId, id) {
   }
   if (!t) return;
   t.done = !t.done;
-  t.doneDate = t.done ? new Date().toISOString().split('T')[0] : null;
+  t.doneDate = t.done ? embToday() : null;
   saveLocal(); renderSidebar();
   document.getElementById('cl-list').innerHTML = renderChecklistItems();
 }
@@ -1816,7 +2394,7 @@ function renderNotas() {
 function addNote() {
   const body = document.getElementById('nt-body').value.trim();
   if (!body) return;
-  state.notes.push({ id: 'n_'+Date.now(), title: document.getElementById('nt-title').value.trim(), body, date: new Date().toISOString().split('T')[0] });
+  state.notes.push({ id: 'n_'+Date.now(), title: document.getElementById('nt-title').value.trim(), body, date: embToday() });
   document.getElementById('nt-title').value = '';
   document.getElementById('nt-body').value = '';
   saveLocal(); renderNotas();
@@ -1986,7 +2564,7 @@ function renderEmbudo() {
     if (p.etapa === 'activo' || p.etapa === 'arranque') activo += m;
     else if (p.etapa !== 'diseno' && p.etapa !== 'perdido') embudo += m;
   });
-  const pendientes = (state.modules || []).filter(m => !list.some(p => p.moduleId === m.id)).length;
+  const pendientes = (state.modules || []).filter(m => !modEsCapital(m) && !list.some(p => p.moduleId === m.id)).length;
 
   const header = `
   <div class="emb-top">
@@ -2081,7 +2659,7 @@ function embCard(p, idx) {
     </div>
     ${p.servicios && p.servicios.length ? `<div class="emb-chips">${p.servicios.map(s => `<span class="emb-chip">${escHtml(s)}</span>`).join('')}</div>` : ''}
     ${meta ? `<div class="emb-meta">${meta}</div>` : ''}
-    ${sig ? `<div class="emb-next${late ? ' late' : ''}">✅ <b>${sig.fecha ? formatDate(sig.fecha) + (late ? ' (vencida)' : '') : 'Pendiente'}</b> · ${escHtml(sig.texto)}${pend.length > 1 ? ` <span class="emb-more">+${pend.length - 1} más</span>` : ''}</div>` : ''}
+    ${pend.length ? embTareasHtml(p, pend, id) : ''}
     ${ultima ? `<div class="emb-last">📝 ${embFechaCorta(ultima.fecha)} · ${escHtml(ultima.texto)}</div>` : ''}
     ${p.etapa === 'perdido' && p.motivoPerdido ? `<div class="emb-rubro"><b>Motivo:</b> ${escHtml(p.motivoPerdido)}</div>` : ''}
     <div class="emb-btns">
@@ -2181,7 +2759,7 @@ function embImportModules() {
   const list = embList();
   let n = 0;
   (state.modules || []).forEach(m => {
-    if (list.some(p => p.moduleId === m.id)) return;
+    if (modEsCapital(m) || list.some(p => p.moduleId === m.id)) return;
     const meta = Number(m.meta) || 0;
     // En Marcha = cliente activo. Sin valor, o con un valor de proyecto
     // muy grande (100 millones o más), queda "En diseño" y el valor pasa
@@ -2206,6 +2784,7 @@ function embImportModules() {
 
 function embOpen(id, etapaForzada) {
   embEditId = id || null;
+  embActsExp = false;
   const p = id ? embList().find(x => x.id === id) : null;
   const v = (k, d) => embAttr(p && p[k] != null ? p[k] : (d == null ? '' : d));
   const etapa = etapaForzada || (p ? p.etapa : 'prospecto');
@@ -2238,6 +2817,7 @@ function embOpen(id, etapaForzada) {
       <input type="text" id="emb-resp" list="emb-resp-list" value="${v('responsable')}" placeholder="Quién le hace el seguimiento" autocomplete="off">
       <datalist id="emb-resp-list">${embResponsables().map(r => `<option value="${embAttr(r)}">`).join('')}</datalist>
     </div>
+    <div class="modal-field"><label>Proyecto vinculado <span class="emb-hint">sus tareas se ven también aquí</span></label><select id="emb-modulo"><option value="">(ninguno)</option>${(state.modules || []).map(m => `<option value="${embAttr(m.id)}" ${p && p.moduleId === m.id ? 'selected' : ''}>${escHtml(m.name)}</option>`).join('')}</select></div>
     ${p ? `
     <div class="emb-sec">
       <div class="emb-sec-title">✅ Actividades por hacer</div>
@@ -2248,6 +2828,15 @@ function embOpen(id, etapaForzada) {
       </div>
       <div id="emb-acts">${embActsHtml(p)}</div>
     </div>
+    ${p.moduleId && state.modules.find(x => x.id === p.moduleId) ? `<div class="emb-sec">
+      <div class="emb-sec-title">📁 Tareas del proyecto <span class="emb-hint">${escHtml(state.modules.find(x => x.id === p.moduleId).name)} · las mismas de la página del proyecto</span></div>
+      <div class="emb-addrow">
+        <input type="text" id="ept-nombre" placeholder="Nueva tarea del proyecto" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();embAddTareaProy();}">
+        <input type="date" id="ept-fecha" title="Fecha límite (opcional)">
+        <button class="btn-add" type="button" onclick="embAddTareaProy()">+ Agregar</button>
+      </div>
+      <div id="emb-ptareas">${embProyTareasHtml(p)}</div>
+    </div>` : ''}
     <div class="emb-sec">
       <div class="emb-sec-title">📝 Novedades</div>
       <div class="emb-addrow">
@@ -2333,6 +2922,7 @@ function embSave() {
     email: document.getElementById('emb-email').value.trim(),
     ciudad: document.getElementById('emb-ciudad').value.trim(),
     responsable: document.getElementById('emb-resp').value.trim(),
+    moduleId: document.getElementById('emb-modulo').value,
     motivoPerdido: document.getElementById('emb-motivo').value.trim(),
     notas: document.getElementById('emb-notas').value.trim()
   };
@@ -2345,9 +2935,11 @@ function embSave() {
         (data.etapa === 'perdido' && data.motivoPerdido ? '. Motivo: ' + data.motivoPerdido : ''));
     }
     Object.assign(cur, data);
+    if (!cur.moduleId) delete cur.moduleId;
   } else {
     nuevoId = 'p_' + Date.now();
     list.push(Object.assign({ id: nuevoId, desde: new Date().toISOString(), actividades: [], bitacora: [], enlaces: [] }, data));
+    if (!list[list.length - 1].moduleId) delete list[list.length - 1].moduleId;
   }
   saveLocal(); renderEmbudo();
   if (nuevoId) {            // un prospecto nuevo se vuelve a abrir para cargarle actividades
@@ -2360,6 +2952,98 @@ function embSave() {
 }
 
 // ── Actividades y novedades de cada prospecto (se guardan al instante) ──
+// Tareas pendientes en la tarjeta: se ven hasta 3 y el resto se despliega.
+const EMB_TAREAS_VISIBLES = 3;
+let embExpand = {};
+function embTareasHtml(p, pend, id) {
+  const hoy = embToday(), exp = !!embExpand[p.id];
+  const vis = exp ? pend : pend.slice(0, EMB_TAREAS_VISIBLES);
+  return `<div class="emb-tareas">` + vis.map(a => {
+    const late = a.fecha && a.fecha < hoy;
+    return `<div class="emb-tarea${late ? ' late' : ''}">
+      <button type="button" class="emb-ok" title="Marcar como cumplida" onclick="embCardHecha('${id}','${embAttr(a.id)}')">○</button>
+      <span class="emb-tarea-t" onclick="embOpen('${id}')" title="Abrir la ficha"><b>${a.fecha ? formatDate(a.fecha) + (late ? ' (vencida)' : '') : 'Pendiente'}</b> · ${escHtml(a.texto)}</span>
+    </div>`;
+  }).join('') + (pend.length > EMB_TAREAS_VISIBLES
+    ? `<button type="button" class="emb-vermas" onclick="embToggleTareas('${id}')">${exp ? 'Ver menos ▴' : 'Ver ' + (pend.length - EMB_TAREAS_VISIBLES) + ' más ▾'}</button>` : '') + `</div>`;
+}
+function embToggleTareas(id) { embExpand[id] = !embExpand[id]; renderEmbudo(); }
+function embCardHecha(id, aid) {
+  const p = embList().find(x => x.id === id); const a = p && (p.actividades || []).find(x => x.id === aid);
+  if (!a) return;
+  a.hecha = true; a.fechaHecha = embToday();
+  saveLocal(); renderSidebar(); renderEmbudo();
+  showToast('✅ Tarea cumplida');
+}
+// Editar y reprogramar una actividad dentro de la ficha
+function embActPanel(aid, modo) {
+  const p = embActual(); const a = p && p.actividades.find(x => x.id === aid); if (!a) return;
+  const panel = document.getElementById('ea-panel-' + aid); if (!panel) return;
+  const abierto = panel.dataset.modo === modo;
+  document.querySelectorAll('.ea-panel').forEach(x => { x.innerHTML = ''; x.dataset.modo = ''; });
+  if (abierto) return;
+  panel.dataset.modo = modo;
+  const q = embAttr(aid);
+  if (modo === 'fecha') {
+    panel.innerHTML = `<div class="dt-rapidos">
+        <button type="button" class="dt-chip" onclick="embActFecha('${q}',0)">Hoy</button>
+        <button type="button" class="dt-chip" onclick="embActFecha('${q}',1)">Mañana</button>
+        <button type="button" class="dt-chip" onclick="embActFecha('${q}',3)">+3 días</button>
+        <button type="button" class="dt-chip" onclick="embActFecha('${q}',7)">+1 semana</button>
+        <button type="button" class="dt-chip" onclick="embActFecha('${q}',30)">+1 mes</button>
+      </div>
+      <div class="dt-form"><input type="date" id="ea-fecha-${q}" value="${embAttr(a.fecha || '')}"><button type="button" class="btn-add" onclick="embActFecha('${q}',null)">Guardar fecha</button></div>`;
+  } else {
+    panel.innerHTML = `<div class="dt-form dt-edit">
+        <input type="text" id="ea-nombre-${q}" value="${embAttr(a.texto)}" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();embActGuardar('${q}');}">
+        <input type="date" id="ea-fecha-${q}" value="${embAttr(a.fecha || '')}">
+        <button type="button" class="btn-add" onclick="embActGuardar('${q}')">Guardar</button>
+        <button type="button" class="dt-chip" onclick="embActPanel('${q}','editar')">Cancelar</button>
+      </div>`;
+    const i = document.getElementById('ea-nombre-' + aid); if (i) i.focus();
+  }
+}
+function embActFecha(aid, dias) {
+  const p = embActual(); const a = p && p.actividades.find(x => x.id === aid); if (!a) return;
+  let f;
+  if (dias === null) {
+    f = document.getElementById('ea-fecha-' + aid).value;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(f)) { showToast('⚠️ Elige una fecha'); return; }
+  } else f = fechaMasDias(dias);
+  a.fecha = f;
+  saveLocal(); embSecciones(p); renderEmbudo();
+  showToast('📅 Reprogramada para el ' + formatDate(f));
+}
+function embActGuardar(aid) {
+  const p = embActual(); const a = p && p.actividades.find(x => x.id === aid); if (!a) return;
+  const t = document.getElementById('ea-nombre-' + aid).value.trim();
+  if (!t) { showToast('⚠️ Escribe el nombre de la actividad'); return; }
+  a.texto = t; a.fecha = document.getElementById('ea-fecha-' + aid).value;
+  saveLocal(); embSecciones(p); renderEmbudo();
+  showToast('💾 Actividad actualizada');
+}
+
+let embActsExp = false;
+function embActsToggle() { embActsExp = !embActsExp; const p = embActual(); if (p) embSecciones(p); }
+// Tareas del proyecto vinculado (las mismas de la página del proyecto)
+function embProyTareasHtml(p) {
+  const m = p.moduleId && state.modules.find(x => x.id === p.moduleId); if (!m) return '';
+  const items = tkOrden(tkDeMod(m));
+  tkRegistrar('ficha', items, () => { const e = document.getElementById('emb-ptareas'), pa = embActual(); if (e && pa) e.innerHTML = embProyTareasHtml(pa); });
+  const hoyD = hoyLocal();
+  return items.length ? items.map((t, n) => tkFila('ficha', t, n, hoyD, { nav: false, sinOrigen: true, prio: true })).join('') : '<div class="emb-none">Este proyecto aún no tiene tareas.</div>';
+}
+function embAddTareaProy() {
+  const p = embActual(); const m = p && p.moduleId && state.modules.find(x => x.id === p.moduleId); if (!m) return;
+  const n = document.getElementById('ept-nombre'), f = document.getElementById('ept-fecha');
+  const nombre = n.value.trim(); if (!nombre) { showToast('Escribe la tarea'); n.focus(); return; }
+  m.tasks.push({ id: 't_' + Date.now(), name: nombre, date: f.value, priority: 'media', done: false, doneDate: null });
+  n.value = ''; f.value = '';
+  saveLocal(); renderSidebar();
+  if (currentPage === 'dashboard') renderDashboard();
+  const e = document.getElementById('emb-ptareas'); if (e) e.innerHTML = embProyTareasHtml(p);
+  n.focus();
+}
 function embActsHtml(p) {
   const pend = embPendientes(p);
   const hechas = (p.actividades || []).filter(a => a.hecha)
@@ -2369,13 +3053,17 @@ function embActsHtml(p) {
   const fila = a => {
     const late = !a.hecha && a.fecha && a.fecha < hoy;
     const aid = embAttr(a.id);
-    return `<div class="emb-act${a.hecha ? ' done' : ''}">
+    return `<div class="emb-act-wrap"><div class="emb-act${a.hecha ? ' done' : ''}">
       <label class="emb-actl"><input type="checkbox"${a.hecha ? ' checked' : ''} onchange="embToggleAct('${aid}')"><span class="emb-act-txt">${escHtml(a.texto)}</span></label>
       ${a.fecha ? `<span class="emb-act-date${late ? ' late' : ''}">${formatDate(a.fecha)}${late ? ' (vencida)' : ''}</span>` : ''}
+      <button class="emb-x" type="button" title="Reprogramar" onclick="embActPanel('${aid}','fecha')">📅</button>
+      <button class="emb-x" type="button" title="Editar" onclick="embActPanel('${aid}','editar')">✏️</button>
       <button class="emb-x" type="button" title="Eliminar" onclick="embConfirmX(this,'act','${aid}')">×</button>
-    </div>`;
+    </div><div class="dt-panel ea-panel" id="ea-panel-${aid}"></div></div>`;
   };
-  return pend.map(fila).join('') +
+  const vis = embActsExp ? pend : pend.slice(0, EMB_TAREAS_VISIBLES);
+  return vis.map(fila).join('') +
+    (pend.length > EMB_TAREAS_VISIBLES ? `<button type="button" class="emb-vermas" onclick="embActsToggle()">${embActsExp ? 'Ver menos ▴' : 'Ver ' + (pend.length - EMB_TAREAS_VISIBLES) + ' más ▾'}</button>` : '') +
     (hechas.length ? `<div class="emb-sub2">Hechas (${hechas.length})</div>` + hechas.slice(0, 10).map(fila).join('') : '');
 }
 function embBitsHtml(p) {
@@ -2391,6 +3079,7 @@ function embSecciones(p) {
   if (a) a.innerHTML = embActsHtml(p);
   if (b) b.innerHTML = embBitsHtml(p);
   if (e) e.innerHTML = embEnlHtml(p);
+  const pt = document.getElementById('emb-ptareas'); if (pt) pt.innerHTML = embProyTareasHtml(p);
   const dc = document.getElementById('emb-docs'); if (dc) dc.innerHTML = embDocsHtml(p);
   renderSidebar();   // el número rojo del menú cuenta las actividades pendientes
 }
@@ -2944,7 +3633,7 @@ function printReport() {
   <div class="meta">Meta total: ${fmtCOP(state.metaTotal)}</div>`;
 
   state.modules.forEach(m => {
-    html += `<h2>${m.icon} ${m.name} — ${fmtCOP(m.meta)}</h2>`;
+    html += `<h2>${escHtml(m.icon)} ${escHtml(m.name)} — ${fmtCOP(m.meta)}</h2>`;
     if (!m.tasks.length) { html += `<p style="font-size:12px;color:#999">Sin tareas registradas.</p>`; return; }
     html += `<table><tr><th>Tarea</th><th>Fecha</th><th>Prioridad</th><th>Estado</th><th>Cumplida</th></tr>`;
     m.tasks.forEach(t => {
