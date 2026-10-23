@@ -466,6 +466,9 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .emb-tarea { display: flex; align-items: flex-start; gap: 6px; font-size: 12px; color: var(--gray-600); overflow-wrap: anywhere; }
 .emb-tarea b { color: var(--gray-900); }
 .emb-tarea.late, .emb-tarea.late b { color: var(--red); }
+/* Tareas activas (pendientes) en verde; las vencidas siguen en rojo */
+.emb-tarea:not(.late), .emb-tarea:not(.late) b { color: #047857; }
+.dark .emb-tarea:not(.late), .dark .emb-tarea:not(.late) b { color: #34D399; }
 .emb-tarea-t { cursor: pointer; flex: 1; min-width: 0; }
 .emb-tarea-t:hover { text-decoration: underline; }
 .emb-ok { flex: none; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--gray-400); background: white; color: transparent; font-size: 11px; line-height: 1; cursor: pointer; padding: 0; margin-top: 1px; }
