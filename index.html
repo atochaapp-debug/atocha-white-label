@@ -495,7 +495,16 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .emb-tpl-text { font-size: 13px; color: var(--gray-800); white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 10px; }
 .emb-del { background: none; border: none; color: var(--red); font-size: 13px; font-weight: 700; cursor: pointer; padding: 8px 0; margin-top: 10px; }
 .emb-btns { display: flex; flex-wrap: wrap; gap: 6px; }
-.emb-move.sec { background: var(--gray-100); color: var(--gray-600); }
+/* "Marcar perdido": enlace discreto, a la derecha */
+.emb-move.sec { background: none; padding: 6px 2px; margin-left: auto; font-size: 11px; font-weight: 600; color: var(--gray-400); text-decoration: underline; }
+.emb-tel { font-weight: 700; color: inherit; text-decoration: underline; }
+.emb-tel-c { margin-left: 3px; text-decoration: none; font-size: 11px; }
+.emb-col-alertas { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+.emb-col-late, .emb-col-warn { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 8px; }
+.emb-col-late { background: #FEE2E2; color: #991B1B; }
+.emb-col-warn { background: #FEF3C7; color: #92400E; }
+.dark .emb-col-late { background: #7F1D1D; color: #FECACA; }
+.dark .emb-col-warn { background: #78350F; color: #FDE68A; }
 .emb-move.sec:hover { color: var(--red); }
 /* Menú izquierdo oculto en computador: más espacio para el tablero */
 .main { transition: margin-left .3s; }
@@ -2417,6 +2426,57 @@ const EMB_SERVICES = ['Trabajo virtual', 'Marketing', 'Apps'];
 const EMB_DIAS_ALERTA = 7;    // amarillo desde 7 días sin novedad
 const EMB_DIAS_ROJO = 14;     // rojo desde 14
 const EMB_ETAPAS_ALERTA = ['prospecto', 'contactado', 'reunion', 'propuesta', 'negociacion'];
+const EMB_ETAPAS_ACCION = ['contactado', 'reunion', 'propuesta', 'negociacion'];   // aquí siempre debe haber una tarea pendiente
+
+// Días entre hoy y una fecha 'AAAA-MM-DD' (negativo = ya pasó)
+function embDiasHasta(f) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(f || ''));
+  if (!m) return null;
+  const h = embToday().split('-');
+  return Math.round((Date.UTC(+m[1], +m[2] - 1, +m[3]) - Date.UTC(+h[0], +h[1] - 1, +h[2])) / 86400000);
+}
+// Fecha en lenguaje natural: Hoy, Mañana, En 3 días, En 2 semanas, En 1 mes, Vencida hace…
+function embFechaRel(f) {
+  const d = embDiasHasta(f);
+  if (d === null) return formatDate(f);
+  const anio = f.slice(0, 4) !== embToday().slice(0, 4);
+  const corta = f.slice(8, 10) + '/' + f.slice(5, 7) + (anio ? '/' + f.slice(0, 4) : '');
+  const u = (n, uno, varios) => n + ' ' + (n === 1 ? uno : varios);
+  if (d === 0) return 'Hoy';
+  if (d === 1) return 'Mañana';
+  if (d === -1) return 'Vencida ayer';
+  if (d > 0) {
+    if (d < 7) return 'En ' + d + ' días';
+    if (d < 30) return 'En ' + u(Math.floor(d / 7), 'semana', 'semanas') + ' (' + corta + ')';
+    return 'En ' + u(Math.floor(d / 30), 'mes', 'meses') + ' (' + corta + ')';
+  }
+  const n = -d;
+  if (n < 7) return 'Vencida hace ' + n + ' días';
+  if (n < 30) return 'Vencida hace ' + u(Math.floor(n / 7), 'semana', 'semanas') + ' (' + corta + ')';
+  return 'Vencida hace ' + u(Math.floor(n / 30), 'mes', 'meses') + ' (' + corta + ')';
+}
+// Convierte celulares dentro de un texto YA escapado en enlaces a WhatsApp (+ 📞 para llamar)
+function embLinkTel(h) {
+  return h.replace(/\+?\d[\d \-]{7,16}\d/g, m => {
+    const wa = embWa(m.replace(/\D/g, ''));
+    if (!wa) return m;
+    const num = wa.replace('https://wa.me/', '');
+    return `<a class="emb-tel" href="${wa}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Abrir WhatsApp">${m}</a><a class="emb-tel-c" href="tel:+${num}" onclick="event.stopPropagation()" title="Llamar">📞</a>`;
+  });
+}
+// Paquete estándar = los mismos servicios que trae todo prospecto nuevo (no se muestra en la tarjeta)
+function embServiciosEstandar(arr) {
+  return arr.length === EMB_SERVICES.length && arr.every(x => EMB_SERVICES.indexOf(x) >= 0);
+}
+// Orden por urgencia: 0 vencida u hoy · 1 sin próxima acción · 2 con fecha futura · 3 sin fecha · 4 nada pendiente
+function embRankUrgencia(p) {
+  const pend = embPendientes(p), hoy = embToday(), sig = pend[0];
+  if (sig && sig.fecha && sig.fecha <= hoy) return [0, sig.fecha];
+  if (!pend.length && EMB_ETAPAS_ACCION.indexOf(p.etapa) >= 0) return [1, ''];
+  if (sig && sig.fecha) return [2, sig.fecha];
+  if (sig) return [3, ''];
+  return [4, ''];
+}
 let embFiltroResp = '', embSoloAlerta = false;
 const EMB_STAGES = [
   { id: 'diseno',     name: 'En diseño',      color: '#8B5CF6', guide: 'Definir alcance y valor del proyecto.' },
@@ -2601,14 +2661,29 @@ function renderEmbudo() {
   </div>`;
 
   const cols = EMB_STAGES.map((s, idx) => {
-    const items = by[s.id].slice().sort((a, b) =>
-      (Number(b.mensualidad) || 0) - (Number(a.mensualidad) || 0) || String(a.nombre).localeCompare(String(b.nombre), 'es'));
+    const items = by[s.id].slice().sort((a, b) => {
+      const ra = embRankUrgencia(a), rb = embRankUrgencia(b);
+      return ra[0] - rb[0] || (ra[1] < rb[1] ? -1 : ra[1] > rb[1] ? 1 : 0) ||
+        (Number(b.mensualidad) || 0) - (Number(a.mensualidad) || 0) || String(a.nombre).localeCompare(String(b.nombre), 'es');
+    });
     const suma = items.reduce((t, p) => t + (Number(p.mensualidad) || 0), 0);
+    const hoyC = embToday();
+    let venc = 0, sinAcc = 0;
+    items.forEach(p => {
+      const pd = embPendientes(p);
+      pd.forEach(a => { if (a.fecha && a.fecha < hoyC) venc++; });
+      if (!pd.length && EMB_ETAPAS_ACCION.indexOf(p.etapa) >= 0) sinAcc++;
+    });
+    const alertas = [
+      venc ? `<span class="emb-col-late">⚠ ${venc} ${venc === 1 ? 'vencida' : 'vencidas'}</span>` : '',
+      sinAcc ? `<span class="emb-col-warn">⚠ ${sinAcc} sin próxima acción</span>` : ''
+    ].filter(Boolean).join('');
     return `
     <div class="emb-col">
       <div class="emb-col-head">
         <div class="emb-col-title"><span class="emb-dot" style="background:${s.color}"></span>${s.name}<span class="emb-count">${items.length}</span></div>
         ${s.id !== 'diseno' && s.id !== 'perdido' ? `<div class="emb-col-sum">${fmtCOP(suma)} / mes</div>` : ''}
+        ${alertas ? `<div class="emb-col-alertas">${alertas}</div>` : ''}
         <div class="emb-col-guide">${s.guide}</div>
       </div>
       ${items.length ? items.map(p => embCard(p, idx)).join('') : '<div class="emb-empty">Sin empresas en esta etapa</div>'}
@@ -2638,9 +2713,13 @@ function embCard(p, idx) {
   const pend = embPendientes(p);
   const sig = pend[0];
   const late = !!(sig && sig.fecha && sig.fecha < embToday());
-  const ultima = (p.bitacora || []).length ? p.bitacora[p.bitacora.length - 1] : null;
+  // Solo novedades escritas por ti: las líneas automáticas "Etapa: A → B" no se muestran en la tarjeta
+  const novs = (p.bitacora || []).filter(x => !/^Etapa: /.test(x.texto || ''));
+  const ultima = novs.length ? novs[novs.length - 1] : null;
+  const sinAccion = !pend.length && EMB_ETAPAS_ACCION.indexOf(p.etapa) >= 0;
   const al = embAlerta(p), nc = embContactos(p), ne = (p.enlaces || []).length, wa = embWa(p.telefono);
   const meta = [
+    sinAccion ? `<span class="emb-tag amber">⚠ Sin próxima acción</span>` : '',
     al.nivel ? `<span class="emb-tag ${al.nivel === 2 ? 'red' : 'amber'}">⏱ ${al.dias} días sin novedad</span>` : '',
     nc ? `<span class="emb-tag">📞 ${nc} ${nc === 1 ? 'contacto' : 'contactos'}</span>` : '',
     ne ? `<span class="emb-tag">🔗 ${ne}</span>` : '',
@@ -2660,7 +2739,7 @@ function embCard(p, idx) {
       <span class="emb-fee${m ? '' : ' zero'}">${m ? fmtCOP(m) + ' /mes' : 'Sin mensualidad'}</span>
       ${v ? `<span class="emb-proj">Proyecto ${fmtCOP(v)}</span>` : ''}
     </div>
-    ${p.servicios && p.servicios.length ? `<div class="emb-chips">${p.servicios.map(s => `<span class="emb-chip">${escHtml(s)}</span>`).join('')}</div>` : ''}
+    ${p.servicios && p.servicios.length && !embServiciosEstandar(p.servicios) ? `<div class="emb-chips">${p.servicios.map(s => `<span class="emb-chip">${escHtml(s)}</span>`).join('')}</div>` : ''}
     ${meta ? `<div class="emb-meta">${meta}</div>` : ''}
     ${pend.length ? embTareasHtml(p, pend, id) : ''}
     ${ultima ? `<div class="emb-last">📝 ${embFechaCorta(ultima.fecha)} · ${escHtml(ultima.texto)}</div>` : ''}
@@ -2965,7 +3044,7 @@ function embTareasHtml(p, pend, id) {
     const late = a.fecha && a.fecha < hoy;
     return `<div class="emb-tarea${late ? ' late' : ''}">
       <button type="button" class="emb-ok" title="Marcar como cumplida" onclick="embCardHecha('${id}','${embAttr(a.id)}')">○</button>
-      <span class="emb-tarea-t" onclick="embOpen('${id}')" title="Abrir la ficha"><b>${a.fecha ? formatDate(a.fecha) + (late ? ' (vencida)' : '') : 'Pendiente'}</b> · ${escHtml(a.texto)}</span>
+      <span class="emb-tarea-t" onclick="embOpen('${id}')" title="Abrir la ficha"><b${a.fecha ? ` title="${formatDate(a.fecha)}"` : ''}>${a.fecha ? embFechaRel(a.fecha) : 'Pendiente'}</b> · ${embLinkTel(escHtml(a.texto))}</span>
     </div>`;
   }).join('') + (pend.length > EMB_TAREAS_VISIBLES
     ? `<button type="button" class="emb-vermas" onclick="embToggleTareas('${id}')">${exp ? 'Ver menos ▴' : 'Ver ' + (pend.length - EMB_TAREAS_VISIBLES) + ' más ▾'}</button>` : '') + `</div>`;
