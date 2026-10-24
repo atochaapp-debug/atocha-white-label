@@ -36,8 +36,8 @@
   --white:    #FFFFFF;
   --sidebar-w: 220px;
   --header-h: 56px;
-  --radius: 12px;
-  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(15,23,42,0.06), 0 1px 3px rgba(15,23,42,0.05);
   --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
 }
 .dark {
@@ -56,7 +56,7 @@
 .dark .btn-icon { background: var(--gray-700); color: var(--gray-900); }
 .dark .status-concepto { background: var(--gray-600); color: var(--gray-100); }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--gray-100); color: var(--gray-900); min-height: 100vh; transition: background .3s, color .3s; }
+body { font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial, sans-serif; font-variant-numeric: tabular-nums; background: var(--gray-100); color: var(--gray-900); min-height: 100vh; transition: background .3s, color .3s; }
 
 /* ── ONBOARDING ── */
 #onboarding { position: fixed; inset: 0; background: linear-gradient(135deg, var(--blue-900), var(--blue-700)); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 24px; }
@@ -80,7 +80,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 
 /* ── LAYOUT ── */
 #app { display: none; }
-.sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: linear-gradient(180deg, var(--blue-900) 0%, var(--blue-800) 100%); color: white; display: flex; flex-direction: column; z-index: 100; transition: transform .3s; overflow-y: auto; }
+.sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: linear-gradient(180deg, #0B1220 0%, #172033 100%); color: white; display: flex; flex-direction: column; z-index: 100; transition: transform .3s; overflow-y: auto; }
 .sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .sidebar-logo .app-name { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
 .sidebar-logo .company-name { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -112,7 +112,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .nav-section { padding: 8px 20px 4px; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 1px; }
 .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; transition: background .2s; font-size: 14px; color: rgba(255,255,255,0.8); position: relative; }
 .nav-item:hover { background: rgba(255,255,255,0.08); }
-.nav-item.active { background: rgba(255,255,255,0.15); color: white; font-weight: 600; }
+.nav-item.active { background: rgba(255,255,255,0.09); color: white; font-weight: 600; box-shadow: inset 3px 0 0 var(--blue-500); }
 .nav-item .badge { margin-left: auto; background: var(--red); color: white; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
 /* ── MAIN ── */
@@ -125,11 +125,12 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .topbar-btn { padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: all .2s; }
 .btn-cloud { background: var(--blue-600); color: white; }
 .btn-cloud:hover { background: var(--blue-700); }
-.btn-save { background: var(--gold); color: var(--blue-900); }
+.btn-save { background: #fff; color: var(--gray-700); box-shadow: inset 0 0 0 1px var(--gray-200); }
+.btn-save:hover { background: var(--gray-100); }
+.dark .btn-save { background: var(--gray-700); color: var(--gray-900); box-shadow: none; }
 .btn-app { background: var(--blue-50); color: var(--blue-700); }
 .dark .btn-app { background: var(--gray-700); color: var(--gray-900); }
 @media (max-width: 768px) { .btn-app { display: none; } }
-.btn-save:hover { background: #D97706; }
 .btn-icon { background: var(--gray-100); color: var(--gray-700); width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
 .hamburger { display: flex; align-items: center; background: none; border: none; cursor: pointer; color: var(--gray-700); font-size: 20px; }
 .content { flex: 1; padding: 24px; max-width: 1200px; width: 100%; }
@@ -141,9 +142,9 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 
 /* ── DASHBOARD ── */
 .dash-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.stat-card { background: white; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.stat-card { background: white; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--gray-200); }
 .dark .stat-card { background: var(--gray-800); }
-.stat-label { font-size: 12px; color: var(--gray-600); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.stat-label { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--gray-600); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 .stat-value { font-size: 26px; font-weight: 800; color: var(--gray-900); letter-spacing: -0.5px; }
 .stat-sub { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
 
@@ -228,14 +229,6 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .dt-edit input[type="text"] { flex: 1 1 100%; }
 .mod-tag { display: inline-block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .3px; padding: 2px 7px; border-radius: 999px; background: var(--gray-100); color: var(--gray-600); margin-left: 6px; vertical-align: 2px; white-space: nowrap; }
 .mod-tag.cap { background: #FEF3C7; color: #92400E; }
-.mt-sel { flex: none; max-width: 150px; padding: 4px 6px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 11px; font-weight: 700; background: white; color: var(--gray-700); font-family: inherit; cursor: pointer; margin-left: 6px; }
-.dark .mt-sel { background: var(--gray-700); border-color: var(--gray-600); color: var(--gray-900); }
-.mt-total { float: right; font-size: 13px; color: var(--gray-900); text-transform: none; letter-spacing: 0; }
-.mt-total small { font-weight: 600; color: var(--gray-400); }
-.mt-req { display: block; font-size: 11px; font-weight: 600; color: #92400E; margin-top: 2px; }
-.dark .mt-req { color: #FDE68A; }
-.mt-bulk { width: 100%; margin-top: 10px; padding: 10px; background: var(--gray-100); color: var(--gray-700); border: 1.5px dashed var(--gray-400); border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
-.mt-bulk:hover { border-color: var(--blue-600); color: var(--blue-700); }
 .dark .mod-tag { background: var(--gray-700); } .dark .mod-tag.cap { background: #78350F; color: #FDE68A; }
 .dash-aviso { background: #FEF3C7; color: #92400E; border-radius: 10px; padding: 10px 12px; font-size: 13px; margin-bottom: 12px; }
 .dark .dash-aviso { background: #78350F; color: #FDE68A; }
@@ -248,7 +241,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .dash-click-fila { cursor: pointer; border-radius: 6px; } .dash-click-fila:hover { background: var(--gray-100); }
 .dark .dash-click-fila:hover { background: var(--gray-700); }
 .dash-proy-top { display: flex; align-items: center; gap: 10px; }
-.dash-proy-i { font-size: 20px; flex: none; }
+.dash-proy-i { width: 30px; height: 30px; border-radius: 8px; background: var(--blue-50); color: var(--blue-700); display: flex; align-items: center; justify-content: center; flex: none; }
 .dash-proy-n { flex: 1; min-width: 0; font-weight: 700; color: var(--gray-900); font-size: 14px; overflow-wrap: anywhere; }
 .dash-proy-m { color: var(--blue-700); font-size: 14px; white-space: nowrap; }
 .dash-proy-bot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -283,11 +276,11 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 
 /* ── MODULE GRID ── */
 .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.module-card { background: white; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); cursor: pointer; transition: transform .2s, box-shadow .2s; position: relative; }
+.module-card { background: white; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--gray-200); cursor: pointer; transition: transform .2s, box-shadow .2s; position: relative; }
 .dark .module-card { background: var(--gray-800); }
 .module-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 .mc-badge-count { position: absolute; top: 12px; right: 12px; background: var(--red); color: white; font-size: 11px; font-weight: 700; min-width: 20px; height: 20px; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
-.mc-icon { font-size: 28px; margin-bottom: 10px; }
+.mc-icon { width: 42px; height: 42px; border-radius: 10px; background: var(--blue-50); color: var(--blue-700); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
 .mc-name { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
 .mc-desc { font-size: 12px; color: var(--gray-400); margin-bottom: 12px; }
 .mc-footer { display: flex; align-items: center; justify-content: space-between; }
@@ -297,13 +290,13 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .status-desarrollo { background: #DBEAFE; color: #1E40AF; }
 .status-exploracion { background: #EDE9FE; color: #5B21B6; }
 .status-concepto { background: var(--gray-200); color: var(--gray-700); }
-.mc-amount { font-size: 18px; font-weight: 800; color: var(--blue-700); }
+.mc-amount { font-size: 18px; font-weight: 700; color: var(--gray-900); }
 
 /* ── PROJECT PAGE ── */
 .project-header { background: white; border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow); }
 .dark .project-header { background: var(--gray-800); }
 .ph-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
-.ph-icon { font-size: 36px; }
+.ph-icon { width: 52px; height: 52px; border-radius: 12px; background: var(--blue-50); color: var(--blue-700); display: flex; align-items: center; justify-content: center; flex: none; }
 .ph-info { flex: 1; }
 .ph-name { font-size: 22px; font-weight: 800; color: var(--gray-900); margin-bottom: 4px; }
 .ph-desc { font-size: 14px; color: var(--gray-400); }
@@ -392,7 +385,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .dark .modal-field input, .dark .modal-field select, .dark .modal-field textarea { background: var(--gray-700); border-color: var(--gray-600); color: var(--gray-900); }
 .modal-field input:focus, .modal-field select:focus { border-color: var(--blue-600); }
 .emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-top: 8px; }
-.emoji-btn { padding: 8px; font-size: 20px; border: 2px solid transparent; border-radius: 8px; cursor: pointer; background: var(--gray-100); text-align: center; transition: all .2s; }
+.emoji-btn { display: flex; align-items: center; justify-content: center; color: var(--gray-700); padding: 8px; font-size: 20px; border: 2px solid transparent; border-radius: 8px; cursor: pointer; background: var(--gray-100); text-align: center; transition: all .2s; }
 .dark .emoji-btn { background: var(--gray-700); }
 .emoji-btn.selected { border-color: var(--blue-600); background: var(--blue-50); }
 .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
@@ -472,11 +465,11 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .emb-chip { font-size: 10px; font-weight: 700; background: var(--gray-100); color: var(--gray-600); border-radius: 999px; padding: 2px 8px; }
 .emb-tareas { border-top: 1px solid var(--gray-200); padding-top: 7px; display: flex; flex-direction: column; gap: 5px; }
 .emb-tarea { display: flex; align-items: flex-start; gap: 6px; font-size: 12px; color: var(--gray-600); overflow-wrap: anywhere; }
-.emb-tarea b { color: var(--gray-900); }
-.emb-tarea.late, .emb-tarea.late b { color: var(--red); }
-/* Tareas activas (pendientes) en verde; las vencidas siguen en rojo */
-.emb-tarea:not(.late), .emb-tarea:not(.late) b { color: #047857; }
-.dark .emb-tarea:not(.late), .dark .emb-tarea:not(.late) b { color: #34D399; }
+.emb-tarea, .emb-tarea .emb-tarea-t { color: #15803D; font-weight: 600; }
+.emb-tarea b { color: #166534; }
+.emb-tarea.late, .emb-tarea.late .emb-tarea-t, .emb-tarea.late b { color: var(--red); }
+.dark .emb-tarea, .dark .emb-tarea .emb-tarea-t, .dark .emb-tarea b { color: #4ADE80; }
+.dark .emb-tarea.late, .dark .emb-tarea.late .emb-tarea-t, .dark .emb-tarea.late b { color: #F87171; }
 .emb-tarea-t { cursor: pointer; flex: 1; min-width: 0; }
 .emb-tarea-t:hover { text-decoration: underline; }
 .emb-ok { flex: none; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--gray-400); background: white; color: transparent; font-size: 11px; line-height: 1; cursor: pointer; padding: 0; margin-top: 1px; }
@@ -503,16 +496,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .emb-tpl-text { font-size: 13px; color: var(--gray-800); white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 10px; }
 .emb-del { background: none; border: none; color: var(--red); font-size: 13px; font-weight: 700; cursor: pointer; padding: 8px 0; margin-top: 10px; }
 .emb-btns { display: flex; flex-wrap: wrap; gap: 6px; }
-/* "Marcar perdido": enlace discreto, a la derecha */
-.emb-move.sec { background: none; padding: 6px 2px; margin-left: auto; font-size: 11px; font-weight: 600; color: var(--gray-400); text-decoration: underline; }
-.emb-tel { font-weight: 700; color: inherit; text-decoration: underline; }
-.emb-tel-c { margin-left: 3px; text-decoration: none; font-size: 11px; }
-.emb-col-alertas { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
-.emb-col-late, .emb-col-warn { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 8px; }
-.emb-col-late { background: #FEE2E2; color: #991B1B; }
-.emb-col-warn { background: #FEF3C7; color: #92400E; }
-.dark .emb-col-late { background: #7F1D1D; color: #FECACA; }
-.dark .emb-col-warn { background: #78350F; color: #FDE68A; }
+.emb-move.sec { background: var(--gray-100); color: var(--gray-600); }
 .emb-move.sec:hover { color: var(--red); }
 /* Menú izquierdo oculto en computador: más espacio para el tablero */
 .main { transition: margin-left .3s; }
@@ -594,7 +578,7 @@ body.sb-hidden .content { max-width: none; }
     padding-bottom: 4px;
   }
   .bn-item.active { color: var(--blue-700); }
-  .bn-item .bn-icon { font-size: 20px; line-height: 1; }
+  .bn-item .bn-icon { font-size: 20px; line-height: 1; display: flex; justify-content: center; }
   .bn-item .bn-badge {
     position: absolute;
     top: 6px;
@@ -634,6 +618,19 @@ body.sb-hidden .content { max-width: none; }
 .mod-action-bar { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
 .btn-mod-save { padding:10px 18px; background:var(--gold); color:var(--blue-900); border:none; border-radius:8px; font-size:13px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:6px; }
 .btn-mod-sync { padding:10px 18px; background:var(--blue-600); color:white; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; }
+
+/* ---- Presentacion corporativa ---- */
+.ico { display: block; flex: none; }
+.stat-label .ico { color: var(--gray-400); }
+.nav-item .ni { display: flex; flex: none; opacity: .8; }
+.nav-item.active .ni { opacity: 1; }
+.nav-item .nn { min-width: 0; overflow-wrap: anywhere; }
+.nav-item { padding: 9px 20px; }
+.stat-value { font-weight: 700; }
+.module-card:hover { transform: none; box-shadow: 0 4px 14px rgba(15,23,42,0.10); border-color: var(--blue-500); }
+button, input, select, textarea { font-family: inherit; }
+.dark .mc-icon, .dark .ph-icon, .dark .dash-proy-i { background: rgba(59,130,246,0.14); color: #93C5FD; }
+.dark .mc-amount { color: var(--gray-900); }
 </style>
 <body>
 
@@ -738,19 +735,19 @@ body.sb-hidden .content { max-width: none; }
     </div>
     <div class="sidebar-nav">
       <div class="nav-section">General</div>
-      <div class="nav-item active" onclick="goPage('dashboard')" id="nav-dashboard">🎯 Dashboard</div>
+      <div class="nav-item active" onclick="goPage('dashboard')" id="nav-dashboard"><span class="ni" data-i="target"></span><span class="nn">Dashboard</span></div>
       <div class="nav-section">Módulos</div>
       <div id="sb-modules"></div>
       <div class="nav-section">Gestión</div>
-      <div class="nav-item" onclick="goPage('embudo')" id="nav-embudo">🧲 Embudo</div>
-      <div class="nav-item" onclick="goPage('checklist')" id="nav-checklist">📋 Checklist Maestro <span class="badge" id="badge-checklist" style="display:none">0</span></div>
-      <div class="nav-item" onclick="goPage('notas')" id="nav-notas">📝 Notas</div>
-      <div class="nav-item" onclick="goPage('sync')" id="nav-sync">☁️ Sincronización</div>
-      <div class="nav-item" onclick="goPage('backup')" id="nav-backup">📦 Backup</div>
+      <div class="nav-item" onclick="goPage('embudo')" id="nav-embudo"><span class="ni" data-i="funnel"></span><span class="nn">Embudo</span></div>
+      <div class="nav-item" onclick="goPage('checklist')" id="nav-checklist"><span class="ni" data-i="list"></span><span class="nn">Checklist Maestro</span> <span class="badge" id="badge-checklist" style="display:none">0</span></div>
+      <div class="nav-item" onclick="goPage('notas')" id="nav-notas"><span class="ni" data-i="note"></span><span class="nn">Notas</span></div>
+      <div class="nav-item" onclick="goPage('sync')" id="nav-sync"><span class="ni" data-i="cloud"></span><span class="nn">Sincronización</span></div>
+      <div class="nav-item" onclick="goPage('backup')" id="nav-backup"><span class="ni" data-i="box"></span><span class="nn">Backup</span></div>
       <div class="nav-section">Opciones</div>
-      <div class="nav-item" onclick="installApp()" id="nav-app">📲 Descargar app</div>
-      <div class="nav-item" onclick="toggleDark()" id="nav-dark">🌙 Modo Oscuro</div>
-      <div class="nav-item" onclick="goPage('config')" id="nav-config">⚙️ Configuración</div>
+      <div class="nav-item" onclick="installApp()" id="nav-app"><span class="ni" data-i="download"></span><span class="nn">Descargar app</span></div>
+      <div class="nav-item" onclick="toggleDark()" id="nav-dark"><span class="ni" data-i="moon"></span><span class="nn">Modo Oscuro</span></div>
+      <div class="nav-item" onclick="goPage('config')" id="nav-config"><span class="ni" data-i="gear"></span><span class="nn">Configuración</span></div>
     </div>
   </nav>
 
@@ -761,10 +758,10 @@ body.sb-hidden .content { max-width: none; }
         <span class="tt-company" id="tt-company">—</span>
         <span class="tt-page" id="tt-page">Dashboard</span>
       </div>
-      <button class="topbar-btn btn-app" id="btn-app" onclick="installApp()" title="Instalar la app en este dispositivo">📲 Descargar app</button>
-      <button class="topbar-btn btn-cloud" onclick="syncUp()">☁️ Subir</button>
-      <button class="topbar-btn btn-save" onclick="saveLocal()">💾 Guardar</button>
-      <button class="topbar-btn btn-icon" onclick="printReport()" title="Imprimir reporte">🖨️</button>
+      <button class="topbar-btn btn-app" id="btn-app" onclick="installApp()" title="Instalar la app en este dispositivo"><span data-i="download" data-z="15"></span>Descargar app</button>
+      <button class="topbar-btn btn-cloud" onclick="syncUp()"><span data-i="upload" data-z="15"></span>Subir</button>
+      <button class="topbar-btn btn-save" onclick="saveLocal()"><span data-i="save" data-z="15"></span>Guardar</button>
+      <button class="topbar-btn btn-icon" onclick="printReport()" title="Imprimir reporte"><span data-i="print" data-z="16"></span></button>
     </div>
     <div class="content" id="page-content"></div>
   </div>
@@ -772,24 +769,24 @@ body.sb-hidden .content { max-width: none; }
   <!-- BOTTOM NAV (mobile) -->
   <nav class="bottom-nav" id="bottom-nav">
     <div class="bn-item active" id="bn-dashboard" onclick="goPage('dashboard')">
-      <div class="bn-icon">🎯</div>
+      <div class="bn-icon" data-i="target" data-z="22"></div>
       <span>Dashboard</span>
     </div>
     <div class="bn-item" id="bn-checklist" onclick="goPage('checklist')">
-      <div class="bn-icon">📋</div>
+      <div class="bn-icon" data-i="list" data-z="22"></div>
       <span>Checklist</span>
       <div class="bn-badge" id="bn-badge" style="display:none">0</div>
     </div>
     <div class="bn-item" id="bn-menu" onclick="toggleSidebar()">
-      <div class="bn-icon">☰</div>
+      <div class="bn-icon" data-i="menu" data-z="22"></div>
       <span>Menú</span>
     </div>
     <div class="bn-item" id="bn-notas" onclick="goPage('notas')">
-      <div class="bn-icon">📝</div>
+      <div class="bn-icon" data-i="note" data-z="22"></div>
       <span>Notas</span>
     </div>
     <div class="bn-item" id="bn-sync" onclick="syncUp()">
-      <div class="bn-icon">☁️</div>
+      <div class="bn-icon" data-i="cloud" data-z="22"></div>
       <span>Subir</span>
     </div>
   </nav>
@@ -819,6 +816,78 @@ let state = {
   lastSync: null
 };
 
+const ICONOS = {
+  'building': '<path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/><path d="M9 10h.01M12 10h.01M15 10h.01M9 13h.01M12 13h.01M15 13h.01"/>',
+  'hotel': '<path d="M3 21V8a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v13"/><path d="M15 12h5a1 1 0 0 1 1 1v8"/><path d="M2 21h20"/><path d="M7 11h2M7 15h2"/>',
+  'factory': '<path d="M3 21V11l6 4v-4l6 4V5h4a2 2 0 0 1 2 2v14z"/><path d="M3 21h18"/>',
+  'store': '<path d="M4 9l1-5h14l1 5"/><path d="M4 9a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0"/><path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/>',
+  'globe': '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/>',
+  'coin': '<circle cx="12" cy="12" r="9"/><path d="M14.5 9.2a2.7 2 0 0 0-2.5-1.4c-1.5 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.8 2.5 2-1 2-2.5 2a2.7 2 0 0 1-2.5-1.4"/><path d="M12 6v1.8M12 16.2V18"/>',
+  'bank': '<path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 21h18"/>',
+  'chart': '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+  'target': '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  'list': '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8l1.5 1.5L14 6M9 14h6M9 17h4"/>',
+  'check': '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+  'alert': '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+  'calendar': '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  'clock': '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  'folder': '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  'users': '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14a5 5 0 0 1 4.5 5"/>',
+  'funnel': '<path d="M3 4h18l-7 9v6l-4 2v-8z"/>',
+  'note': '<path d="M5 3h10l4 4v14H5z"/><path d="M15 3v4h4M8 12h8M8 16h6"/>',
+  'cloud': '<path d="M7 18a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 9.5 4 4 0 0 1 17.5 18z"/>',
+  'box': '<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>',
+  'download': '<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',
+  'moon': '<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
+  'gear': '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+  'menu': '<path d="M4 7h16M4 12h16M4 17h16"/>',
+  'bolt': '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  'truck': '<path d="M2 6h11v10H2zM13 9h4l4 3v4h-8"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',
+  'plant': '<path d="M12 21v-9"/><path d="M12 12c0-4 3-7 8-7 0 5-3 8-8 7z"/><path d="M12 15c0-3-2-5-6-5 0 4 2 6 6 5z"/>',
+  'home': '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
+  'cart': '<path d="M3 4h3l2.5 11h10l2-8H7"/><circle cx="10" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/>',
+  'health': '<path d="M12 21C5 15 3 11 3 8a4.5 4.5 0 0 1 9-1 4.5 4.5 0 0 1 9 1c0 3-2 7-9 13z"/>',
+  'cap': '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/>',
+  'plane': '<path d="M21 3L3 10l7 3 3 7z"/><path d="M10 13l11-10"/>',
+  'shield': '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+  'phone': '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+  'briefcase': '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M3 13h18"/>',
+  'bulb': '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 11c.7.6 1 1.3 1 2h5c0-.7.3-1.4 1-2A6 6 0 0 0 12 3z"/>',
+  'wave': '<path d="M2 9c2.5-2 4.5-2 7 0s4.5 2 7 0 3-1.5 6 0"/><path d="M2 15c2.5-2 4.5-2 7 0s4.5 2 7 0 3-1.5 6 0"/>',
+  'trophy': '<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v4M8 21h8M10 18h4"/>',
+  'wrench': '<path d="M14.5 6a4 4 0 0 0 4.5 5.5L10 20.5a2.1 2.1 0 0 1-3-3L16 8.5A4 4 0 0 0 14.5 6z"/>',
+  'flask': '<path d="M9 3h6M10 3v6l-5.5 9.5A1.5 1.5 0 0 0 5.8 21h12.4a1.5 1.5 0 0 0 1.3-2.5L14 9V3"/><path d="M7.5 15h9"/>',
+  'gem': '<path d="M6 4h12l4 6-10 11L2 10z"/><path d="M2 10h20M9 4l-2 6 5 11 5-11-2-6"/>',
+  'upload': '<path d="M12 16V5M7 9l5-5 5 5M5 20h14"/>',
+  'save': '<path d="M5 3h11l4 4v14H5z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/>',
+  'print': '<path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/>',
+  'edit': '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'
+};
+const ICON_KEYS = ['building','hotel','factory','store','globe','coin','bank','chart','target','briefcase','home','truck','plant','cart','health','cap','plane','shield','phone','bulb','bolt','wave','trophy','wrench','flask','gem','users','folder'];
+const EMOJI_A_ICONO = {'🏢':'building','🏗':'building','🌍':'globe','🚀':'bolt','💡':'bulb','🤝':'users','📈':'chart','🏭':'factory','🏪':'store','🌐':'globe','💰':'coin','🔧':'wrench','🏠':'home','⚡':'bolt','🎯':'target','🛒':'cart','🏥':'health','🎓':'cap','🚗':'truck','✈':'plane','🌱':'plant','💎':'gem','🔬':'flask','📱':'phone','🛡':'shield','🌊':'wave','🏆':'trophy','🎪':'briefcase','🏨':'hotel','🏦':'bank','📁':'folder','🏬':'building','🏛':'bank'};
+// Dibuja un icono de linea (SVG). Hereda el color del texto.
+function ico(key, size) {
+  const d = ICONOS[key] || ICONOS.folder; const z = size || 20;
+  return '<svg class="ico" width="' + z + '" height="' + z + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>';
+}
+// Los proyectos guardados con emoji se muestran con su icono equivalente; si es un emoji generico se deduce del nombre.
+function iconoClave(icon, nombre) {
+  if (ICONOS[icon]) return icon;
+  const e = String(icon || '').replace(/️/g, '');
+  const n = String(nombre || '').toLowerCase();
+  if (!e || e === '💰' || e === '📁') {
+    if (/hotel|hostal/.test(n)) return 'hotel';
+    if (/casa|apartamento|inmueble|vivienda/.test(n)) return 'home';
+    if (/comercio|tienda|centro/.test(n)) return 'store';
+    if (/viaje|turis|carnaval|wcf|internacional/.test(n)) return 'globe';
+    if (/harina|trigo|cerdo|pollo|carne|pasabocas|aseo|fabrica|fábrica|industria|chino|producto|alimento/.test(n)) return 'factory';
+  }
+  return EMOJI_A_ICONO[e] || (e === '' ? 'folder' : 'coin');
+}
+function modIco(m, size) { return ico(iconoClave(m && m.icon, m && m.name), size); }
+function pintarIconos() {
+  document.querySelectorAll('[data-i]').forEach(el => { if (!el.dataset.ok) { el.innerHTML = ico(el.dataset.i, +el.dataset.z || 18); el.dataset.ok = '1'; } });
+}
 const EMOJIS = ['🏢','🏗️','🌍','🚀','💡','🤝','📈','🏭','🏪','🌐','💰','🔧','🏠','⚡','🎯','🛒','🏥','🎓','🚗','✈️','🌱','💎','🔬','📱','🛡️','🌊','🏆','🎪'];
 const STATUSES = [
   {key:'marcha',    label:'En Marcha',     cls:'status-marcha'},
@@ -829,18 +898,16 @@ const STATUSES = [
 ];
 // Tipo de cifra de cada proyecto: lo que significa el número de su "Objetivo (COP)".
 const MOD_TIPOS = {
-  ingreso: { n: 'Ganancia neta esperada (total)', ayuda: 'Lo que esperas ganar neto con este proyecto (ej. WCF). Cuenta en la Meta Total.' },
+  ingreso: { n: 'Ingreso esperado (total)', ayuda: 'Lo que esperas ganar con este proyecto. Cuenta en la Meta Total.' },
   mensual: { n: 'Ingreso mensual (se cuenta × 12 meses)', ayuda: 'La mensualidad. En la Meta Total se cuenta por 12 meses.' },
   venta:   { n: 'Venta aspirada (total)', ayuda: 'Lo que aspiras vender en total. Cuenta en la Meta Total.' },
   capital: { n: 'Capital que necesito', ayuda: 'Dinero que necesitas reunir (compra, inversión). NO cuenta como ingreso: se sigue aparte en "Capital requerido".' }
 };
-// Un proyecto sin tipo elegido queda 'sin' (sin clasificar): NO suma en ninguna cifra hasta que lo clasifiques.
-function modTipo(m) { return MOD_TIPOS[m && m.tipo] ? m.tipo : 'sin'; }
+function modTipo(m) { return MOD_TIPOS[m && m.tipo] ? m.tipo : 'ingreso'; }
 function modEsCapital(m) { return modTipo(m) === 'capital'; }
-function modSinClasificar(m) { return modTipo(m) === 'sin'; }
 // Lo que el proyecto aporta a la Meta Total (el capital no cuenta; lo mensual se multiplica por 12).
 function modAporte(m) {
-  if (modEsCapital(m) || modSinClasificar(m)) return 0;
+  if (modEsCapital(m)) return 0;
   const v = Number(m.meta) || 0;
   return modTipo(m) === 'mensual' ? v * 12 : v;
 }
@@ -850,9 +917,9 @@ function capitalAportado(estado) { return aliList().filter(a => a.tipo === 'inve
 function modTag(m) {
   const t = modTipo(m);
   if (t === 'ingreso') return '';
-  return `<span class="mod-tag${t === 'capital' || t === 'sin' ? ' cap' : ''}">${{ mensual: 'por mes', venta: 'venta', capital: 'capital', sin: 'sin clasificar' }[t]}</span>`;
+  return `<span class="mod-tag${t === 'capital' ? ' cap' : ''}">${{ mensual: 'por mes', venta: 'venta', capital: 'capital' }[t]}</span>`;
 }
-function modEtiquetaCifra(m) { return { capital: 'Capital requerido', mensual: 'Ingreso mensual', venta: 'Venta aspirada', ingreso: 'Ganancia neta esperada' }[modTipo(m)] || 'Objetivo (sin clasificar)'; }
+function modEtiquetaCifra(m) { return { capital: 'Capital requerido', mensual: 'Ingreso mensual', venta: 'Venta aspirada' }[modTipo(m)] || 'Objetivo'; }
 const COLORS = ['#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#EC4899','#06B6D4','#F97316'];
 const MAX_PROJECTS = 22;
 const DEFAULT_SUPABASE = {
@@ -993,7 +1060,7 @@ function obFinish() {
       id: 'mod_' + Date.now() + i,
       name: p.name || `Proyecto ${i+1}`,
       desc: '',
-      icon: EMOJIS[i % EMOJIS.length] || '📁',
+      icon: ICON_KEYS[i % ICON_KEYS.length] || 'folder',
       status: 'planificacion',
       meta: p.meta || 0,
       tasks: []
@@ -1133,6 +1200,7 @@ function startNewBusiness() {
 //  SIDEBAR
 // ═══════════════════════════════════════════
 function renderSidebar() {
+  pintarIconos();
   document.getElementById('sb-company').textContent = state.company;
   const assigned = totalAsignado();
   const pct = state.metaTotal ? Math.round(assigned / state.metaTotal * 100) : 0;
@@ -1151,7 +1219,7 @@ function renderSidebar() {
   mods.innerHTML = state.modules.map(m => {
     const p = m.tasks.filter(t => !t.done).length;
     return `<div class="nav-item" onclick="goPage('mod_${m.id}')" id="nav-mod_${m.id}">
-      ${escHtml(m.icon)} ${escHtml(m.name)}
+      <span class="ni">${modIco(m, 18)}</span><span class="nn">${escHtml(m.name)}</span>
       ${p > 0 ? `<span class="badge">${p}</span>` : ''}
     </div>`;
   }).join('');
@@ -1259,9 +1327,11 @@ function renderDashboard() {
   const embIngresoActivo = embAll.filter(p => p.etapa === 'activo').reduce((t, p) => t + (Number(p.mensualidad) || 0), 0);
   const embClientes = embAll.filter(p => p.etapa === 'activo').length;
   const embEnCurso = embAll.filter(p => p.etapa !== 'activo' && p.etapa !== 'perdido').length;
+  const ICO_TARJ = { hoy: 'calendar', pend: 'clock', venc: 'alert', cump: 'check', meta: 'target', asig: 'chart', ing: 'coin', cap: 'bank', proy: 'folder', ali: 'users', chk: 'list' };
+  const sinEmoji = t => String(t).replace(/^[^A-Za-zÁÉÍÓÚÑáéíóúñ]+/, '');
   const tarjeta = (clave, etiqueta, valor, sub, color, grande) => `
     <div class="stat-card dash-click" role="button" tabindex="0" onclick="dashAbrir('${clave}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();dashAbrir('${clave}')}">
-      <div class="stat-label">${etiqueta}</div>
+      <div class="stat-label">${ico(ICO_TARJ[clave] || 'folder', 15)}<span>${sinEmoji(etiqueta)}</span></div>
       <div class="stat-value" style="${grande ? 'font-size:20px;' : ''}${color ? 'color:' + color : ''}">${valor}</div>
       <div class="stat-sub">${sub}</div>
       <div class="dash-ver">Ver detalle ›</div>
@@ -1274,7 +1344,7 @@ function renderDashboard() {
   const ingHoyN = ingSuma(ingList().filter(i => i.fecha === hoyS));
   const cardEmb = `
     <div class="stat-card dash-click" role="button" tabindex="0" onclick="goPage('embudo')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('embudo')}">
-      <div class="stat-label">🧲 Embudo · ingreso mensual</div>
+      <div class="stat-label">${ico('funnel', 15)}<span>Embudo · ingreso mensual</span></div>
       <div class="stat-value" style="font-size:20px;color:var(--green)">${fmtCOP(embIngresoActivo)}</div>
       <div class="stat-sub">${embEnCurso} en embudo · ${embClientes} clientes activos</div>
       <div class="dash-ver">Abrir embudo ›</div>
@@ -1285,7 +1355,7 @@ function renderDashboard() {
     tarjeta('venc', '🔴 Tareas vencidas', overdue.length, overdue.length ? 'requieren atención' : 'todo al día', overdue.length ? 'var(--red)' : ''),
     tarjeta('cump', '✅ Tareas cumplidas', done.length, 'de ' + all.length + ' en total', 'var(--green)'),
     tarjeta('meta', 'Meta Total', fmtCOP(state.metaTotal), 'Ingresos y ventas', '', true),
-    tarjeta('asig', 'Asignado', fmtCOP(assigned), pct + '% de la meta · solo ingresos' + (state.modules.some(modSinClasificar) ? '<br><span style="color:var(--orange);font-weight:700">⚠ ' + state.modules.filter(modSinClasificar).length + ' sin clasificar</span>' : ''), 'var(--blue-600)', true),
+    tarjeta('asig', 'Asignado', fmtCOP(assigned), pct + '% de la meta · solo ingresos', 'var(--blue-600)', true),
     tarjeta('ing', '💰 Ingresos del mes', fmtCOP(ingSuma(ingMesAct)), 'Hoy: ' + fmtCOP(ingHoyN) + ' · ' + ingMesAct.length + (ingMesAct.length === 1 ? ' registro' : ' registros'), 'var(--green)', true),
     totalCapital() ? tarjeta('cap', '🏦 Capital requerido', fmtCOP(totalCapital()), 'Aportado: ' + fmtCOP(capitalAportado('activo')) + ' (' + Math.round(capitalAportado('activo') / totalCapital() * 100) + '%)', 'var(--orange)', true) : '',
     tarjeta('proy', 'Proyectos', state.modules.length, state.modules.filter(m=>m.status==='marcha').length + ' en marcha', ''),
@@ -1318,8 +1388,8 @@ function renderDashboard() {
 
   // Debajo de los módulos: lo que viene
   html += `<div class="task-panels" style="margin-top:24px;">
-    ${taskPanel('🟡 Por vencer (7 días)', 'var(--gold)', soon, false)}
-    ${taskPanel('🔵 Próximas (30 días)', 'var(--blue-500)', upcoming, false)}
+    ${taskPanel('Por vencer (7 días)', 'var(--gold)', soon, false)}
+    ${taskPanel('Próximas (30 días)', 'var(--blue-500)', upcoming, false)}
   </div>`;
 
   document.getElementById('page-content').innerHTML = html;
@@ -1424,7 +1494,7 @@ function dashAbrir(clave) {
     const assigned = totalAsignado();
     const meta = state.metaTotal || 0;
     const libre = meta - assigned;
-    const ing = state.modules.filter(m => !modEsCapital(m) && !modSinClasificar(m));
+    const ing = state.modules.filter(m => !modEsCapital(m));
     titulo = '📊 Distribución del proyecto';
     cuerpo = `
       <div class="dash-resumen">
@@ -1980,103 +2050,42 @@ function ingBorrar(btn, id) {
   ingRefrescar();
 }
 
-// Detalle de la Meta Total: tres cifras que NO se mezclan
-//  1) Ganancia neta / ventas (activos principales)   2) Mensualidades (× 12)   3) Capital (no es ingreso)
-function modSetTipo(id, tipo) {
-  const m = (state.modules || []).find(x => x.id === id);
-  if (!m || (tipo && !MOD_TIPOS[tipo])) return;
-  if (tipo) m.tipo = tipo; else delete m.tipo;
-  if (tipo !== 'capital') delete m.paraId;
-  saveLocal(); renderSidebar();
-  if (currentPage === 'dashboard') renderDashboard();
-  dashMeta();
-}
-function modSetPara(id, para) {
-  const m = (state.modules || []).find(x => x.id === id);
-  if (!m || !modEsCapital(m)) return;
-  if (para && (state.modules || []).some(x => x.id === para)) m.paraId = para; else delete m.paraId;
-  saveLocal();
-  dashMeta();
-}
-function modMarcarSin(tipo) {
-  const g = (state.modules || []).filter(modSinClasificar);
-  if (!g.length || !MOD_TIPOS[tipo]) return;
-  if (!confirm('¿Marcar ' + g.length + (g.length === 1 ? ' proyecto' : ' proyectos') + ' como "' + MOD_TIPOS[tipo].n + '"?')) return;
-  g.forEach(m => { m.tipo = tipo; });
-  saveLocal(); renderSidebar();
-  if (currentPage === 'dashboard') renderDashboard();
-  dashMeta();
-}
+// Detalle de la Meta Total: de qué está hecha la cifra
 function dashMeta() {
   const meta = state.metaTotal || 0;
   const mods = state.modules || [];
-  const idx = new Map(mods.map((m, i) => [m.id, i]));
-  const grupo = f => mods.filter(f).sort((a, b) => (modEsCapital(b) ? Number(b.meta) || 0 : modAporte(b)) - (modEsCapital(a) ? Number(a.meta) || 0 : modAporte(a)));
-  const gan = grupo(m => ['ingreso', 'venta'].indexOf(modTipo(m)) >= 0);
-  const men = grupo(m => modTipo(m) === 'mensual');
-  const cap = grupo(modEsCapital);
-  const sin = grupo(modSinClasificar);
-  const sum = (arr, f) => arr.reduce((t, m) => t + f(m), 0);
-  const totGan = sum(gan, modAporte), totMenAnual = sum(men, modAporte), totMenMes = sum(men, m => Number(m.meta) || 0);
-  const totCap = sum(cap, m => Number(m.meta) || 0);
-  const asignado = totGan + totMenAnual;
+  const asignado = totalAsignado();
   const libre = meta - asignado;
   const pct = meta ? Math.round(asignado / meta * 100) : 0;
   const pctDe = v => meta ? (Math.round((v || 0) / meta * 1000) / 10).toLocaleString('es-CO') + '%' : '—';
-  const sel = (m) => `<select class="mt-sel" onclick="event.stopPropagation()" onchange="modSetTipo('${aliSafeIdM(m.id)}', this.value)" title="Cambiar el tipo">
-      <option value=""${modSinClasificar(m) ? ' selected' : ''}>Sin clasificar</option>
-      ${Object.keys(MOD_TIPOS).map(k => `<option value="${k}"${modTipo(m) === k ? ' selected' : ''}>${{ ingreso: 'Ganancia neta', mensual: 'Mensualidad', venta: 'Venta', capital: 'Capital' }[k]}</option>`).join('')}
-    </select>`;
-  const dot = m => `<div style="width:10px;height:10px;border-radius:3px;flex:none;background:${COLORS[(idx.get(m.id) || 0) % COLORS.length]}"></div>`;
-  const fila = (m, extra, valor, pctTxt) => `<div class="dash-fila dash-click-fila" onclick="closeModal();goPage('mod_${aliSafeIdM(m.id)}')">
-      ${dot(m)}<span class="dash-fila-n">${escHtml(m.name)}${extra || ''}</span>${pctTxt != null ? `<span class="dash-fila-p">${pctTxt}</span>` : ''}<b>${valor}</b>${sel(m)}
-    </div>`;
-  const capDe = id => cap.filter(c => c.paraId === id);
-  const bloque = (titulo, ayuda, total, filas, vacio) => `<div class="dash-sub">${titulo} <span class="mt-total">${total}</span></div>
-    <div class="emb-hint" style="margin:0 0 4px">${ayuda}</div>
-    ${filas || `<div class="empty-panel">${vacio}</div>`}`;
-
+  const porEstado = STATUSES.map(st => {
+    const g = mods.filter(m => m.status === st.key && !modEsCapital(m));
+    return { st, n: g.length, total: g.reduce((t, m) => t + modAporte(m), 0) };
+  }).filter(x => x.n);
+  const orden = mods.map((m, i) => ({ m, i })).filter(x => !modEsCapital(x.m)).sort((a, b) => modAporte(b.m) - modAporte(a.m));
   setModal(`<h3>🎯 Meta Total</h3>
     ${meta ? '' : '<div class="dash-aviso">Aún no has definido la Meta Total. Se cambia en Configuración.</div>'}
-    ${sin.length ? `<div class="dash-aviso">⚠ ${sin.length} ${sin.length === 1 ? 'proyecto sin clasificar no suma' : 'proyectos sin clasificar no suman'} en ninguna cifra. Elige el tipo de cada uno abajo.</div>` : ''}
     <div class="dash-resumen">
       <div><span>Meta total</span><b>${fmtCOP(meta)}</b></div>
-      <div><span>Ganancia + ingresos del año</span><b style="color:var(--blue-600)">${fmtCOP(asignado)}</b></div>
-      <div><span>${libre < 0 ? 'Excede la meta' : 'Falta para la meta'}</span><b style="color:${libre < 0 ? 'var(--red)' : 'var(--orange)'}">${fmtCOP(Math.abs(libre))}</b></div>
+      <div><span>Asignado a proyectos</span><b style="color:var(--blue-600)">${fmtCOP(asignado)}</b></div>
+      <div><span>${libre < 0 ? 'Excede la meta' : 'Sin asignar'}</span><b style="color:${libre < 0 ? 'var(--red)' : 'var(--green)'}">${fmtCOP(Math.abs(libre))}</b></div>
     </div>
-    <div class="dash-prog" title="${pct}% de la meta"><div style="width:${Math.min(100, pct)}%;background:${pct > 100 ? 'var(--red)' : 'var(--blue-600)'}"></div></div>
-    <div class="dash-prog-txt">${pct.toLocaleString('es-CO')}% de la meta cubierta${pct > 100 ? ' — se supera la meta' : ''} · el capital no se cuenta como ingreso</div>
-
-    ${bloque('💎 Ganancia neta y ventas', 'Activos principales: lo que esperas ganar en total.', fmtCOP(totGan),
-      gan.map(m => { const c = capDe(m.id), tc = sum(c, x => Number(x.meta) || 0);
-        return fila(m, (modTipo(m) === 'venta' ? ' <span class="mod-tag">venta</span>' : '') + (c.length ? `<span class="mt-req">Requiere capital: ${fmtCOP(tc)} (${c.map(x => escHtml(x.name)).join(', ')})</span>` : ''), fmtCOP(modAporte(m)), pctDe(modAporte(m))); }).join(''),
-      'Ningún proyecto de este tipo todavía.')}
-
-    ${bloque('🔁 Mensualidades', 'Clientes que pagan cada mes. Se cuenta ×12 para la meta del año.', fmtCOP(totMenAnual) + ' <small>/ año</small>',
-      men.map(m => fila(m, ' <span class="mod-tag">' + fmtCOP(m.meta) + ' / mes</span>', fmtCOP(modAporte(m)), pctDe(modAporte(m)))).join('') +
-      (men.length ? `<div class="dash-fila"><span class="dash-fila-n"><b>Total por mes</b></span><b>${fmtCOP(totMenMes)}</b></div>` : ''),
-      'Ningún proyecto de este tipo todavía.')}
-
-    ${bloque('🏦 Capital requerido', 'Inversión necesaria para acceder a los activos. NO es ingreso y no cuenta en la meta.', fmtCOP(totCap),
-      cap.map(m => `<div class="dash-fila dash-click-fila" onclick="closeModal();goPage('mod_${aliSafeIdM(m.id)}')">
-          ${dot(m)}<span class="dash-fila-n">${escHtml(m.name)}</span><b>${fmtCOP(m.meta)}</b>
-          <select class="mt-sel" onclick="event.stopPropagation()" onchange="modSetPara('${aliSafeIdM(m.id)}', this.value)" title="¿Para acceder a cuál proyecto?">
-            <option value="">Para: —</option>
-            ${mods.filter(x => !modEsCapital(x) && x.id !== m.id).map(x => `<option value="${embAttr(x.id)}"${m.paraId === x.id ? ' selected' : ''}>Para: ${escHtml(x.name)}</option>`).join('')}
-          </select>${sel(m)}
-        </div>`).join('') + (cap.length ? `<div class="dash-fila dash-click-fila" onclick="dashCapital()"><span class="dash-fila-n">Ver cuánto han aportado los inversores ›</span></div>` : ''),
-      'Ningún proyecto de este tipo todavía.')}
-
-    ${sin.length ? `<div class="dash-sub">⚠ Sin clasificar <span class="mt-total">${sin.length}</span></div>
-      <div class="emb-hint" style="margin:0 0 4px">No suman en ninguna cifra hasta que elijas su tipo.</div>
-      ${sin.map(m => fila(m, '', fmtCOP(m.meta), null)).join('')}
-      <button class="mt-bulk" onclick="modMarcarSin('mensual')">Marcar todos los sin clasificar como Mensualidad</button>` : ''}
+    <div class="dash-prog" title="${pct}% de la meta asignado"><div style="width:${Math.min(100, pct)}%;background:${pct > 100 ? 'var(--red)' : 'var(--blue-600)'}"></div></div>
+    <div class="dash-prog-txt">${pct.toLocaleString('es-CO')}% de la meta está asignada a proyectos${pct > 100 ? ' — los proyectos suman más que la meta' : ''}</div>
+    ${porEstado.length ? `<div class="dash-sub">Por estado</div>
+      ${porEstado.map(x => `<div class="dash-fila"><span class="status-badge ${x.st.cls}">${x.st.label}</span><span class="dash-fila-n">${x.n} ${x.n === 1 ? 'proyecto' : 'proyectos'}</span><span class="dash-fila-p">${pctDe(x.total)}</span><b>${fmtCOP(x.total)}</b></div>`).join('')}` : ''}
+    <div class="dash-sub">Por proyecto (de mayor a menor)</div>
+    ${orden.length ? orden.map(({ m, i }) => `<div class="dash-fila dash-click-fila" onclick="closeModal();goPage('mod_${m.id}')">
+        <div style="width:10px;height:10px;border-radius:3px;flex:none;background:${COLORS[i % COLORS.length]}"></div>
+        <span class="dash-fila-n">${escHtml(m.name)}${modTipo(m) === 'mensual' ? ' <span class="mod-tag">' + fmtCOP(m.meta) + ' × 12</span>' : ''}</span><span class="dash-fila-p">${pctDe(modAporte(m))}</span><b>${fmtCOP(modAporte(m))}</b>
+      </div>`).join('') : '<div class="empty-panel">Aún no hay proyectos</div>'}
+    ${totalCapital() ? `<div class="dash-sub">Fuera de la meta</div>
+      <div class="dash-fila dash-click-fila" onclick="dashCapital()"><span class="dash-fila-n">🏦 Capital que necesitas reunir (no es ingreso)</span><b>${fmtCOP(totalCapital())}</b></div>` : ''}
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Cerrar</button>
       <button class="btn-confirm" onclick="closeModal();goPage('config')">Cambiar la meta</button>
-    </div>`, 640);
+    </div>`);
 }
-function aliSafeIdM(id) { return String(id || '').replace(/[^\w\-]/g, ''); }
 
 // Capital requerido: lo que necesitas reunir vs. lo que ya aportan los inversores
 function dashCapital() {
@@ -2112,7 +2121,7 @@ function dashProyectos() {
     const av = tot ? Math.round(hechas / tot * 100) : 0;
     return `<div class="task-item dash-tarea dash-proy" onclick="closeModal();goPage('mod_${m.id}')">
       <div class="dash-proy-top">
-        <span class="dash-proy-i">${m.icon || '📁'}</span>
+        <span class="dash-proy-i">${modIco(m, 18)}</span>
         <span class="dash-proy-n">${escHtml(m.name)}</span>
         <b class="dash-proy-m">${fmtCOP(m.meta)}${modTag(m)}</b>
       </div>
@@ -2147,7 +2156,7 @@ function moduleCard(m) {
   const s = STATUSES.find(x => x.key === m.status) || STATUSES[0];
   return `<div class="module-card" onclick="goPage('mod_${m.id}')">
     ${pending > 0 ? `<div class="mc-badge-count">${pending}</div>` : ''}
-    <div class="mc-icon">${escHtml(m.icon)}</div>
+    <div class="mc-icon">${modIco(m, 22)}</div>
     <div class="mc-name">${escHtml(m.name)}</div>
     <div class="mc-desc">${m.desc || '—'}</div>
     <div class="mc-footer">
@@ -2170,20 +2179,18 @@ function openEditModule(id) {
 }
 function openModuleModal(mod = null) {
   const isEdit = !!mod;
-  let selEmoji = mod ? mod.icon : EMOJIS[state.modules.length % EMOJIS.length];
+  let selEmoji = mod ? iconoClave(mod.icon, mod.name) : ICON_KEYS[state.modules.length % ICON_KEYS.length];
   let selStatus = mod ? mod.status : 'planificacion';
-  const selTipo = mod ? modTipo(mod) : 'sin';
-  const otros = (state.modules || []).filter(x => (!mod || x.id !== mod.id) && !modEsCapital(x));
+  const selTipo = mod ? modTipo(mod) : 'ingreso';
 
   document.getElementById('modal-body').innerHTML = `
     <h3>${isEdit ? 'Editar proyecto' : 'Nuevo proyecto'}</h3>
     <div class="modal-field"><label>Nombre</label><input type="text" id="mf-name" value="${mod ? embAttr(mod.name) : ''}" placeholder="Nombre del proyecto"></div>
     <div class="modal-field"><label>Descripción corta</label><input type="text" id="mf-desc" value="${mod ? mod.desc : ''}" placeholder="Ej: Red Comercial & Retail"></div>
     <div class="modal-field"><label>Objetivo (COP)</label><input type="text" id="mf-meta" value="${mod && mod.meta ? mod.meta.toLocaleString('es-CO') : ''}" placeholder="0" oninput="formatCOPInput(this)"></div>
-    <div class="modal-field"><label>Tipo de cifra</label><select id="mf-tipo" onchange="modTipoAyuda()"><option value=""${selTipo === 'sin' ? ' selected' : ''}>— Elige el tipo —</option>${Object.keys(MOD_TIPOS).map(k => `<option value="${k}" ${selTipo === k ? 'selected' : ''}>${MOD_TIPOS[k].n}</option>`).join('')}</select><div id="mf-tipo-ayuda" class="emb-hint" style="margin:6px 0 0">${selTipo === 'sin' ? 'Elige qué significa la cifra. Mientras no lo elijas, este proyecto no suma en la Meta Total.' : MOD_TIPOS[selTipo].ayuda}</div></div>
-    <div class="modal-field" id="mf-para-box" style="${selTipo === 'capital' ? '' : 'display:none'}"><label>Este capital es para acceder a…</label><select id="mf-para"><option value="">— Ninguno —</option>${otros.map(x => `<option value="${embAttr(x.id)}"${mod && mod.paraId === x.id ? ' selected' : ''}>${escHtml(x.name)}</option>`).join('')}</select></div>
+    <div class="modal-field"><label>Tipo de cifra</label><select id="mf-tipo" onchange="modTipoAyuda()">${Object.keys(MOD_TIPOS).map(k => `<option value="${k}" ${selTipo === k ? 'selected' : ''}>${MOD_TIPOS[k].n}</option>`).join('')}</select><div id="mf-tipo-ayuda" class="emb-hint" style="margin:6px 0 0">${MOD_TIPOS[selTipo].ayuda}</div></div>
     <div class="modal-field"><label>Estado</label><select id="mf-status">${STATUSES.map(s => `<option value="${s.key}" ${selStatus===s.key?'selected':''}>${s.label}</option>`).join('')}</select></div>
-    <div class="modal-field"><label>Ícono</label><div class="emoji-grid" id="eg">${EMOJIS.map(e => `<button class="emoji-btn ${e===selEmoji?'selected':''}" onclick="selectEmoji('${e}')">${e}</button>`).join('')}</div></div>
+    <div class="modal-field"><label>Ícono</label><div class="emoji-grid" id="eg">${ICON_KEYS.map(e => `<button type="button" class="emoji-btn ${e===selEmoji?'selected':''}" data-k="${e}" onclick="selectEmoji('${e}')" title="${e}">${ico(e, 20)}</button>`).join('')}</div></div>
     ${isEdit ? `<button onclick="deleteModule('${mod.id}')" style="width:100%;padding:10px;background:#FEE2E2;color:var(--red);border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;">🗑 Eliminar proyecto</button>` : ''}
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
@@ -2195,12 +2202,11 @@ function openModuleModal(mod = null) {
 }
 function modTipoAyuda() {
   const t = document.getElementById('mf-tipo').value, a = document.getElementById('mf-tipo-ayuda');
-  if (a) a.textContent = MOD_TIPOS[t] ? MOD_TIPOS[t].ayuda : 'Elige qué significa la cifra. Mientras no lo elijas, este proyecto no suma en la Meta Total.';
-  const bx = document.getElementById('mf-para-box'); if (bx) bx.style.display = t === 'capital' ? '' : 'none';
+  if (a && MOD_TIPOS[t]) a.textContent = MOD_TIPOS[t].ayuda;
 }
 function selectEmoji(e) {
   window._selEmoji = e;
-  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.toggle('selected', b.textContent === e));
+  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.toggle('selected', b.dataset.k === e));
 }
 function saveModule(id) {
   const name = document.getElementById('mf-name').value.trim();
@@ -2208,19 +2214,12 @@ function saveModule(id) {
   const meta = parseCOP(document.getElementById('mf-meta').value);
   const desc = document.getElementById('mf-desc').value.trim();
   const status = document.getElementById('mf-status').value;
-  const tipoSel = document.getElementById('mf-tipo').value;
-  if (!MOD_TIPOS[tipoSel]) { showToast('Elige el tipo de cifra'); return; }
-  const tipo = tipoSel;
-  const paraEl = document.getElementById('mf-para');
-  const paraId = tipo === 'capital' && paraEl ? paraEl.value : '';
+  const tipo = MOD_TIPOS[document.getElementById('mf-tipo').value] ? document.getElementById('mf-tipo').value : 'ingreso';
   if (id) {
     const m = state.modules.find(x => x.id === id);
     Object.assign(m, { name, desc, icon: window._selEmoji, status, meta, tipo });
-    if (paraId) m.paraId = paraId; else delete m.paraId;
   } else {
-    const nuevo = { id: 'mod_' + Date.now(), name, desc, icon: window._selEmoji, status, meta, tipo, tasks: [] };
-    if (paraId) nuevo.paraId = paraId;
-    state.modules.push(nuevo);
+    state.modules.push({ id: 'mod_' + Date.now(), name, desc, icon: window._selEmoji, status, meta, tipo, tasks: [] });
   }
   closeModal(); saveLocal(); renderSidebar(); goPage(currentPage);
 }
@@ -2243,7 +2242,7 @@ function renderModule(id) {
   const html = `
   <div class="project-header">
     <div class="ph-top">
-      <div class="ph-icon">${escHtml(m.icon)}</div>
+      <div class="ph-icon">${modIco(m, 26)}</div>
       <div class="ph-info">
         <div class="ph-name">${escHtml(m.name)}</div>
         <div class="ph-desc">${m.desc || '—'}</div>
@@ -2507,57 +2506,6 @@ const EMB_SERVICES = ['Trabajo virtual', 'Marketing', 'Apps'];
 const EMB_DIAS_ALERTA = 7;    // amarillo desde 7 días sin novedad
 const EMB_DIAS_ROJO = 14;     // rojo desde 14
 const EMB_ETAPAS_ALERTA = ['prospecto', 'contactado', 'reunion', 'propuesta', 'negociacion'];
-const EMB_ETAPAS_ACCION = ['contactado', 'reunion', 'propuesta', 'negociacion'];   // aquí siempre debe haber una tarea pendiente
-
-// Días entre hoy y una fecha 'AAAA-MM-DD' (negativo = ya pasó)
-function embDiasHasta(f) {
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(f || ''));
-  if (!m) return null;
-  const h = embToday().split('-');
-  return Math.round((Date.UTC(+m[1], +m[2] - 1, +m[3]) - Date.UTC(+h[0], +h[1] - 1, +h[2])) / 86400000);
-}
-// Fecha en lenguaje natural: Hoy, Mañana, En 3 días, En 2 semanas, En 1 mes, Vencida hace…
-function embFechaRel(f) {
-  const d = embDiasHasta(f);
-  if (d === null) return formatDate(f);
-  const anio = f.slice(0, 4) !== embToday().slice(0, 4);
-  const corta = f.slice(8, 10) + '/' + f.slice(5, 7) + (anio ? '/' + f.slice(0, 4) : '');
-  const u = (n, uno, varios) => n + ' ' + (n === 1 ? uno : varios);
-  if (d === 0) return 'Hoy';
-  if (d === 1) return 'Mañana';
-  if (d === -1) return 'Vencida ayer';
-  if (d > 0) {
-    if (d < 7) return 'En ' + d + ' días';
-    if (d < 30) return 'En ' + u(Math.floor(d / 7), 'semana', 'semanas') + ' (' + corta + ')';
-    return 'En ' + u(Math.floor(d / 30), 'mes', 'meses') + ' (' + corta + ')';
-  }
-  const n = -d;
-  if (n < 7) return 'Vencida hace ' + n + ' días';
-  if (n < 30) return 'Vencida hace ' + u(Math.floor(n / 7), 'semana', 'semanas') + ' (' + corta + ')';
-  return 'Vencida hace ' + u(Math.floor(n / 30), 'mes', 'meses') + ' (' + corta + ')';
-}
-// Convierte celulares dentro de un texto YA escapado en enlaces a WhatsApp (+ 📞 para llamar)
-function embLinkTel(h) {
-  return h.replace(/\+?\d[\d \-]{7,16}\d/g, m => {
-    const wa = embWa(m.replace(/\D/g, ''));
-    if (!wa) return m;
-    const num = wa.replace('https://wa.me/', '');
-    return `<a class="emb-tel" href="${wa}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Abrir WhatsApp">${m}</a><a class="emb-tel-c" href="tel:+${num}" onclick="event.stopPropagation()" title="Llamar">📞</a>`;
-  });
-}
-// Paquete estándar = los mismos servicios que trae todo prospecto nuevo (no se muestra en la tarjeta)
-function embServiciosEstandar(arr) {
-  return arr.length === EMB_SERVICES.length && arr.every(x => EMB_SERVICES.indexOf(x) >= 0);
-}
-// Orden por urgencia: 0 vencida u hoy · 1 sin próxima acción · 2 con fecha futura · 3 sin fecha · 4 nada pendiente
-function embRankUrgencia(p) {
-  const pend = embPendientes(p), hoy = embToday(), sig = pend[0];
-  if (sig && sig.fecha && sig.fecha <= hoy) return [0, sig.fecha];
-  if (!pend.length && EMB_ETAPAS_ACCION.indexOf(p.etapa) >= 0) return [1, ''];
-  if (sig && sig.fecha) return [2, sig.fecha];
-  if (sig) return [3, ''];
-  return [4, ''];
-}
 let embFiltroResp = '', embSoloAlerta = false;
 const EMB_STAGES = [
   { id: 'diseno',     name: 'En diseño',      color: '#8B5CF6', guide: 'Definir alcance y valor del proyecto.' },
@@ -2742,29 +2690,14 @@ function renderEmbudo() {
   </div>`;
 
   const cols = EMB_STAGES.map((s, idx) => {
-    const items = by[s.id].slice().sort((a, b) => {
-      const ra = embRankUrgencia(a), rb = embRankUrgencia(b);
-      return ra[0] - rb[0] || (ra[1] < rb[1] ? -1 : ra[1] > rb[1] ? 1 : 0) ||
-        (Number(b.mensualidad) || 0) - (Number(a.mensualidad) || 0) || String(a.nombre).localeCompare(String(b.nombre), 'es');
-    });
+    const items = by[s.id].slice().sort((a, b) =>
+      (Number(b.mensualidad) || 0) - (Number(a.mensualidad) || 0) || String(a.nombre).localeCompare(String(b.nombre), 'es'));
     const suma = items.reduce((t, p) => t + (Number(p.mensualidad) || 0), 0);
-    const hoyC = embToday();
-    let venc = 0, sinAcc = 0;
-    items.forEach(p => {
-      const pd = embPendientes(p);
-      pd.forEach(a => { if (a.fecha && a.fecha < hoyC) venc++; });
-      if (!pd.length && EMB_ETAPAS_ACCION.indexOf(p.etapa) >= 0) sinAcc++;
-    });
-    const alertas = [
-      venc ? `<span class="emb-col-late">⚠ ${venc} ${venc === 1 ? 'vencida' : 'vencidas'}</span>` : '',
-      sinAcc ? `<span class="emb-col-warn">⚠ ${sinAcc} sin próxima acción</span>` : ''
-    ].filter(Boolean).join('');
     return `
     <div class="emb-col">
       <div class="emb-col-head">
         <div class="emb-col-title"><span class="emb-dot" style="background:${s.color}"></span>${s.name}<span class="emb-count">${items.length}</span></div>
         ${s.id !== 'diseno' && s.id !== 'perdido' ? `<div class="emb-col-sum">${fmtCOP(suma)} / mes</div>` : ''}
-        ${alertas ? `<div class="emb-col-alertas">${alertas}</div>` : ''}
         <div class="emb-col-guide">${s.guide}</div>
       </div>
       ${items.length ? items.map(p => embCard(p, idx)).join('') : '<div class="emb-empty">Sin empresas en esta etapa</div>'}
@@ -2794,13 +2727,9 @@ function embCard(p, idx) {
   const pend = embPendientes(p);
   const sig = pend[0];
   const late = !!(sig && sig.fecha && sig.fecha < embToday());
-  // Solo novedades escritas por ti: las líneas automáticas "Etapa: A → B" no se muestran en la tarjeta
-  const novs = (p.bitacora || []).filter(x => !/^Etapa: /.test(x.texto || ''));
-  const ultima = novs.length ? novs[novs.length - 1] : null;
-  const sinAccion = !pend.length && EMB_ETAPAS_ACCION.indexOf(p.etapa) >= 0;
+  const ultima = (p.bitacora || []).length ? p.bitacora[p.bitacora.length - 1] : null;
   const al = embAlerta(p), nc = embContactos(p), ne = (p.enlaces || []).length, wa = embWa(p.telefono);
   const meta = [
-    sinAccion ? `<span class="emb-tag amber">⚠ Sin próxima acción</span>` : '',
     al.nivel ? `<span class="emb-tag ${al.nivel === 2 ? 'red' : 'amber'}">⏱ ${al.dias} días sin novedad</span>` : '',
     nc ? `<span class="emb-tag">📞 ${nc} ${nc === 1 ? 'contacto' : 'contactos'}</span>` : '',
     ne ? `<span class="emb-tag">🔗 ${ne}</span>` : '',
@@ -2820,7 +2749,7 @@ function embCard(p, idx) {
       <span class="emb-fee${m ? '' : ' zero'}">${m ? fmtCOP(m) + ' /mes' : 'Sin mensualidad'}</span>
       ${v ? `<span class="emb-proj">Proyecto ${fmtCOP(v)}</span>` : ''}
     </div>
-    ${p.servicios && p.servicios.length && !embServiciosEstandar(p.servicios) ? `<div class="emb-chips">${p.servicios.map(s => `<span class="emb-chip">${escHtml(s)}</span>`).join('')}</div>` : ''}
+    ${p.servicios && p.servicios.length ? `<div class="emb-chips">${p.servicios.map(s => `<span class="emb-chip">${escHtml(s)}</span>`).join('')}</div>` : ''}
     ${meta ? `<div class="emb-meta">${meta}</div>` : ''}
     ${pend.length ? embTareasHtml(p, pend, id) : ''}
     ${ultima ? `<div class="emb-last">📝 ${embFechaCorta(ultima.fecha)} · ${escHtml(ultima.texto)}</div>` : ''}
@@ -3125,7 +3054,7 @@ function embTareasHtml(p, pend, id) {
     const late = a.fecha && a.fecha < hoy;
     return `<div class="emb-tarea${late ? ' late' : ''}">
       <button type="button" class="emb-ok" title="Marcar como cumplida" onclick="embCardHecha('${id}','${embAttr(a.id)}')">○</button>
-      <span class="emb-tarea-t" onclick="embOpen('${id}')" title="Abrir la ficha"><b${a.fecha ? ` title="${formatDate(a.fecha)}"` : ''}>${a.fecha ? embFechaRel(a.fecha) : 'Pendiente'}</b> · ${embLinkTel(escHtml(a.texto))}</span>
+      <span class="emb-tarea-t" onclick="embOpen('${id}')" title="Abrir la ficha"><b>${a.fecha ? formatDate(a.fecha) + (late ? ' (vencida)' : '') : 'Pendiente'}</b> · ${escHtml(a.texto)}</span>
     </div>`;
   }).join('') + (pend.length > EMB_TAREAS_VISIBLES
     ? `<button type="button" class="emb-vermas" onclick="embToggleTareas('${id}')">${exp ? 'Ver menos ▴' : 'Ver ' + (pend.length - EMB_TAREAS_VISIBLES) + ' más ▾'}</button>` : '') + `</div>`;
@@ -3796,7 +3725,7 @@ function printReport() {
   <div class="meta">Meta total: ${fmtCOP(state.metaTotal)}</div>`;
 
   state.modules.forEach(m => {
-    html += `<h2>${escHtml(m.icon)} ${escHtml(m.name)} — ${fmtCOP(m.meta)}</h2>`;
+    html += `<h2>${escHtml(m.name)} — ${fmtCOP(m.meta)}</h2>`;
     if (!m.tasks.length) { html += `<p style="font-size:12px;color:#999">Sin tareas registradas.</p>`; return; }
     html += `<table><tr><th>Tarea</th><th>Fecha</th><th>Prioridad</th><th>Estado</th><th>Cumplida</th></tr>`;
     m.tasks.forEach(t => {
