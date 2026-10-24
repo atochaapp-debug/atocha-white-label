@@ -631,6 +631,62 @@ body.sb-hidden .content { max-width: none; }
 button, input, select, textarea { font-family: inherit; }
 .dark .mc-icon, .dark .ph-icon, .dark .dash-proy-i { background: rgba(59,130,246,0.14); color: #93C5FD; }
 .dark .mc-amount { color: var(--gray-900); }
+
+/* ---- Mejoras: copias, seguimiento, pronóstico, búsqueda, cobros, gráficas ---- */
+.bk-p { font-size: 13px; color: var(--gray-600); line-height: 1.5; margin: 6px 0 12px; }
+.bk-vacio { font-size: 13px; color: var(--gray-400); padding: 8px 0; }
+.bk-fila { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--gray-200); font-size: 13px; }
+.bk-fila small { display: block; color: var(--gray-400); font-size: 12px; margin-top: 2px; }
+.seg-cfg { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--gray-700); background: var(--gray-100); border-radius: 8px; padding: 10px 12px; margin: 10px 0; }
+.seg-cfg input { width: 70px; padding: 6px 8px; border: 1.5px solid var(--gray-200); border-radius: 8px; background: var(--white); color: var(--gray-900); font-family: inherit; }
+.seg-fila { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--gray-200); }
+.seg-main { flex: 1; min-width: 0; cursor: pointer; }
+.seg-main b { display: block; font-size: 14px; }
+.seg-main small { display: block; font-size: 12px; color: var(--gray-400); margin: 1px 0 5px; }
+.seg-main:hover b { text-decoration: underline; }
+.seg-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.seg-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--gray-100); color: var(--gray-700); }
+.seg-tag.n1 { background: #FEF3C7; color: #92400E; } .seg-tag.n2 { background: #FEE2E2; color: #991B1B; } .seg-tag.s { background: #E0E7FF; color: #3730A3; }
+.pron-tabla { margin-top: 12px; font-size: 13px; }
+.pron-h, .pron-f { display: grid; grid-template-columns: 1.6fr .7fr 1.2fr .8fr 1.2fr; gap: 8px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--gray-200); }
+.pron-h { font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--gray-400); font-weight: 700; }
+.pron-f input { width: 56px; padding: 4px 6px; border: 1.5px solid var(--gray-200); border-radius: 6px; background: var(--white); color: var(--gray-900); font-family: inherit; }
+.pron-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 7px; }
+.pron-barra { height: 10px; border-radius: 5px; background: var(--gray-200); overflow: hidden; margin-top: 12px; }
+.pron-barra div { height: 100%; background: var(--blue-600); }
+@media (max-width: 560px) { .pron-h, .pron-f { grid-template-columns: 1.4fr .5fr 1fr .8fr; } .pron-h span:nth-child(3), .pron-f span:nth-child(3) { display: none; } }
+.rep-tag { display: inline-flex; align-items: center; gap: 3px; color: var(--blue-700); font-weight: 600; }
+.rep-tag .ico { display: inline-block; vertical-align: -2px; }
+.rec-fila { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 14px; margin-bottom: 8px; border: 1px solid var(--gray-200); border-radius: 10px; background: var(--white); color: var(--gray-900); font-family: inherit; font-size: 14px; cursor: pointer; }
+.rec-fila b { font-size: 20px; min-width: 28px; } .rec-fila span { flex: 1; } .rec-fila i { color: var(--gray-400); font-style: normal; font-size: 18px; }
+.rec-fila.rojo b { color: var(--red); } .rec-fila.ambar b { color: var(--orange); } .rec-fila:hover { border-color: var(--blue-500); }
+.bus-top { display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 0 12px; color: var(--gray-400); }
+.bus-top input { flex: 1; border: none; outline: none; padding: 12px 0; font-size: 15px; background: transparent; color: var(--gray-900); font-family: inherit; }
+.bus-g { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--gray-400); margin: 16px 0 6px; } .bus-g span { color: var(--blue-600); }
+.bus-r { padding: 9px 10px; border-radius: 8px; cursor: pointer; } .bus-r:hover, .bus-r:focus { background: var(--blue-50); outline: none; }
+.bus-r b { display: block; font-size: 14px; overflow-wrap: anywhere; } .bus-r small { display: block; font-size: 12px; color: var(--gray-400); overflow-wrap: anywhere; }
+.bus-vacio, .bus-mas { font-size: 13px; color: var(--gray-400); padding: 14px 4px; }
+.cob-fila { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--gray-200); }
+.cob-n { flex: 1; min-width: 0; } .cob-n small { display: block; font-size: 12px; color: var(--orange); } .cob-fila.ok .cob-n small { color: var(--green); }
+.cob-m { font-size: 14px; white-space: nowrap; }
+.evo-b { margin-bottom: 18px; }
+.chart { width: 100%; height: auto; display: block; margin-top: 6px; }
+.chart .ch-v { font-size: 13px; font-weight: 700; fill: var(--gray-900); } .chart .ch-l { font-size: 13px; fill: var(--gray-600); }
+.cfg-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700); margin: 4px 0 14px; }
+.dt-form select { max-width: 150px; }
+@media (max-width: 480px) { .topbar-btn { padding: 8px 9px; gap: 4px; } .topbar { gap: 6px; } }
+
+.mp-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 8px; }
+.mp-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--gray-100); color: var(--gray-700); }
+.mp-chip i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.mp-fila { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 6px; border-bottom: 1px solid var(--gray-200); cursor: pointer; border-radius: 6px; }
+.mp-fila:hover { background: var(--blue-50); }
+.mp-n b { display: block; font-size: 14px; overflow-wrap: anywhere; } .mp-n small { display: block; font-size: 12px; color: var(--gray-400); }
+.mp-m { font-size: 13px; font-weight: 700; white-space: nowrap; }
+.mp-vincular { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; } .mp-vincular select { flex: 1; min-width: 180px; padding: 9px 10px; border: 1.5px solid var(--gray-200); border-radius: 8px; background: var(--white); color: var(--gray-900); font-family: inherit; }
+.mc-emb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--blue-700); margin: -4px 0 10px; font-weight: 600; }
+.emb-tag.proy { background: var(--blue-50); color: var(--blue-700); }
+.pron-h.pp, .pron-f.pp { grid-template-columns: 1.8fr .8fr 1.2fr 1.2fr; }
 </style>
 <body>
 
@@ -758,6 +814,7 @@ button, input, select, textarea { font-family: inherit; }
         <span class="tt-company" id="tt-company">—</span>
         <span class="tt-page" id="tt-page">Dashboard</span>
       </div>
+      <button class="topbar-btn btn-icon" onclick="buscarAbrir()" title="Buscar (Ctrl+K)"><span data-i="search" data-z="16"></span></button>
       <button class="topbar-btn btn-app" id="btn-app" onclick="installApp()" title="Instalar la app en este dispositivo"><span data-i="download" data-z="15"></span>Descargar app</button>
       <button class="topbar-btn btn-cloud" onclick="syncUp()"><span data-i="upload" data-z="15"></span>Subir</button>
       <button class="topbar-btn btn-save" onclick="saveLocal()"><span data-i="save" data-z="15"></span>Guardar</button>
@@ -861,6 +918,8 @@ const ICONOS = {
   'upload': '<path d="M12 16V5M7 9l5-5 5 5M5 20h14"/>',
   'save': '<path d="M5 3h11l4 4v14H5z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/>',
   'print': '<path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/>',
+  'search': '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  'repeat': '<path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/>',
   'edit': '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'
 };
 const ICON_KEYS = ['building','hotel','factory','store','globe','coin','bank','chart','target','briefcase','home','truck','plant','cart','health','cap','plane','shield','phone','bulb','bolt','wave','trophy','wrench','flask','gem','users','folder'];
@@ -1109,7 +1168,9 @@ function initApp() {
   renderSidebar();
   renderProfileSwitcher();
   goPage('dashboard');
+  snapGuardar('Automática', false);
   setTimeout(showCloudBanner, 800);
+  setTimeout(recordatorioDia, 1600);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -1209,6 +1270,7 @@ function renderSidebar() {
   document.getElementById('sb-amounts').textContent = fmtCOP(assigned) + ' / ' + fmtCOP(state.metaTotal);
 
   const pending = getAllTasks().filter(t => !t.done).length;
+  badgeApp();
   const cl = document.getElementById('badge-checklist');
   if (pending > 0) { cl.style.display = 'flex'; cl.textContent = pending; } else { cl.style.display = 'none'; }
   // bottom nav badge
@@ -1305,7 +1367,7 @@ function getAllTasks() {
   // pero viven dentro de cada prospecto. Los textos se escapan porque estas listas usan HTML.
   embList().forEach(p => (p.actividades || []).forEach(a => all.push({
     id: a.id, name: escHtml(a.texto), date: a.fecha || '', priority: 'media',
-    done: !!a.hecha, doneDate: a.fechaHecha || null,
+    done: !!a.hecha, doneDate: a.fechaHecha || null, repite: a.repite || '',
     projectName: escHtml('Embudo · ' + p.nombre), projectId: 'emb:' + p.id
   })));
   return all;
@@ -1327,7 +1389,7 @@ function renderDashboard() {
   const embIngresoActivo = embAll.filter(p => p.etapa === 'activo').reduce((t, p) => t + (Number(p.mensualidad) || 0), 0);
   const embClientes = embAll.filter(p => p.etapa === 'activo').length;
   const embEnCurso = embAll.filter(p => p.etapa !== 'activo' && p.etapa !== 'perdido').length;
-  const ICO_TARJ = { hoy: 'calendar', pend: 'clock', venc: 'alert', cump: 'check', meta: 'target', asig: 'chart', ing: 'coin', cap: 'bank', proy: 'folder', ali: 'users', chk: 'list' };
+  const ICO_TARJ = { hoy: 'calendar', pend: 'clock', venc: 'alert', cump: 'check', meta: 'target', asig: 'chart', ing: 'coin', cap: 'bank', proy: 'folder', ali: 'users', chk: 'list', seg: 'funnel', pron: 'target', cob: 'check', evo: 'chart' };
   const sinEmoji = t => String(t).replace(/^[^A-Za-zÁÉÍÓÚÑáéíóúñ]+/, '');
   const tarjeta = (clave, etiqueta, valor, sub, color, grande) => `
     <div class="stat-card dash-click" role="button" tabindex="0" onclick="dashAbrir('${clave}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();dashAbrir('${clave}')}">
@@ -1361,7 +1423,12 @@ function renderDashboard() {
     tarjeta('proy', 'Proyectos', state.modules.length, state.modules.filter(m=>m.status==='marcha').length + ' en marcha', ''),
     tarjeta('ali', '🤝 Aliados', aliList().length, aliList().length ? ['partner','socio','inversor'].map(k => aliList().filter(a => a.tipo === k).length + ' ' + ALI_TIPOS[k].pl).join(' · ') : 'Agrega el primero', ''),
     cardEmb,
-    tarjeta('chk', '☑️ Checklist', all.length, all.filter(t=>!t.done).length + ' pendientes · ' + done.length + ' cumplidas', '')
+    tarjeta('chk', '☑️ Checklist', all.length, all.filter(t=>!t.done).length + ' pendientes · ' + done.length + ' cumplidas', ''),
+    (() => { const sg = embSeguimiento(); const n1 = sg.filter(x => x.al.nivel).length, n2 = sg.filter(x => x.sin).length;
+      return tarjeta('seg', 'Seguimiento del Embudo', sg.length, sg.length ? n1 + ' sin novedad · ' + n2 + ' sin próxima acción' : 'todo al día', sg.length ? 'var(--orange)' : 'var(--green)'); })(),
+    (() => { const pr = embPronostico(); return tarjeta('pron', 'Pronóstico mensual', fmtCOP(pr.total), 'ya cobras ' + fmtCOP(pr.activo) + ' · embudo ' + fmtCOP(pr.pipe), 'var(--blue-600)', true); })(),
+    (() => { const cr = cobResumen(ingMesActual()); return tarjeta('cob', 'Cobros del mes', cr.cl.length ? cr.pag.length + ' de ' + cr.cl.length : '0', cr.cl.length ? 'cobrado ' + fmtCOP(cr.cob) + ' de ' + fmtCOP(cr.esp) : 'aún no hay clientes activos', cr.cl.length && cr.pag.length === cr.cl.length ? 'var(--green)' : ''); })(),
+    tarjeta('evo', 'Evolución', 'Gráficas', 'ingresos, embudo y tareas', '', true)
   ].filter(Boolean);
   const paginas = [];
   for (let i = 0; i < cards.length; i += 4) paginas.push(cards.slice(i, i + 4));
@@ -1487,6 +1554,10 @@ function dashAbrir(clave) {
   if (clave === 'proy') { dashProyectos(); return; }
   if (clave === 'cap') { dashCapital(); return; }
   if (clave === 'hoy') { dashHoy(); return; }
+  if (clave === 'seg') { dashSeguimiento(); return; }
+  if (clave === 'pron') { dashPronostico(); return; }
+  if (clave === 'cob') { cobMes = ''; dashCobros(); return; }
+  if (clave === 'evo') { dashEvolucion(); return; }
   if (clave === 'ing') { dashIngresos(); return; }
   if (clave === 'chk') { dashChecklist(); return; }
   if (clave === 'venc' || clave === 'pend' || clave === 'cump') { dashTareasLista(clave); return; }
@@ -1704,7 +1775,7 @@ function isoALocal(iso) {
 function tkDeEmb(p) {
   return (p.actividades || []).map(a => ({
     id: a.id, name: escHtml(a.texto), date: a.fecha || '', priority: 'media',
-    done: !!a.hecha, doneDate: a.fechaHecha || null,
+    done: !!a.hecha, doneDate: a.fechaHecha || null, repite: a.repite || '',
     projectName: escHtml('Embudo · ' + p.nombre), projectId: 'emb:' + p.id
   }));
 }
@@ -1741,13 +1812,13 @@ function tkFila(ctx, t, n, hoy, o) {
   o = o || {};
   const venc = !t.done && t.date && fechaLocal(t.date) < hoy;
   const destino = t.projectId === null ? 'checklist' : String(t.projectId).startsWith('emb:') ? 'embudo' : 'mod_' + t.projectId;
-  const meta = `${t.projectName}${t.date ? ' · <span style="' + (venc ? 'color:var(--red);font-weight:700' : '') + '">' + formatDate(t.date) + '</span>' : ' · sin fecha'}${t.done && t.doneDate ? ' · ✅ ' + formatDate(t.doneDate) : ''}`;
+  const meta = `${t.projectName}${t.date ? ' · <span style="' + (venc ? 'color:var(--red);font-weight:700' : '') + '">' + formatDate(t.date) + '</span>' : ' · sin fecha'}${t.done && t.doneDate ? ' · ✅ ' + formatDate(t.doneDate) : ''}${repTag(t)}`;
   const nav = o.nav === false ? ' style="cursor:default"' : ` onclick="closeModal();goPage('${destino}')" title="Ir allí"`;
   return `<div class="task-item dt-item${t.done ? ' dt-hecha' : ''}">
     <div class="dt-fila">
       <div class="dt-main"${nav}>
         <div class="ti-name">${t.name}</div>
-        <div class="ti-meta">${o.sinOrigen ? (t.date ? (venc ? '<span style="color:var(--red);font-weight:700">' + formatDate(t.date) + ' (vencida)</span>' : formatDate(t.date)) : 'sin fecha') : meta}${o.prio && t.priority ? ' · <span class="task-priority p-' + t.priority + '">' + t.priority + '</span>' : ''}${o.sinOrigen && t.done && t.doneDate ? ' · ✅ ' + formatDate(t.doneDate) : ''}</div>
+        <div class="ti-meta">${o.sinOrigen ? (t.date ? (venc ? '<span style="color:var(--red);font-weight:700">' + formatDate(t.date) + ' (vencida)</span>' : formatDate(t.date)) : 'sin fecha') : meta}${o.prio && t.priority ? ' · <span class="task-priority p-' + t.priority + '">' + t.priority + '</span>' : ''}${o.sinOrigen && t.done && t.doneDate ? ' · ✅ ' + formatDate(t.doneDate) : ''}${o.sinOrigen ? repTag(t) : ''}</div>
       </div>
       <div class="dt-acts">
         <button type="button" class="dt-btn" title="${t.done ? 'Reabrir' : 'Marcar como cumplida'}" onclick="tkAccion('${ctx}','hecha',${n})">${t.done ? '↩' : '✓'}</button>
@@ -1765,6 +1836,7 @@ function tkAccion(ctx, accion, n) {
   if (accion === 'hecha') {
     const hecha = emb ? !!o.hecha : !!o.done;
     if (emb) { o.hecha = !hecha; o.fechaHecha = hecha ? '' : embToday(); } else { o.done = !hecha; o.doneDate = hecha ? null : embToday(); }
+    if (!hecha) repAlCompletar(ref.tipo, o, ref.dueno);
     showToast(hecha ? '↩ Tarea reabierta' : '✅ Tarea cumplida');
     tkRefrescar(ctx); return;
   }
@@ -1793,6 +1865,7 @@ function tkAccion(ctx, accion, n) {
         <input type="text" id="tk-nombre-${id}" value="${embAttr(nombre)}" placeholder="Nombre de la tarea" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();tkGuardar('${ctx}',${n});}">
         <input type="date" id="tk-fecha-${id}" value="${embAttr(fecha)}">
         ${emb ? '' : `<select id="tk-pri-${id}">${['alta', 'media', 'baja'].map(x => `<option value="${x}" ${o.priority === x ? 'selected' : ''}>${{ alta: 'Prioridad alta', media: 'Prioridad media', baja: 'Prioridad baja' }[x]}</option>`).join('')}</select>`}
+        <select id="tk-rep-${id}" title="Repetición">${repOpciones(o.repite)}</select>
         <button type="button" class="btn-add" onclick="tkGuardar('${ctx}',${n})">Guardar</button>
         <button type="button" class="dt-chip" onclick="tkAccion('${ctx}','editar',${n})">Cancelar</button>
       </div>`;
@@ -1821,6 +1894,8 @@ function tkGuardar(ctx, n) {
     ref.obj.name = nombre; ref.obj.date = f;
     const pr = document.getElementById('tk-pri-' + id); if (pr && ['alta', 'media', 'baja'].indexOf(pr.value) >= 0) ref.obj.priority = pr.value;
   }
+  const rp = document.getElementById('tk-rep-' + id);
+  if (rp) { if (rp.value && REPITE[rp.value]) ref.obj.repite = rp.value; else delete ref.obj.repite; }
   showToast('💾 Tarea actualizada');
   tkRefrescar(ctx);
 }
@@ -1910,6 +1985,7 @@ function dashChecklist() {
       <input type="text" id="dc-name" placeholder="Nueva tarea maestra..." autocomplete="off" style="flex:1 1 200px" onkeydown="if(event.key==='Enter'){event.preventDefault();chkAdd();}">
       <input type="date" id="dc-date">
       <select id="dc-pri"><option value="media">Media</option><option value="alta">Alta</option><option value="baja">Baja</option></select>
+      <select id="dc-rep" title="Repetición">${repOpciones('')}</select>
       <button type="button" class="btn-add" onclick="chkAdd()">+ Agregar</button>
     </div>
     <div class="filter-bar" style="margin:12px 0">${['all', 'pending', 'done', 'overdue'].map(f => `<button type="button" class="filter-btn ${chkFiltro === f ? 'active' : ''}" onclick="chkSetFiltro('${f}')">${nombres[f]} (${cuenta[f]})</button>`).join('')}</div>
@@ -1923,7 +1999,7 @@ function chkAdd() {
   const nombre = document.getElementById('dc-name').value.trim();
   if (!nombre) { showToast('⚠️ Escribe el nombre de la tarea'); return; }
   const pri = document.getElementById('dc-pri').value;
-  state.checklist.push({ id: 'cl_' + Date.now(), name: nombre, date: document.getElementById('dc-date').value, priority: ['alta', 'media', 'baja'].indexOf(pri) >= 0 ? pri : 'media', done: false, doneDate: null });
+  state.checklist.push({ id: 'cl_' + Date.now(), name: nombre, date: document.getElementById('dc-date').value, priority: ['alta', 'media', 'baja'].indexOf(pri) >= 0 ? pri : 'media', done: false, doneDate: null, ...(REPITE[document.getElementById('dc-rep').value] && document.getElementById('dc-rep').value ? { repite: document.getElementById('dc-rep').value } : {}) });
   saveLocal(); renderSidebar();
   if (currentPage === 'dashboard') renderDashboard();
   dashChecklist();
@@ -2158,7 +2234,8 @@ function moduleCard(m) {
     ${pending > 0 ? `<div class="mc-badge-count">${pending}</div>` : ''}
     <div class="mc-icon">${modIco(m, 22)}</div>
     <div class="mc-name">${escHtml(m.name)}</div>
-    <div class="mc-desc">${m.desc || '—'}</div>
+    <div class="mc-desc">${escHtml(m.desc || '—')}</div>
+    ${(() => { const ps = embDeProyecto(m.id); return ps.length ? `<div class="mc-emb">${ico('funnel', 13)}${ps.length} ${ps.length === 1 ? 'prospecto' : 'prospectos'} · ${ps.filter(p => p.etapa === 'activo').length} activos</div>` : ''; })()}
     <div class="mc-footer">
       <span class="status-badge ${s.cls}">${s.label}</span>
       <span class="mc-amount">${fmtCOP(m.meta)}${modTag(m)}</span>
@@ -2245,7 +2322,7 @@ function renderModule(id) {
       <div class="ph-icon">${modIco(m, 26)}</div>
       <div class="ph-info">
         <div class="ph-name">${escHtml(m.name)}</div>
-        <div class="ph-desc">${m.desc || '—'}</div>
+        <div class="ph-desc">${escHtml(m.desc || '—')}</div>
       </div>
       <button class="edit-btn" onclick="openEditModule('${m.id}')">✏️ Editar</button>
     </div>
@@ -2286,7 +2363,7 @@ function renderModule(id) {
     </div>
   </div>`;
 
-  document.getElementById('page-content').innerHTML = html + modEmbudoHtml(m);
+  document.getElementById('page-content').innerHTML = html + modEmbudoProyHtml(m) + modEmbudoHtml(m);
 }
 
 function renderTaskList(tasks, modId) {
@@ -2298,25 +2375,59 @@ function renderTaskList(tasks, modId) {
   return items.map((t, n) => tkFila('modt', t, n, hoyD, { nav: false, sinOrigen: true, prio: true })).join('');
 }
 // Actividades del prospecto vinculado a este proyecto (las mismas que ve en el Embudo)
+function embDeProyecto(modId) { return embList().filter(p => p.moduleId === modId); }
+function modEmbudoProyHtml(m) {
+  const ps = embDeProyecto(m.id), id = embAttr(m.id);
+  const libres = embList().filter(p => !p.moduleId);
+  const pron = (list) => { let act = 0, pipe = 0; list.forEach(p => { const v = Number(p.mensualidad) || 0; if (p.etapa === 'activo') act += v; else if (p.etapa !== 'perdido') pipe += Math.round(v * embProb(p.etapa) / 100); }); return { act, pipe, total: act + pipe }; };
+  const r = pron(ps);
+  const chips = EMB_STAGES.map(st => ({ st, n: ps.filter(p => p.etapa === st.id).length })).filter(x => x.n).map(x => `<span class="mp-chip"><i style="background:${x.st.color}"></i>${escHtml(x.st.name)} <b>${x.n}</b></span>`).join('');
+  const fila = p => {
+    const e = EMB_STAGES.find(x => x.id === p.etapa), al = embAlerta(p);
+    return `<div class="mp-fila" onclick="embOpen('${embAttr(p.id)}')" title="Abrir la ficha"><div class="mp-n"><b>${escHtml(p.nombre)}</b><small>${escHtml(e ? e.name : '')}${al.nivel ? ' · ' + al.dias + ' días sin novedad' : ''}</small></div><span class="mp-m">${Number(p.mensualidad) ? fmtCOP(p.mensualidad) + '/mes' : 'Sin mensualidad'}</span></div>`;
+  };
+  return `<div class="card" style="margin-top:16px">
+    <div class="card-title">Embudo de este proyecto
+      <button type="button" class="edit-btn" style="margin-left:8px" onclick="embNuevoEnProyecto('${id}')">+ Nuevo prospecto</button>
+      <button type="button" class="edit-btn" onclick="goPage('embudo');embSetProy('${id}')">Ver en el tablero</button></div>
+    ${ps.length ? `<div class="dash-resumen">
+        <div><span>Prospectos</span><b>${ps.length}</b></div>
+        <div><span>Ya cobras</span><b>${fmtCOP(r.act)}</b></div>
+        <div><span>Esperado por mes</span><b style="color:var(--blue-600)">${fmtCOP(r.total)}</b></div></div>
+      <div class="mp-chips">${chips}</div>
+      <div>${ps.slice().sort((a, b) => EMB_STAGES.findIndex(x => x.id === b.etapa) - EMB_STAGES.findIndex(x => x.id === a.etapa)).map(fila).join('')}</div>`
+      : '<div class="emb-hint" style="padding:6px 0 10px">Todavía no hay prospectos en este proyecto. Crea el primero o vincula uno que ya tengas en el Embudo.</div>'}
+    ${libres.length ? `<div class="mp-vincular"><select id="mp-vinc-${id}"><option value="">Vincular un prospecto existente…</option>${libres.map(p => `<option value="${embAttr(p.id)}">${escHtml(p.nombre)}</option>`).join('')}</select><button type="button" class="btn-add" onclick="embVincular('${id}')">Vincular</button></div>` : ''}
+  </div>`;
+}
+function embNuevoEnProyecto(modId) { embProyNuevo = modId; embOpen(null); }
+function embVincular(modId) {
+  const sel = document.getElementById('mp-vinc-' + modId); const p = sel && embList().find(x => x.id === sel.value);
+  if (!p) { showToast('Elige un prospecto'); return; }
+  p.moduleId = modId; saveLocal(); renderSidebar(); renderModule(modId); showToast('Prospecto vinculado a este proyecto');
+}
 function modEmbudoHtml(m) {
-  const pe = embList().find(p => p.moduleId === m.id); if (!pe) return '';
-  const items = tkOrden(tkDeEmb(pe));
+  const ps = embDeProyecto(m.id); if (!ps.length) return '';
+  const varios = ps.length > 1;
+  const items = tkOrden(ps.flatMap(p => tkDeEmb(p)));
   tkRegistrar('mod', items, () => renderModule(m.id));
   const hoyD = hoyLocal();
   return `<div class="card" style="margin-top:16px">
-    <div class="card-title">🧲 Actividades del Embudo · ${escHtml(pe.nombre)}
-      <button type="button" class="edit-btn" style="margin-left:8px" onclick="goPage('embudo');embOpen('${embAttr(pe.id)}')">Abrir la ficha</button></div>
+    <div class="card-title">Actividades del Embudo ${varios ? '(' + ps.length + ' prospectos)' : '· ' + escHtml(ps[0].nombre)}
+      ${varios ? '' : `<button type="button" class="edit-btn" style="margin-left:8px" onclick="goPage('embudo');embOpen('${embAttr(ps[0].id)}')">Abrir la ficha</button>`}</div>
     <div class="emb-hint" style="margin:-4px 0 12px">Son las mismas actividades de la ficha del prospecto: lo que cambies aquí cambia allá.</div>
     <div class="task-form">
+      ${varios ? `<select id="ma-pros-${embAttr(m.id)}">${ps.map(p => `<option value="${embAttr(p.id)}">${escHtml(p.nombre)}</option>`).join('')}</select>` : ''}
       <input type="text" id="ma-texto-${embAttr(m.id)}" placeholder="Nueva actividad del embudo..." autocomplete="off" onkeydown="if(event.key==='Enter')modAddAct('${embAttr(m.id)}')">
       <input type="date" id="ma-fecha-${embAttr(m.id)}">
       <button class="btn-add" onclick="modAddAct('${embAttr(m.id)}')">+ Agregar</button>
     </div>
-    <div class="tasks-list">${items.length ? items.map((t, n) => tkFila('mod', t, n, hoyD, { nav: false, sinOrigen: true })).join('') : '<div style="text-align:center;padding:18px;color:var(--gray-400);font-size:14px;">Sin actividades en el embudo.</div>'}</div>
+    <div class="tasks-list">${items.length ? items.map((t, n) => tkFila('mod', t, n, hoyD, { nav: false, sinOrigen: !varios })).join('') : '<div style="text-align:center;padding:18px;color:var(--gray-400);font-size:14px;">Sin actividades en el embudo.</div>'}</div>
   </div>`;
 }
 function modAddAct(modId) {
-  const m = state.modules.find(x => x.id === modId); const pe = m && embList().find(p => p.moduleId === modId); if (!pe) return;
+  const m = state.modules.find(x => x.id === modId); const sp = document.getElementById('ma-pros-' + modId);
+  const pe = m && (sp ? embList().find(p => p.id === sp.value && p.moduleId === modId) : embList().find(p => p.moduleId === modId)); if (!pe) return;
   const texto = document.getElementById('ma-texto-' + modId).value.trim();
   if (!texto) { showToast('Escribe la actividad'); return; }
   pe.actividades.push({ id: embId('a'), texto, fecha: document.getElementById('ma-fecha-' + modId).value, hecha: false, fechaHecha: '' });
@@ -2346,6 +2457,7 @@ function toggleTask(modId, taskId) {
   const t = m.tasks.find(x => x.id === taskId);
   t.done = !t.done;
   t.doneDate = t.done ? embToday() : null;
+  if (t.done) repAlCompletar('mod', t, m);
   saveLocal(); renderSidebar();
   document.getElementById(`tasks-list-${modId}`).innerHTML = renderTaskList(m.tasks, modId);
 }
@@ -2373,6 +2485,7 @@ function renderChecklist() {
         <option value="alta">Alta</option>
         <option value="baja">Baja</option>
       </select>
+      <select id="cl-rep" title="Repetición">${repOpciones('')}</select>
       <button class="btn-add" onclick="addChecklistTask()">+ Agregar</button>
     </div>
     <div class="checklist-filters">
@@ -2413,7 +2526,8 @@ function addChecklistTask() {
     date: document.getElementById('cl-date').value,
     priority: document.getElementById('cl-pri').value,
     done: false,
-    doneDate: null
+    doneDate: null,
+    ...(document.getElementById('cl-rep') && REPITE[document.getElementById('cl-rep').value] && document.getElementById('cl-rep').value ? { repite: document.getElementById('cl-rep').value } : {})
   });
   document.getElementById('cl-name').value = '';
   saveLocal(); renderSidebar();
@@ -2427,6 +2541,7 @@ function toggleCL(projectId, id) {
     if (!t) return;
     t.hecha = !t.hecha;
     t.fechaHecha = t.hecha ? embToday() : '';
+    if (t.hecha) repAlCompletar('emb', t, p);
     saveLocal(); renderSidebar();
     document.getElementById('cl-list').innerHTML = renderChecklistItems();
     return;
@@ -2440,6 +2555,7 @@ function toggleCL(projectId, id) {
   if (!t) return;
   t.done = !t.done;
   t.doneDate = t.done ? embToday() : null;
+  if (t.done) repAlCompletar(projectId ? 'mod' : 'cl', t, projectId ? state.modules.find(x => x.id === projectId) : null);
   saveLocal(); renderSidebar();
   document.getElementById('cl-list').innerHTML = renderChecklistItems();
 }
@@ -2506,7 +2622,7 @@ const EMB_SERVICES = ['Trabajo virtual', 'Marketing', 'Apps'];
 const EMB_DIAS_ALERTA = 7;    // amarillo desde 7 días sin novedad
 const EMB_DIAS_ROJO = 14;     // rojo desde 14
 const EMB_ETAPAS_ALERTA = ['prospecto', 'contactado', 'reunion', 'propuesta', 'negociacion'];
-let embFiltroResp = '', embSoloAlerta = false;
+let embFiltroResp = '', embSoloAlerta = false, embFiltroProy = '';
 const EMB_STAGES = [
   { id: 'diseno',     name: 'En diseño',      color: '#8B5CF6', guide: 'Definir alcance y valor del proyecto.' },
   { id: 'prospecto',  name: 'Prospecto',      color: '#6B7280', guide: 'Identificar al decisor y su contacto.' },
@@ -2581,7 +2697,7 @@ function embDiasSinNovedad(p) {
 function embAlerta(p) {
   if (EMB_ETAPAS_ALERTA.indexOf(p.etapa) < 0) return { dias: 0, nivel: 0 };
   const dias = embDiasSinNovedad(p);
-  return { dias, nivel: dias >= EMB_DIAS_ROJO ? 2 : dias >= EMB_DIAS_ALERTA ? 1 : 0 };
+  return { dias, nivel: dias >= embDiasR() ? 2 : dias >= embDiasA() ? 1 : 0 };
 }
 function embContactos(p) { return (p.bitacora || []).filter(x => x.contacto).length; }
 function embResponsables() {
@@ -2592,9 +2708,11 @@ function embPasaFiltros(p) {
   const r = (p.responsable || '').trim();
   if (embFiltroResp === '__none' ? r : (embFiltroResp && r !== embFiltroResp)) return false;
   if (embSoloAlerta && embAlerta(p).nivel === 0) return false;
+  if (embFiltroProy === '__none' ? p.moduleId : (embFiltroProy && p.moduleId !== embFiltroProy)) return false;
   return true;
 }
 function embSetResp(v) { embFiltroResp = v; renderEmbudo(); }
+function embSetProy(v) { embFiltroProy = v; renderEmbudo(); }
 function embToggleAlerta() { embSoloAlerta = !embSoloAlerta; renderEmbudo(); }
 
 // Enlace directo a WhatsApp. Un celular colombiano de 10 dígitos recibe el 57;
@@ -2642,6 +2760,7 @@ function embTemplate(stageId, empresa, contacto) {
 }
 
 function renderEmbudo() {
+  if (currentPage !== 'embudo') { vistaActual(); return; }
   const list = embList();
   const by = {};
   EMB_STAGES.forEach(s => by[s.id] = []);
@@ -2706,15 +2825,22 @@ function renderEmbudo() {
 
   const viejo = document.querySelector('.emb-board');
   const izq = viejo ? viejo.scrollLeft : 0;
-  const filtros = (responsables.length || conAlerta.length) ? `
+  if (embFiltroProy && embFiltroProy !== '__none' && !state.modules.some(m => m.id === embFiltroProy)) embFiltroProy = '';
+  const filtros = (responsables.length || conAlerta.length || state.modules.length) ? `
   <div class="emb-filters">
+    ${state.modules.length ? `<label>Proyecto
+      <select onchange="embSetProy(this.value)">
+        <option value="">Todos (${list.length})</option>
+        ${state.modules.map(m => `<option value="${embAttr(m.id)}"${embFiltroProy === m.id ? ' selected' : ''}>${escHtml(m.name)} (${list.filter(p => p.moduleId === m.id).length})</option>`).join('')}
+        <option value="__none"${embFiltroProy === '__none' ? ' selected' : ''}>Sin proyecto (${list.filter(p => !p.moduleId).length})</option>
+      </select></label>` : ''}
     ${responsables.length ? `<label>👤 Responsable
       <select onchange="embSetResp(this.value)">
         <option value="">Todos</option>
         ${responsables.map(r => `<option value="${embAttr(r)}"${embFiltroResp === r ? ' selected' : ''}>${escHtml(r)}</option>`).join('')}
         <option value="__none"${embFiltroResp === '__none' ? ' selected' : ''}>Sin responsable</option>
       </select></label>` : ''}
-    ${conAlerta.length ? `<button class="edit-btn${embSoloAlerta ? ' on' : ''}" type="button" onclick="embToggleAlerta()">⏱ ${conAlerta.length} ${conAlerta.length === 1 ? 'empresa lleva' : 'empresas llevan'} ${EMB_DIAS_ALERTA}+ días sin novedad${embSoloAlerta ? ' · quitar filtro' : ' · ver solo ' + (conAlerta.length === 1 ? 'esa' : 'esas')}</button>` : ''}
+    ${conAlerta.length ? `<button class="edit-btn${embSoloAlerta ? ' on' : ''}" type="button" onclick="embToggleAlerta()">⏱ ${conAlerta.length} ${conAlerta.length === 1 ? 'empresa lleva' : 'empresas llevan'} ${embDiasA()}+ días sin novedad${embSoloAlerta ? ' · quitar filtro' : ' · ver solo ' + (conAlerta.length === 1 ? 'esa' : 'esas')}</button>` : ''}
   </div>` : '';
   document.getElementById('page-content').innerHTML = header + stats + filtros + `<div class="emb-board">${cols}</div>`;
   const nuevo = document.querySelector('.emb-board');
@@ -2731,11 +2857,13 @@ function embCard(p, idx) {
   const al = embAlerta(p), nc = embContactos(p), ne = (p.enlaces || []).length, wa = embWa(p.telefono);
   const meta = [
     al.nivel ? `<span class="emb-tag ${al.nivel === 2 ? 'red' : 'amber'}">⏱ ${al.dias} días sin novedad</span>` : '',
+    (embSinAccion(p) && !al.nivel) ? `<span class="emb-tag amber">Sin próxima acción</span>` : '',
     nc ? `<span class="emb-tag">📞 ${nc} ${nc === 1 ? 'contacto' : 'contactos'}</span>` : '',
     ne ? `<span class="emb-tag">🔗 ${ne}</span>` : '',
     (p.documentos || []).length ? `<span class="emb-tag">📄 ${p.documentos.length}</span>` : '',
     p.notas ? `<span class="emb-tag" title="${embAttr(String(p.notas).slice(0, 200))}">📝 Nota</span>` : '',
     p.responsable ? `<span class="emb-tag">👤 ${escHtml(p.responsable)}</span>` : '',
+    (p.moduleId && state.modules.find(x => x.id === p.moduleId)) ? `<span class="emb-tag proy" title="Proyecto vinculado">${escHtml(state.modules.find(x => x.id === p.moduleId).name)}</span>` : '',
     wa ? `<a class="emb-tag wa" href="${embAttr(wa)}" target="_blank" rel="noopener noreferrer" title="Abrir WhatsApp">💬 WhatsApp</a>` : ''
   ].filter(Boolean).join('');
   const next = embNext(p.etapa);
@@ -2874,7 +3002,9 @@ function embImportModules() {
   renderEmbudo();
 }
 
+let embProyNuevo = '';
 function embOpen(id, etapaForzada) {
+  const modPre = id ? '' : embProyNuevo; embProyNuevo = '';
   embEditId = id || null;
   embActsExp = false;
   const p = id ? embList().find(x => x.id === id) : null;
@@ -2909,7 +3039,7 @@ function embOpen(id, etapaForzada) {
       <input type="text" id="emb-resp" list="emb-resp-list" value="${v('responsable')}" placeholder="Quién le hace el seguimiento" autocomplete="off">
       <datalist id="emb-resp-list">${embResponsables().map(r => `<option value="${embAttr(r)}">`).join('')}</datalist>
     </div>
-    <div class="modal-field"><label>Proyecto vinculado <span class="emb-hint">sus tareas se ven también aquí</span></label><select id="emb-modulo"><option value="">(ninguno)</option>${(state.modules || []).map(m => `<option value="${embAttr(m.id)}" ${p && p.moduleId === m.id ? 'selected' : ''}>${escHtml(m.name)}</option>`).join('')}</select></div>
+    <div class="modal-field"><label>Proyecto vinculado <span class="emb-hint">sus tareas se ven también aquí</span></label><select id="emb-modulo"><option value="">(ninguno)</option>${(state.modules || []).map(m => `<option value="${embAttr(m.id)}" ${(p ? p.moduleId === m.id : modPre === m.id) ? 'selected' : ''}>${escHtml(m.name)}</option>`).join('')}</select></div>
     ${p ? `
     <div class="emb-sec">
       <div class="emb-sec-title">✅ Actividades por hacer</div>
@@ -3064,6 +3194,7 @@ function embCardHecha(id, aid) {
   const p = embList().find(x => x.id === id); const a = p && (p.actividades || []).find(x => x.id === aid);
   if (!a) return;
   a.hecha = true; a.fechaHecha = embToday();
+  repAlCompletar('emb', a, p);
   saveLocal(); renderSidebar(); renderEmbudo();
   showToast('✅ Tarea cumplida');
 }
@@ -3190,6 +3321,7 @@ function embToggleAct(aid) {
   const a = p.actividades.find(x => x.id === aid); if (!a) return;
   a.hecha = !a.hecha;
   a.fechaHecha = a.hecha ? embToday() : '';
+  if (a.hecha) repAlCompletar('emb', a, p);
   saveLocal(); embSecciones(p); renderEmbudo();
 }
 function embAddBit() {
@@ -3532,7 +3664,7 @@ async function syncUp() {
     if (res.ok || res.status === 201 || res.status === 200) {
       state.lastSync = new Date().toISOString();
       state.cambiosSinSubir = false;
-      saveLocal(true); showToast('☁️ Subido a la nube');
+      saveLocal(true); showToast('☁️ Subido a la nube'); bkNube();
     } else { showToast('❌ Error al subir (código ' + res.status + ')'); }
   } catch(e) { showToast('❌ Error de conexión: no se pudo llegar a Supabase'); }
 }
@@ -3549,6 +3681,7 @@ async function syncDown() {
     const rows = await res.json();
     if (rows && rows[0] && rows[0].data) {
       const remote = JSON.parse(rows[0].data);
+      snapGuardar('Antes de descargar de la nube', true);
       const syncCfg = state.sync;
       const cid = state.clientId;
       state = { ...remote, sync: syncCfg, clientId: cid };
@@ -3579,7 +3712,7 @@ function renderBackup() {
       </label>
     </div>
     <div style="margin-top:16px;font-size:12px;color:var(--gray-400);">Última exportación: guarda regularmente para no perder datos.</div>
-  </div>`;
+  </div>` + backupExtraHtml();
 }
 function exportBackup() {
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
@@ -3601,6 +3734,7 @@ function importBackup(e) {
   r.onload = ev => {
     try {
       const d = JSON.parse(ev.target.result);
+      snapGuardar('Antes de importar', true);
       state = d;
       saveLocal(); renderSidebar(); goPage('dashboard');
       showToast('✅ Backup importado');
@@ -3628,6 +3762,7 @@ function renderConfig() {
       <label>Meta total (COP)</label>
       <input type="text" id="cfg-meta" value="${state.metaTotal ? state.metaTotal.toLocaleString('es-CO') : ''}" oninput="formatCOPInput(this)">
     </div>
+    <label class="cfg-check"><input type="checkbox" ${state.recordarOff ? '' : 'checked'} onchange="state.recordarOff=!this.checked;saveLocal()"> Mostrar el resumen del día al abrir la app</label>
     <button class="btn-confirm" onclick="saveConfig()" style="width:100%;padding:12px;">Guardar cambios</button>
 
     <div style="margin-top:24px;border-top:1px solid var(--gray-200);padding-top:20px;">
@@ -3897,6 +4032,469 @@ async function bannerSyncDown() {
   await syncDown();
 }
 
+
+// ═══════════════════════════════════════════════════════════
+//  MEJORAS: copias de seguridad, seguimiento, pronóstico, repetición,
+//  resumen del día, buscador, cobros, reporte para inversores y evolución
+// ═══════════════════════════════════════════════════════════
+const normTxt = s => String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const fechaStr = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+function refrescarDash() { if (currentPage === 'dashboard') renderDashboard(); }
+
+// ── 1. Copias de seguridad ──
+const SNAP_KEY = 'atocha_snaps_v1', SNAP_TOPE = 1200000, SNAP_MAX = 10;
+function snapLeer() { try { const l = JSON.parse(localStorage.getItem(SNAP_KEY) || '[]'); return Array.isArray(l) ? l : []; } catch (e) { return []; } }
+function snapEscribir(l) {
+  for (;;) {
+    try { localStorage.setItem(SNAP_KEY, JSON.stringify(l)); return true; }
+    catch (e) { if (l.length <= 1) return false; l.pop(); }
+  }
+}
+// Guarda una copia en este dispositivo. Sin forzar: solo si hay cambios y pasaron 6 horas desde la última.
+function snapGuardar(motivo, forzar) {
+  try {
+    const cid = state.clientId || '', datos = JSON.stringify(state);
+    if (datos.length > SNAP_TOPE / 2) return false;      // muy grande: no arriesgar el espacio de los datos reales
+    let l = snapLeer();
+    const ult = l.find(x => x.cid === cid);
+    if (ult && ult.d === datos) return false;
+    if (!forzar && ult && Date.now() - ult.t < 6 * 3600 * 1000) return false;
+    l.unshift({ t: Date.now(), cid, m: motivo || 'Automática', d: datos });
+    let n = 0; l = l.filter(x => x.cid !== cid || ++n <= SNAP_MAX);
+    let tam = 0; l = l.filter((x, i) => { tam += x.d.length; return i === 0 || tam <= SNAP_TOPE; });
+    return snapEscribir(l);
+  } catch (e) { return false; }
+}
+function restaurarEstado(o, desde) {
+  if (!o || typeof o !== 'object' || !Array.isArray(o.modules)) { showToast('❌ La copia no es válida'); return false; }
+  if (!confirm('Se reemplazarán los datos actuales por la copia del ' + desde + '. Antes se guarda una copia de lo actual. ¿Continuar?')) return false;
+  snapGuardar('Antes de restaurar', true);
+  const cfg = state.sync, cid = state.clientId;
+  state = { ...o, sync: cfg, clientId: cid };
+  ensureDefaults();
+  saveLocal();
+  document.getElementById('sb-company').textContent = state.company;
+  renderSidebar(); goPage('backup');
+  showToast('✅ Copia restaurada. Pulsa ☁️ Subir para llevarla a la nube');
+  return true;
+}
+function snapRestaurar(i) {
+  const l = snapLeer().filter(x => x.cid === (state.clientId || ''));
+  const x = l[i]; if (!x) return;
+  let o; try { o = JSON.parse(x.d); } catch (e) { showToast('❌ La copia está dañada'); return; }
+  restaurarEstado(o, new Date(x.t).toLocaleString('es-CO'));
+}
+function snapBorrar() {
+  if (!confirm('¿Borrar las copias guardadas en este dispositivo? No afecta tus datos ni la nube.')) return;
+  const cid = state.clientId || '';
+  snapEscribir(snapLeer().filter(x => x.cid !== cid));
+  renderBackup();
+}
+async function bkNube() {
+  try {
+    const hoy = embToday();
+    if (state.bkNubeDia === hoy || !state.sync.url || !state.sync.key) return;
+    const res = await fetch(`${state.sync.url}/rest/v1/atocha_sync`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': state.sync.key, 'Authorization': `Bearer ${state.sync.key}`, 'Prefer': 'resolution=merge-duplicates' },
+      body: JSON.stringify({ id: state.clientId + '__bk' + new Date().getDay(), data: JSON.stringify(state), updated_at: new Date().toISOString() })
+    });
+    if (res.ok) { state.bkNubeDia = hoy; saveLocal(true); }
+  } catch (e) { /* la copia diaria es un extra: si falla no molesta */ }
+}
+async function bkNubeListar() {
+  const box = document.getElementById('bk-nube'); if (!box) return;
+  if (!state.sync.url || !state.sync.key) { box.innerHTML = '<div class="bk-vacio">Configura Supabase primero.</div>'; return; }
+  box.innerHTML = '<div class="bk-vacio">Buscando copias…</div>';
+  try {
+    const res = await fetch(`${state.sync.url}/rest/v1/atocha_sync?id=like.${encodeURIComponent(state.clientId)}__bk*&select=id,updated_at&order=updated_at.desc`, { headers: { 'apikey': state.sync.key, 'Authorization': `Bearer ${state.sync.key}` } });
+    if (!res.ok) { box.innerHTML = '<div class="bk-vacio">❌ No se pudo leer (código ' + res.status + ')</div>'; return; }
+    const rows = (await res.json()).filter(r => /^[\w.:\-]+$/.test(String(r.id)));
+    box.innerHTML = rows.length ? rows.map(r => `<div class="bk-fila"><span>${escHtml(new Date(r.updated_at).toLocaleString('es-CO'))}</span><button type="button" class="edit-btn" onclick="bkNubeRestaurar('${embAttr(r.id)}')">Restaurar</button></div>`).join('')
+      : '<div class="bk-vacio">Aún no hay copias en la nube. Se crea una al día cuando pulsas ☁️ Subir.</div>';
+  } catch (e) { box.innerHTML = '<div class="bk-vacio">❌ Sin conexión con Supabase</div>'; }
+}
+async function bkNubeRestaurar(id) {
+  try {
+    const res = await fetch(`${state.sync.url}/rest/v1/atocha_sync?id=eq.${encodeURIComponent(id)}`, { headers: { 'apikey': state.sync.key, 'Authorization': `Bearer ${state.sync.key}` } });
+    const rows = res.ok ? await res.json() : [];
+    if (!rows[0] || !rows[0].data) { showToast('❌ No se encontró esa copia'); return; }
+    restaurarEstado(JSON.parse(rows[0].data), new Date(rows[0].updated_at).toLocaleString('es-CO'));
+  } catch (e) { showToast('❌ No se pudo restaurar'); }
+}
+function backupExtraHtml() {
+  const cid = state.clientId || '';
+  const l = snapLeer().filter(x => x.cid === cid);
+  const filas = l.map((x, i) => {
+    let r = '';
+    try { const o = JSON.parse(x.d); const nt = (o.checklist || []).length + (o.modules || []).reduce((t, m) => t + (m.tasks || []).length, 0); r = `${(o.modules || []).length} proyectos · ${(o.prospects || []).length} prospectos · ${nt} tareas`; } catch (e) { /* sin resumen */ }
+    return `<div class="bk-fila"><span><b>${escHtml(new Date(x.t).toLocaleString('es-CO'))}</b><small>${escHtml(x.m)}${r ? ' · ' + r : ''}</small></span><button type="button" class="edit-btn" onclick="snapRestaurar(${i})">Restaurar</button></div>`;
+  }).join('');
+  return `
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">Copias automáticas en este dispositivo</div>
+    <p class="bk-p">Se guardan solas al abrir la app (máximo una cada 6 horas y solo si hubo cambios), y antes de descargar de la nube, importar o restaurar. Se conservan las últimas ${SNAP_MAX}.</p>
+    ${filas || '<div class="bk-vacio">Todavía no hay copias. Se crea la primera al abrir la app con datos.</div>'}
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button type="button" class="edit-btn" onclick="if(snapGuardar('Manual', true)){showToast('Copia guardada');renderBackup()}else{showToast('No hay cambios nuevos que copiar')}">+ Guardar una copia ahora</button>
+      ${l.length ? '<button type="button" class="edit-btn" onclick="snapBorrar()">Borrar copias</button>' : ''}
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">Copias en la nube (últimos 7 días)</div>
+    <p class="bk-p">Cada día que pulsas ☁️ Subir se guarda también una copia aparte en Supabase. La del mismo día de la semana se reemplaza, así que siempre hay hasta 7.</p>
+    <div id="bk-nube"></div>
+    <button type="button" class="edit-btn" style="margin-top:10px" onclick="bkNubeListar()">Ver copias de la nube</button>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">Reporte para inversores</div>
+    <p class="bk-p">Un resumen listo para imprimir o guardar como PDF: meta, avance, capital reunido, inversores, proyectos e ingresos.</p>
+    <button type="button" class="edit-btn" onclick="reporteInversores()">Generar reporte</button>
+  </div>`;
+}
+
+// ── 2. Seguimiento del Embudo ──
+function embDiasA() { return Number(state.embDias && state.embDias.a) || EMB_DIAS_ALERTA; }
+function embDiasR() { return Number(state.embDias && state.embDias.r) || EMB_DIAS_ROJO; }
+function embSinAccion(p) {
+  if (EMB_ETAPAS_ALERTA.indexOf(p.etapa) < 0 && p.etapa !== 'arranque') return false;
+  return !(p.actividades || []).some(a => !a.hecha);
+}
+function embSeguimiento() {
+  return embList().filter(p => p.etapa !== 'activo' && p.etapa !== 'perdido')
+    .map(p => ({ p, al: embAlerta(p), sin: embSinAccion(p) }))
+    .filter(x => x.al.nivel > 0 || x.sin)
+    .sort((a, b) => (b.al.nivel - a.al.nivel) || (b.al.dias - a.al.dias));
+}
+function dashSeguimiento() {
+  const lista = embSeguimiento();
+  const fila = x => {
+    const e = EMB_STAGES.find(s => s.id === x.p.etapa);
+    const tags = [];
+    if (x.al.nivel) tags.push(`<span class="seg-tag n${x.al.nivel}">${x.al.dias} días sin novedad</span>`);
+    if (x.sin) tags.push('<span class="seg-tag s">Sin próxima acción</span>');
+    const id = embAttr(x.p.id);
+    return `<div class="seg-fila">
+      <div class="seg-main" onclick="closeModal();embOpen('${id}')" title="Abrir la ficha"><b>${escHtml(x.p.nombre)}</b><small>${escHtml(e ? e.name : '')}${x.p.responsable ? ' · ' + escHtml(x.p.responsable) : ''}</small><div class="seg-tags">${tags.join('')}</div></div>
+      <button type="button" class="edit-btn" onclick="segAgendar('${id}')">+ Seguimiento mañana</button>
+    </div>`;
+  };
+  setModal(`<h3>Seguimiento del Embudo <span style="color:var(--gray-400);font-weight:600">(${lista.length})</span></h3>
+    <p class="bk-p">Prospectos entre Prospecto y Negociación sin novedad por varios días, y cualquier prospecto en curso sin una actividad pendiente.</p>
+    <div class="seg-cfg">Avisar desde <input type="number" min="1" max="90" id="seg-a" value="${embDiasA()}"> días (amarillo) y desde <input type="number" min="2" max="180" id="seg-r" value="${embDiasR()}"> días (rojo)
+      <button type="button" class="btn-add" onclick="segGuardarUmbral()">Guardar</button></div>
+    ${lista.length ? lista.map(fila).join('') : '<div class="empty-panel">Todo al día: ningún prospecto está desatendido.</div>'}
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cerrar</button></div>`, 640);
+}
+function segAgendar(id) {
+  const p = embList().find(x => x.id === id); if (!p) return;
+  p.actividades.push({ id: embId('a'), texto: 'Dar seguimiento', fecha: fechaMasDias(1), hecha: false, fechaHecha: '' });
+  saveLocal(); renderSidebar(); refrescarDash();
+  if (currentPage === 'embudo') renderEmbudo();
+  showToast('Seguimiento agendado para mañana');
+  dashSeguimiento();
+}
+function segGuardarUmbral() {
+  const a = parseInt(document.getElementById('seg-a').value, 10), r = parseInt(document.getElementById('seg-r').value, 10);
+  if (!(a >= 1) || !(r > a)) { showToast('⚠️ El rojo debe ser mayor que el amarillo'); return; }
+  state.embDias = { a, r };
+  saveLocal(); refrescarDash();
+  if (currentPage === 'embudo') renderEmbudo();
+  dashSeguimiento();
+}
+
+// ── 3. Pronóstico de ingresos ──
+const EMB_PROB_DEF = { diseno: 10, prospecto: 10, contactado: 20, reunion: 35, propuesta: 55, negociacion: 75, arranque: 90, activo: 100, perdido: 0 };
+function embProb(id) { const v = state.embProb && state.embProb[id]; return (v === 0 || v > 0) ? Number(v) : EMB_PROB_DEF[id]; }
+function embPronostico() {
+  const filas = EMB_STAGES.map(s => {
+    const ps = embList().filter(p => p.etapa === s.id);
+    const monto = ps.reduce((t, p) => t + (Number(p.mensualidad) || 0), 0), prob = embProb(s.id);
+    return { s, n: ps.length, monto, prob, esp: Math.round(monto * prob / 100) };
+  });
+  const activo = filas.find(f => f.s.id === 'activo').monto;
+  const pipe = filas.filter(f => f.s.id !== 'activo' && f.s.id !== 'perdido').reduce((t, f) => t + f.esp, 0);
+  return { filas, activo, pipe, total: activo + pipe };
+}
+function dashPronostico() {
+  const r = embPronostico(), meta = Number(state.embMetaMensual) || 0;
+  const pct = meta ? Math.round(r.total / meta * 100) : 0;
+  setModal(`<h3>Pronóstico de ingresos mensuales</h3>
+    <p class="bk-p">Cada mensualidad del Embudo se multiplica por la probabilidad de su etapa. Los porcentajes son tuyos: ajústalos con lo que realmente te cierra cada etapa.</p>
+    <div class="dash-resumen">
+      <div><span>Ya cobras</span><b>${fmtCOP(r.activo)}</b></div>
+      <div><span>Embudo ponderado</span><b>${fmtCOP(r.pipe)}</b></div>
+      <div><span>Esperado por mes</span><b style="color:var(--blue-600)">${fmtCOP(r.total)}</b></div>
+    </div>
+    <div class="pron-tabla">
+      <div class="pron-h"><span>Etapa</span><span>Empresas</span><span>Mensualidad</span><span>Prob.</span><span>Esperado</span></div>
+      ${r.filas.map(f => `<div class="pron-f"><span><i class="pron-dot" style="background:${f.s.color}"></i>${escHtml(f.s.name)}</span><span>${f.n}</span><span>${fmtCOP(f.monto)}</span>
+        <span>${f.s.id === 'activo' || f.s.id === 'perdido' ? f.prob + '%' : `<input type="number" min="0" max="100" value="${f.prob}" onchange="pronProb('${f.s.id}',this.value)">%`}</span><b>${fmtCOP(f.esp)}</b></div>`).join('')}
+    </div>
+    ${(() => { const g = embPorProyecto(); return g.length ? `<div class="dash-sub" style="margin-top:16px">Por proyecto</div>
+      <div class="pron-tabla"><div class="pron-h pp"><span>Proyecto</span><span>Prospectos</span><span>Ya cobras</span><span>Esperado</span></div>
+      ${g.map(x => `<div class="pron-f pp"><span>${escHtml(x.nombre)}</span><span>${x.n}</span><span>${fmtCOP(x.act)}</span><b>${fmtCOP(x.total)}</b></div>`).join('')}
+      <div class="pron-f pp" style="font-weight:700"><span>Total del negocio</span><span>${g.reduce((t, x) => t + x.n, 0)}</span><span>${fmtCOP(g.reduce((t, x) => t + x.act, 0))}</span><b>${fmtCOP(g.reduce((t, x) => t + x.total, 0))}</b></div></div>` : ''; })()}
+    <div class="seg-cfg" style="margin-top:14px">Meta de ingreso mensual (COP) <input type="text" id="pron-meta" value="${meta ? meta.toLocaleString('es-CO') : ''}" oninput="formatCOPInput(this)" placeholder="Ej: 20.000.000" style="width:160px"> <button type="button" class="btn-add" onclick="pronMeta()">Guardar</button></div>
+    ${meta ? `<div class="pron-barra"><div style="width:${Math.min(pct, 100)}%"></div></div><div class="bk-p">${pct}% de la meta mensual con lo esperado (${fmtCOP(r.total)} de ${fmtCOP(meta)}). ${r.total >= meta ? 'Vas por encima de la meta.' : 'Faltan ' + fmtCOP(meta - r.total) + '.'}</div>` : ''}
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cerrar</button></div>`, 680);
+}
+function pronProb(id, v) {
+  let n = parseInt(v, 10); if (!(n >= 0)) n = 0; if (n > 100) n = 100;
+  if (!state.embProb) state.embProb = {};
+  state.embProb[id] = n; saveLocal(); refrescarDash(); dashPronostico();
+}
+function pronMeta() { state.embMetaMensual = parseCOP(document.getElementById('pron-meta').value) || 0; saveLocal(); refrescarDash(); dashPronostico(); }
+
+// ── 4. Tareas que se repiten ──
+const REPITE = { '': 'No se repite', semanal: 'Cada semana', quincenal: 'Cada 15 días', mensual: 'Cada mes' };
+const repTag = t => (t && t.repite && REPITE[t.repite]) ? ` · <span class="rep-tag">${ico('repeat', 12)}${REPITE[t.repite]}</span>` : '';
+function repOpciones(sel) { return Object.keys(REPITE).map(k => `<option value="${k}"${(sel || '') === k ? ' selected' : ''}>${REPITE[k]}</option>`).join(''); }
+function repSiguienteFecha(f, tipo) {
+  const hoy = hoyLocal();
+  let d = (f && /^\d{4}-\d{2}-\d{2}$/.test(f)) ? fechaLocal(f) : new Date(hoy);
+  const base = d.getDate();
+  const avanza = () => {
+    if (tipo === 'semanal') d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 7);
+    else if (tipo === 'quincenal') d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 15);
+    else { const ult = new Date(d.getFullYear(), d.getMonth() + 2, 0).getDate(); d = new Date(d.getFullYear(), d.getMonth() + 1, Math.min(base, ult)); }
+  };
+  avanza();
+  while (d < hoy) avanza();
+  return fechaStr(d);
+}
+// kind: 'mod' | 'cl' | 'emb'. Al cumplir una tarea que se repite crea la siguiente (una sola vez).
+function repAlCompletar(kind, o, dueno) {
+  if (!o || !o.repite || !REPITE[o.repite] || o.siguiente) return;
+  const emb = kind === 'emb';
+  const f = repSiguienteFecha(emb ? o.fecha : o.date, o.repite);
+  const nuevo = emb
+    ? { id: embId('a'), texto: o.texto, fecha: f, hecha: false, fechaHecha: '', repite: o.repite }
+    : { id: embId('t'), name: o.name, date: f, priority: o.priority || 'media', done: false, doneDate: null, repite: o.repite };
+  if (emb) dueno.actividades.push(nuevo); else if (kind === 'mod') dueno.tasks.push(nuevo); else state.checklist.push(nuevo);
+  o.siguiente = nuevo.id;
+  showToast('Próxima repetición: ' + formatDate(f));
+}
+
+// ── 5. Resumen del día al abrir ──
+function cobPendientesN() { const mes = ingMesActual(); return cobClientes().filter(p => !cobList()[p.id + '|' + mes]).length; }
+function datosDelDia() {
+  const hoy = embToday(), pend = getAllTasks().filter(t => !t.done);
+  return { venc: pend.filter(t => t.date && t.date < hoy).length, hoyN: pend.filter(t => t.date === hoy).length, seg: embSeguimiento().length, cob: new Date().getDate() >= 5 ? cobPendientesN() : 0 };
+}
+function badgeApp() {
+  try { const d = datosDelDia(); if (navigator.setAppBadge) { (d.venc + d.hoyN) ? navigator.setAppBadge(d.venc + d.hoyN) : navigator.clearAppBadge(); } } catch (e) { /* no soportado */ }
+}
+function recordatorioDia() {
+  try {
+    if (state.recordarOff) return;
+    const hoy = embToday(), clave = 'atocha_rec_' + (state.clientId || '');
+    if (localStorage.getItem(clave) === hoy) return;
+    if (document.getElementById('modal').style.display === 'flex') return;
+    const d = datosDelDia();
+    if (!d.venc && !d.hoyN && !d.seg && !d.cob) return;
+    localStorage.setItem(clave, hoy);
+    const h = new Date().getHours(), saludo = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
+    const fila = (n, txt, accion, cls) => n ? `<button type="button" class="rec-fila ${cls || ''}" onclick="${accion}"><b>${n}</b><span>${txt}</span><i>›</i></button>` : '';
+    setModal(`<h3>${saludo}</h3>
+      <p class="bk-p" style="margin-bottom:12px">Esto es lo que necesita atención hoy:</p>
+      ${fila(d.venc, d.venc === 1 ? 'tarea vencida' : 'tareas vencidas', 'dashHoy()', 'rojo')}
+      ${fila(d.hoyN, d.hoyN === 1 ? 'tarea para hoy' : 'tareas para hoy', 'dashHoy()')}
+      ${fila(d.seg, d.seg === 1 ? 'prospecto sin seguimiento' : 'prospectos sin seguimiento', 'dashSeguimiento()', 'ambar')}
+      ${fila(d.cob, d.cob === 1 ? 'cliente sin pago este mes' : 'clientes sin pago este mes', 'dashCobros()', 'ambar')}
+      <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Ahora no</button></div>`, 440);
+  } catch (e) { /* el resumen nunca debe impedir abrir la app */ }
+}
+
+// ── 6. Buscador global ──
+function buscarAbrir() {
+  setModal(`<div class="bus-top">${ico('search', 18)}<input id="bus-q" type="text" placeholder="Buscar proyectos, tareas, prospectos, notas, aliados…" autocomplete="off" oninput="buscarRender()" onkeydown="if(event.key==='Escape')closeModal()"></div><div id="bus-res"></div>`, 640);
+  buscarRender();
+  setTimeout(() => { const i = document.getElementById('bus-q'); if (i) i.focus(); }, 40);
+}
+function buscarRender() {
+  const box = document.getElementById('bus-res'), inp = document.getElementById('bus-q'); if (!box || !inp) return;
+  const q = normTxt(inp.value.trim());
+  if (q.length < 2) { box.innerHTML = '<div class="bus-vacio">Escribe al menos 2 letras. Busca en nombres, descripciones, notas, bitácora y documentos.</div>'; return; }
+  const has = (...t) => t.some(x => normTxt(x).indexOf(q) >= 0);
+  const grupos = [];
+  const add = (titulo, items) => { if (items.length) grupos.push({ titulo, items }); };
+  const it = (nombre, detalle, accion) => ({ nombre, detalle, accion });
+  add('Proyectos', state.modules.filter(m => has(m.name, m.desc)).map(m => it(m.name, m.desc || '', `goPage('mod_${embAttr(m.id)}')`)));
+  const tareas = [];
+  state.modules.forEach(m => m.tasks.forEach(t => { if (has(t.name)) tareas.push(it(t.name, m.name + (t.date ? ' · ' + formatDate(t.date) : '') + (t.done ? ' · cumplida' : ''), `goPage('mod_${embAttr(m.id)}')`)); }));
+  state.checklist.forEach(t => { if (has(t.name)) tareas.push(it(t.name, 'Checklist Maestro' + (t.date ? ' · ' + formatDate(t.date) : '') + (t.done ? ' · cumplida' : ''), `goPage('checklist')`)); });
+  embList().forEach(p => (p.actividades || []).forEach(a => { if (has(a.texto)) tareas.push(it(a.texto, 'Embudo · ' + p.nombre + (a.fecha ? ' · ' + formatDate(a.fecha) : '') + (a.hecha ? ' · cumplida' : ''), `embOpen('${embAttr(p.id)}')`)); }));
+  add('Tareas', tareas);
+  const pros = [];
+  embList().forEach(p => {
+    const campos = [['nombre', p.nombre], ['contacto', p.contacto], ['teléfono', p.telefono], ['correo', p.email], ['ciudad', p.ciudad], ['responsable', p.responsable], ['notas', p.notas], ['rubro', p.rubro]];
+    let donde = campos.find(c => c[1] && has(c[1]));
+    let det = donde && donde[0] !== 'nombre' ? donde[0] + ': ' + String(donde[1]).slice(0, 80) : '';
+    if (!donde) { const b = (p.bitacora || []).find(x => has(x.texto)); if (b) { donde = ['bitácora']; det = 'bitácora: ' + String(b.texto).slice(0, 80); } }
+    if (!donde) { const d = (p.documentos || []).find(x => has(x.nombre, x.texto)); if (d) { donde = ['documento']; det = 'documento: ' + d.nombre; } }
+    if (donde) pros.push(it(p.nombre, (EMB_STAGES.find(s => s.id === p.etapa) || {}).name + (det ? ' · ' + det : ''), `embOpen('${embAttr(p.id)}')`));
+  });
+  add('Prospectos', pros);
+  add('Aliados', aliList().filter(a => has(a.nombre, a.contacto, a.notas, a.email)).map(a => it(a.nombre, (ALI_TIPOS[a.tipo] || {}).n || '', `aliOpen('${embAttr(a.id)}')`)));
+  add('Notas', (state.notes || []).filter(n => has(n.title, n.body)).map(n => it(n.title || 'Sin título', String(n.body || '').slice(0, 80), `goPage('notas')`)));
+  add('Ingresos', ingList().filter(i => has(i.concepto)).map(i => it(i.concepto, formatDate(i.fecha) + ' · ' + fmtCOP(i.monto), `dashAbrir('ing')`)));
+  const total = grupos.reduce((t, g) => t + g.items.length, 0);
+  if (!total) { box.innerHTML = '<div class="bus-vacio">Sin resultados para "' + escHtml(inp.value.trim()) + '".</div>'; return; }
+  box.innerHTML = grupos.map(g => `<div class="bus-g">${g.titulo} <span>${g.items.length}</span></div>` +
+    g.items.slice(0, 6).map(x => `<div class="bus-r" role="button" tabindex="0" onclick="closeModal();${x.accion}" onkeydown="if(event.key==='Enter'){closeModal();${x.accion}}"><b>${escHtml(x.nombre)}</b><small>${escHtml(x.detalle)}</small></div>`).join('') +
+    (g.items.length > 6 ? `<div class="bus-mas">y ${g.items.length - 6} más: afina la búsqueda</div>` : '')).join('');
+}
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && String(e.key).toLowerCase() === 'k') {
+    const app = document.getElementById('app');
+    if (app && app.style.display !== 'none') { e.preventDefault(); buscarAbrir(); }
+  }
+});
+
+// ── 7. Cobros por cliente ──
+let cobMes = '';
+function cobList() { if (!state.cobros) state.cobros = {}; return state.cobros; }
+function cobClientes() { return embList().filter(p => p.etapa === 'activo' && Number(p.mensualidad) > 0); }
+function cobResumen(mes) {
+  const cl = cobClientes(), c = cobList();
+  const pag = cl.filter(p => c[p.id + '|' + mes]);
+  return { cl, pag, esp: cl.reduce((t, p) => t + Number(p.mensualidad), 0), cob: pag.reduce((t, p) => t + (Number(c[p.id + '|' + mes].monto) || 0), 0) };
+}
+function cobMover(d) {
+  const [y, m] = (cobMes || ingMesActual()).split('-').map(Number);
+  const f = new Date(y, m - 1 + d, 1); cobMes = f.getFullYear() + '-' + String(f.getMonth() + 1).padStart(2, '0'); dashCobros();
+}
+function dashCobros() {
+  const mes = cobMes || ingMesActual(), r = cobResumen(mes), c = cobList();
+  const fila = p => {
+    const k = p.id + '|' + mes, pagado = c[k], id = embAttr(p.id);
+    return `<div class="cob-fila${pagado ? ' ok' : ''}">
+      <div class="cob-n"><b>${escHtml(p.nombre)}</b><small>${pagado ? 'Pagó el ' + formatDate(pagado.fecha) : 'Pendiente'}</small></div>
+      <b class="cob-m">${fmtCOP(pagado ? pagado.monto : p.mensualidad)}</b>
+      <button type="button" class="${pagado ? 'edit-btn' : 'btn-add'}" onclick="cobToggle('${id}','${mes}')">${pagado ? 'Deshacer' : 'Marcar pagado'}</button>
+    </div>`;
+  };
+  setModal(`<h3>Cobros de clientes activos</h3>
+    <div class="ig-mes"><button type="button" class="dt-chip" onclick="cobMover(-1)">‹</button><b>${escHtml(ingNombreMes(mes))}</b><button type="button" class="dt-chip" onclick="cobMover(1)">›</button>
+      ${mes !== ingMesActual() ? '<button type="button" class="dt-chip" onclick="cobMes=\'\';dashCobros()">Ir al mes actual</button>' : ''}</div>
+    <div class="dash-resumen">
+      <div><span>Cobrado</span><b style="color:var(--green)">${fmtCOP(r.cob)}</b></div>
+      <div><span>Por cobrar</span><b style="color:${r.esp - r.cob > 0 ? 'var(--orange)' : 'var(--green)'}">${fmtCOP(Math.max(0, r.esp - r.cob))}</b></div>
+      <div><span>Pagaron</span><b>${r.pag.length} de ${r.cl.length}</b></div>
+    </div>
+    <p class="bk-p">Al marcar un pago se registra solo en Ingresos (con el proyecto vinculado del cliente). Al deshacerlo, se quita.</p>
+    ${r.cl.length ? r.cl.map(fila).join('') : '<div class="empty-panel">Aún no hay clientes activos con mensualidad. Pasa un prospecto a "Cliente activo" y aparecerá aquí.</div>'}
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cerrar</button></div>`, 640);
+}
+function cobToggle(pid, mes) {
+  const p = embList().find(x => x.id === pid); if (!p) return;
+  const k = pid + '|' + mes, c = cobList();
+  if (c[k]) { state.ingresos = ingList().filter(i => i.cobro !== k); delete c[k]; showToast('Pago deshecho'); }
+  else {
+    const monto = Number(p.mensualidad) || 0, fecha = mes === ingMesActual() ? embToday() : mes + '-01';
+    ingList().push({ id: embId('g'), fecha, pid: p.moduleId || '', concepto: 'Mensualidad · ' + p.nombre, monto, cobro: k });
+    c[k] = { fecha, monto }; showToast('Pago registrado en Ingresos');
+  }
+  saveLocal(); renderSidebar(); refrescarDash(); dashCobros();
+}
+
+// ── 8. Evolución (gráficas) ──
+function svgBarras(items, o) {
+  o = o || {};
+  const W = 520, H = 190, pl = 8, pr = 8, pt = 24, pb = 30, n = items.length || 1;
+  const max = Math.max(1, ...items.map(x => x.v)), bw = (W - pl - pr) / n, ancho = Math.min(46, bw * 0.62);
+  const barras = items.map((x, i) => {
+    const h = Math.round((H - pt - pb) * x.v / max), cx = pl + bw * i + bw / 2, y = H - pb - h;
+    return `<g><title>${escHtml(x.l)}: ${escHtml(x.t)}</title>
+      ${x.v > 0 ? `<path d="M${cx - ancho / 2},${H - pb} V${y + 4} a4,4 0 0 1 4,-4 h${ancho - 8} a4,4 0 0 1 4,4 V${H - pb} z" fill="var(--blue-600)"/>` : `<rect x="${cx - ancho / 2}" y="${H - pb - 2}" width="${ancho}" height="2" fill="var(--gray-200)"/>`}
+      ${x.v > 0 ? `<text x="${cx}" y="${y - 6}" text-anchor="middle" class="ch-v">${escHtml(x.t)}</text>` : ''}
+      <text x="${cx}" y="${H - 10}" text-anchor="middle" class="ch-l">${escHtml(x.l)}</text></g>`;
+  }).join('');
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escHtml(o.aria || 'Gráfica')}"><line x1="${pl}" x2="${W - pr}" y1="${H - pb}" y2="${H - pb}" stroke="var(--gray-200)"/>${barras}</svg>`;
+}
+function svgBarrasH(items) {
+  const W = 520, fila = 26, pl = 150, pr = 44, H = items.length * fila + 6, max = Math.max(1, ...items.map(x => x.v));
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Prospectos por etapa">` + items.map((x, i) => {
+    const y = 3 + i * fila, w = Math.round((W - pl - pr) * x.v / max);
+    return `<g><title>${escHtml(x.l)}: ${x.v}</title><text x="0" y="${y + 15}" class="ch-l" text-anchor="start">${escHtml(x.l)}</text>
+      ${x.v > 0 ? `<rect x="${pl}" y="${y + 3}" width="${Math.max(w, 4)}" height="14" rx="4" fill="var(--blue-600)"/>` : `<rect x="${pl}" y="${y + 9}" width="3" height="2" fill="var(--gray-200)"/>`}
+      <text x="${pl + Math.max(w, 4) + 6}" y="${y + 15}" class="ch-v" text-anchor="start">${x.v}</text></g>`;
+  }).join('') + '</svg>';
+}
+const MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+function fmtCorto(n) { n = Number(n) || 0; return n >= 1e9 ? (n / 1e9).toFixed(1).replace('.0', '') + ' mil M' : n >= 1e6 ? (n / 1e6).toFixed(1).replace('.0', '') + ' M' : n >= 1e3 ? Math.round(n / 1e3) + ' mil' : String(n); }
+function datosEvolucion() {
+  const hoy = hoyLocal(), meses = [];
+  for (let i = 5; i >= 0; i--) { const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1); meses.push({ k: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'), l: MESES_CORTOS[d.getMonth()] }); }
+  const ing = meses.map(m => { const v = ingSuma(ingList().filter(i => String(i.fecha || '').slice(0, 7) === m.k)); return { l: m.l, v, t: fmtCorto(v) }; });
+  const lunes = new Date(hoy); lunes.setDate(lunes.getDate() - ((lunes.getDay() + 6) % 7));
+  const sem = [];
+  for (let i = 5; i >= 0; i--) { const d = new Date(lunes); d.setDate(d.getDate() - 7 * i); sem.push({ d: fechaStr(d), l: String(d.getDate()).padStart(2, '0') + ' ' + MESES_CORTOS[d.getMonth()] }); }
+  const hechas = getAllTasks().filter(t => t.done && t.doneDate);
+  const tar = sem.map((s, i) => { const fin = i + 1 < sem.length ? sem[i + 1].d : '9999'; const v = hechas.filter(t => t.doneDate >= s.d && t.doneDate < fin).length; return { l: s.l, v, t: String(v) }; });
+  const emb = EMB_STAGES.map(s => ({ l: s.name, v: embList().filter(p => p.etapa === s.id).length }));
+  return { ing, tar, emb };
+}
+function dashEvolucion() {
+  const d = datosEvolucion(), totIng = d.ing.reduce((t, x) => t + x.v, 0);
+  setModal(`<h3>Evolución</h3>
+    <div class="evo-b"><div class="dash-sub">Ingresos por mes (últimos 6 meses) · ${fmtCOP(totIng)}</div>${svgBarras(d.ing, { aria: 'Ingresos por mes' })}</div>
+    <div class="evo-b"><div class="dash-sub">Prospectos por etapa del Embudo</div>${svgBarrasH(d.emb)}</div>
+    <div class="evo-b"><div class="dash-sub">Tareas cumplidas por semana (semana que empieza el)</div>${svgBarras(d.tar, { aria: 'Tareas cumplidas por semana' })}</div>
+    <div class="modal-actions"><button class="btn-confirm" onclick="reporteInversores()">Reporte para inversores</button><button class="btn-cancel" onclick="closeModal()">Cerrar</button></div>`, 680);
+}
+
+// ── 9. Reporte para inversores (imprimir / guardar como PDF) ──
+function reporteInversores() {
+  const hoy = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
+  const asig = totalAsignado(), meta = Number(state.metaTotal) || 0, pct = meta ? Math.round(asig / meta * 100) : 0;
+  const capReq = totalCapital(), capAp = capitalAportado('activo'), pr = embPronostico(), d = datosEvolucion();
+  const inv = aliList().filter(a => a.tipo === 'inversor');
+  const tipoN = { ingreso: 'Ingreso esperado', mensual: 'Ingreso mensual', venta: 'Venta aspirada', capital: 'Capital requerido' };
+  const th = (...c) => '<tr>' + c.map(x => `<th>${x}</th>`).join('') + '</tr>';
+  const css = `body{font-family:'Segoe UI',Arial,sans-serif;color:#0F172A;padding:34px 38px;max-width:900px;margin:auto}
+    h1{font-size:24px;margin:0 0 2px}h2{font-size:14px;text-transform:uppercase;letter-spacing:.6px;color:#1D4ED8;border-bottom:2px solid #1D4ED8;padding-bottom:4px;margin:26px 0 10px}
+    .sub{color:#64748B;font-size:13px;margin-bottom:18px}.kpi{display:flex;gap:12px}.kpi div{flex:1;border:1px solid #E2E8F0;border-radius:8px;padding:12px}
+    .kpi span{display:block;font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:.5px}.kpi b{font-size:20px}
+    table{width:100%;border-collapse:collapse;margin-top:6px}th{background:#0F172A;color:#fff;text-align:left;font-size:11px;padding:6px 9px}
+    td{border-bottom:1px solid #E2E8F0;padding:6px 9px;font-size:12px}td.n,th.n{text-align:right}.bar{height:10px;background:#E2E8F0;border-radius:5px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:#2563EB}
+    .foot{margin-top:30px;font-size:11px;color:#94A3B8}@media print{body{padding:0}}`;
+  let h = `<html><head><meta charset="utf-8"><title>Reporte para inversores · ${escHtml(state.company)}</title><style>${css}</style></head><body>
+    <h1>${escHtml(state.company)}</h1><div class="sub">${escHtml(state.tagline || '')}${state.tagline ? ' · ' : ''}Reporte para inversores · ${hoy}</div>
+    <div class="kpi"><div><span>Meta total</span><b>${fmtCOP(meta)}</b></div><div><span>Asignado a proyectos</span><b>${fmtCOP(asig)}</b></div><div><span>Avance de la meta</span><b>${pct}%</b></div></div>
+    <div class="bar"><i style="width:${Math.min(pct, 100)}%"></i></div>`;
+  if (capReq) h += `<h2>Capital</h2><div class="kpi"><div><span>Capital requerido</span><b>${fmtCOP(capReq)}</b></div><div><span>Aportado (activo)</span><b>${fmtCOP(capAp)}</b></div><div><span>Falta por reunir</span><b>${fmtCOP(Math.max(0, capReq - capAp))}</b></div></div>`;
+  if (inv.length) h += `<h2>Inversores</h2><table>${th('Nombre', 'Estado', '<span>Aporte</span>')}${inv.map(a => `<tr><td>${escHtml(a.nombre)}</td><td>${escHtml(aliEstadoNombre(a.estado))}</td><td class="n">${fmtCOP(a.monto || 0)}</td></tr>`).join('')}</table>`;
+  h += `<h2>Proyectos</h2><table>${th('Proyecto', 'Tipo de cifra', 'Estado', 'Avance de tareas', '<span>Cifra</span>')}${state.modules.map(m => {
+    const tot = m.tasks.length, ok = m.tasks.filter(t => t.done).length, st = (STATUSES.find(x => x.key === m.status) || STATUSES[0]);
+    return `<tr><td>${escHtml(m.name)}</td><td>${tipoN[modTipo(m)]}</td><td>${escHtml(st.label || st.name || m.status)}</td><td>${tot ? ok + ' de ' + tot + ' (' + Math.round(ok / tot * 100) + '%)' : '—'}</td><td class="n">${fmtCOP(m.meta)}</td></tr>`;
+  }).join('')}</table>`;
+  h += `<h2>Ingresos de los últimos 6 meses</h2><table>${th('Mes', '<span>Ingresos</span>')}${d.ing.map(x => `<tr><td>${x.l}</td><td class="n">${fmtCOP(x.v)}</td></tr>`).join('')}</table>`;
+  h += `<h2>Embudo comercial</h2><div class="kpi"><div><span>Ya cobra por mes</span><b>${fmtCOP(pr.activo)}</b></div><div><span>Embudo ponderado</span><b>${fmtCOP(pr.pipe)}</b></div><div><span>Esperado por mes</span><b>${fmtCOP(pr.total)}</b></div></div>
+    ${(() => { const g = embPorProyecto(); return g.length ? `<table>${th('Proyecto', 'Prospectos', 'Clientes activos', '<span>Ya cobra</span>', '<span>Esperado</span>')}${g.map(x => `<tr><td>${escHtml(x.nombre)}</td><td>${x.n}</td><td>${x.clientes}</td><td class="n">${fmtCOP(x.act)}</td><td class="n">${fmtCOP(x.total)}</td></tr>`).join('')}</table>` : ''; })()}
+    <table>${th('Etapa', 'Empresas', '<span>Mensualidad</span>')}${pr.filas.filter(f => f.n).map(f => `<tr><td>${escHtml(f.s.name)}</td><td>${f.n}</td><td class="n">${fmtCOP(f.monto)}</td></tr>`).join('')}</table>
+    <div class="foot">Generado con Atocha · ${hoy}. Las cifras de pronóstico usan probabilidades por etapa definidas por el equipo y no son un compromiso de resultado.</div></body></html>`;
+  const w = window.open('', '_blank');
+  if (!w) { showToast('⚠️ El navegador bloqueó la ventana. Permite las ventanas emergentes e inténtalo de nuevo'); return; }
+  w.document.write(h); w.document.close(); setTimeout(() => { try { w.print(); } catch (e) { /* el usuario puede imprimir manualmente */ } }, 300);
+}
+
+function vistaActual() {
+  if (currentPage === 'dashboard') renderDashboard();
+  else if (String(currentPage).startsWith('mod_')) renderModule(currentPage.slice(4));
+}
+// Consolidado del Embudo por proyecto (mas "Sin proyecto"): sirve al pronóstico y al reporte.
+function embPorProyecto() {
+  const grupos = state.modules.map(m => ({ id: m.id, nombre: m.name, ps: embDeProyecto(m.id) })).filter(g => g.ps.length);
+  const libres = embList().filter(p => !p.moduleId || !state.modules.some(m => m.id === p.moduleId));
+  if (libres.length) grupos.push({ id: '', nombre: 'Sin proyecto', ps: libres });
+  return grupos.map(g => {
+    let act = 0, pipe = 0, clientes = 0, enCurso = 0;
+    g.ps.forEach(p => { const v = Number(p.mensualidad) || 0; if (p.etapa === 'activo') { act += v; clientes++; } else if (p.etapa !== 'perdido') { pipe += Math.round(v * embProb(p.etapa) / 100); enCurso++; } });
+    return { id: g.id, nombre: g.nombre, n: g.ps.length, clientes, enCurso, act, pipe, total: act + pipe };
+  });
+}
 </script>
 </body>
 </html>
