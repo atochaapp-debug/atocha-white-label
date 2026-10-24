@@ -674,6 +674,7 @@ button, input, select, textarea { font-family: inherit; }
 .chart .ch-v { font-size: 13px; font-weight: 700; fill: var(--gray-900); } .chart .ch-l { font-size: 13px; fill: var(--gray-600); }
 .cfg-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700); margin: 4px 0 14px; }
 .dt-form select { max-width: 150px; }
+.topbar-title { min-width: 0; } .topbar-title .tt-company, .topbar-title .tt-page { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 480px) { .topbar-btn { padding: 8px 9px; gap: 4px; } .topbar { gap: 6px; } }
 
 .mp-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 8px; }
@@ -687,6 +688,27 @@ button, input, select, textarea { font-family: inherit; }
 .mc-emb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--blue-700); margin: -4px 0 10px; font-weight: 600; }
 .emb-tag.proy { background: var(--blue-50); color: var(--blue-700); }
 .pron-h.pp, .pron-f.pp { grid-template-columns: 1.8fr .8fr 1.2fr 1.2fr; }
+
+.mp-board { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 10px; margin-top: 10px; scroll-snap-type: x proximity; }
+.mp-col { flex: 0 0 210px; background: var(--gray-100); border-radius: 10px; padding: 9px; scroll-snap-align: start; align-self: flex-start; }
+.mp-col-h { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; color: var(--gray-900); }
+.mp-col-h i { width: 9px; height: 9px; border-radius: 50%; flex: none; } .mp-col-h span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.mp-col-h em { font-style: normal; font-size: 11px; background: var(--white); border-radius: 999px; padding: 1px 8px; color: var(--gray-600); }
+.mp-col-s { font-size: 11px; color: var(--gray-400); margin: 2px 0 4px; min-height: 14px; }
+.mp-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 8px; padding: 9px 10px; margin-top: 7px; cursor: pointer; }
+.mp-card:hover { border-color: var(--blue-500); }
+.mp-card b { display: block; font-size: 13px; overflow-wrap: anywhere; } .mp-cm { font-size: 12px; color: var(--gray-600); margin: 2px 0 4px; }
+.mp-ct { display: flex; flex-wrap: wrap; gap: 4px; }
+.mp-mv { display: flex; justify-content: space-between; margin-top: 7px; }
+.mp-mv button { border: none; background: var(--gray-100); color: var(--gray-700); border-radius: 6px; padding: 2px 12px; font-size: 15px; cursor: pointer; line-height: 1.3; } .mp-mv button:disabled { opacity: .3; cursor: default; }
+.mp-vacia { font-size: 12px; color: var(--gray-400); padding: 10px 2px; }
+.ee-lista { margin: 8px 0 10px; }
+.ee-row { display: flex; align-items: center; gap: 6px; margin-bottom: 7px; }
+.ee-row input[type=color] { width: 34px; height: 34px; padding: 0; border: 1.5px solid var(--gray-200); border-radius: 8px; background: var(--white); flex: none; cursor: pointer; }
+.ee-row .ee-n { flex: 1; min-width: 0; padding: 8px 10px; border: 1.5px solid var(--gray-200); border-radius: 8px; background: var(--white); color: var(--gray-900); font-family: inherit; }
+.ee-row select { width: 150px; padding: 8px 6px; border: 1.5px solid var(--gray-200); border-radius: 8px; background: var(--white); color: var(--gray-900); font-family: inherit; font-size: 12px; }
+.ee-row .dt-btn:disabled { opacity: .3; }
+@media (max-width: 560px) { .ee-row { flex-wrap: wrap; } .ee-row select { width: 100%; order: 5; } .mp-col { flex-basis: 78vw; } }
 </style>
 <body>
 
@@ -2380,23 +2402,32 @@ function modEmbudoProyHtml(m) {
   const ps = embDeProyecto(m.id), id = embAttr(m.id);
   const libres = embList().filter(p => !p.moduleId);
   const pron = (list) => { let act = 0, pipe = 0; list.forEach(p => { const v = Number(p.mensualidad) || 0; if (p.etapa === 'activo') act += v; else if (p.etapa !== 'perdido') pipe += Math.round(v * embProb(p.etapa) / 100); }); return { act, pipe, total: act + pipe }; };
-  const r = pron(ps);
-  const chips = EMB_STAGES.map(st => ({ st, n: ps.filter(p => p.etapa === st.id).length })).filter(x => x.n).map(x => `<span class="mp-chip"><i style="background:${x.st.color}"></i>${escHtml(x.st.name)} <b>${x.n}</b></span>`).join('');
-  const fila = p => {
-    const e = EMB_STAGES.find(x => x.id === p.etapa), al = embAlerta(p);
-    return `<div class="mp-fila" onclick="embOpen('${embAttr(p.id)}')" title="Abrir la ficha"><div class="mp-n"><b>${escHtml(p.nombre)}</b><small>${escHtml(e ? e.name : '')}${al.nivel ? ' · ' + al.dias + ' días sin novedad' : ''}</small></div><span class="mp-m">${Number(p.mensualidad) ? fmtCOP(p.mensualidad) + '/mes' : 'Sin mensualidad'}</span></div>`;
+  const r = pron(ps), propias = !!embEtapasDe(m.id), cols = embColumnasProyecto(m.id);
+  const colDe = p => propias ? ((embEtapaPDe(p) || {}).id) : p.etapa;
+  const col = c => {
+    const items = ps.filter(p => colDe(p) === c.id).sort((a, b) => (Number(b.mensualidad) || 0) - (Number(a.mensualidad) || 0));
+    const suma = items.reduce((t, p) => t + (Number(p.mensualidad) || 0), 0), i = cols.findIndex(x => x.id === c.id);
+    return `<div class="mp-col"><div class="mp-col-h"><i style="background:${escHtml(c.color)}"></i><span>${escHtml(c.name)}</span><em>${items.length}</em></div>
+      <div class="mp-col-s">${suma ? fmtCOP(suma) + ' / mes' : '&nbsp;'}</div>
+      ${items.map(p => {
+        const al = embAlerta(p), pend = (p.actividades || []).filter(a => !a.hecha).length, pid = embAttr(p.id);
+        return `<div class="mp-card" onclick="embOpen('${pid}')" title="Abrir la ficha"><b>${escHtml(p.nombre)}</b>
+          <div class="mp-cm">${Number(p.mensualidad) ? fmtCOP(p.mensualidad) + '/mes' : 'Sin mensualidad'}</div>
+          <div class="mp-ct">${al.nivel ? `<span class="seg-tag n${al.nivel}">${al.dias} días sin novedad</span>` : ''}${embSinAccion(p) ? '<span class="seg-tag s">Sin próxima acción</span>' : ''}${pend ? `<span class="seg-tag">${pend} ${pend === 1 ? 'tarea' : 'tareas'}</span>` : ''}</div>
+          <div class="mp-mv"><button type="button" title="Etapa anterior" ${i === 0 ? 'disabled' : ''} onclick="event.stopPropagation();embMoverP('${pid}',-1)">‹</button><button type="button" title="Etapa siguiente" ${i === cols.length - 1 ? 'disabled' : ''} onclick="event.stopPropagation();embMoverP('${pid}',1)">›</button></div></div>`;
+      }).join('') || '<div class="mp-vacia">Sin empresas</div>'}</div>`;
   };
   return `<div class="card" style="margin-top:16px">
     <div class="card-title">Embudo de este proyecto
       <button type="button" class="edit-btn" style="margin-left:8px" onclick="embNuevoEnProyecto('${id}')">+ Nuevo prospecto</button>
-      <button type="button" class="edit-btn" onclick="goPage('embudo');embSetProy('${id}')">Ver en el tablero</button></div>
+      <button type="button" class="edit-btn" onclick="embEditarEtapas('${id}')">Etapas y precio${propias ? ' · propias' : ''}</button>
+      <button type="button" class="edit-btn" onclick="goPage('embudo');embSetProy('${id}')">Ver en el tablero general</button></div>
+    ${propias ? '<div class="emb-hint" style="margin:-2px 0 10px">Este proyecto usa sus propias etapas. En el tablero general cada una aparece en la etapa a la que equivale.</div>' : ''}
     ${ps.length ? `<div class="dash-resumen">
         <div><span>Prospectos</span><b>${ps.length}</b></div>
         <div><span>Ya cobras</span><b>${fmtCOP(r.act)}</b></div>
-        <div><span>Esperado por mes</span><b style="color:var(--blue-600)">${fmtCOP(r.total)}</b></div></div>
-      <div class="mp-chips">${chips}</div>
-      <div>${ps.slice().sort((a, b) => EMB_STAGES.findIndex(x => x.id === b.etapa) - EMB_STAGES.findIndex(x => x.id === a.etapa)).map(fila).join('')}</div>`
-      : '<div class="emb-hint" style="padding:6px 0 10px">Todavía no hay prospectos en este proyecto. Crea el primero o vincula uno que ya tengas en el Embudo.</div>'}
+        <div><span>Esperado por mes</span><b style="color:var(--blue-600)">${fmtCOP(r.total)}</b></div></div>` : '<div class="emb-hint" style="padding:6px 0 10px">Todavía no hay prospectos en este proyecto. Crea el primero o vincula uno que ya tengas en el Embudo.</div>'}
+    <div class="mp-board">${cols.map(col).join('')}</div>
     ${libres.length ? `<div class="mp-vincular"><select id="mp-vinc-${id}"><option value="">Vincular un prospecto existente…</option>${libres.map(p => `<option value="${embAttr(p.id)}">${escHtml(p.nombre)}</option>`).join('')}</select><button type="button" class="btn-add" onclick="embVincular('${id}')">Vincular</button></div>` : ''}
   </div>`;
 }
@@ -2404,7 +2435,7 @@ function embNuevoEnProyecto(modId) { embProyNuevo = modId; embOpen(null); }
 function embVincular(modId) {
   const sel = document.getElementById('mp-vinc-' + modId); const p = sel && embList().find(x => x.id === sel.value);
   if (!p) { showToast('Elige un prospecto'); return; }
-  p.moduleId = modId; saveLocal(); renderSidebar(); renderModule(modId); showToast('Prospecto vinculado a este proyecto');
+  p.moduleId = modId; embSincEtapaP(p); saveLocal(); renderSidebar(); renderModule(modId); showToast('Prospecto vinculado a este proyecto');
 }
 function modEmbudoHtml(m) {
   const ps = embDeProyecto(m.id); if (!ps.length) return '';
@@ -2863,7 +2894,7 @@ function embCard(p, idx) {
     (p.documentos || []).length ? `<span class="emb-tag">📄 ${p.documentos.length}</span>` : '',
     p.notas ? `<span class="emb-tag" title="${embAttr(String(p.notas).slice(0, 200))}">📝 Nota</span>` : '',
     p.responsable ? `<span class="emb-tag">👤 ${escHtml(p.responsable)}</span>` : '',
-    (p.moduleId && state.modules.find(x => x.id === p.moduleId)) ? `<span class="emb-tag proy" title="Proyecto vinculado">${escHtml(state.modules.find(x => x.id === p.moduleId).name)}</span>` : '',
+    (p.moduleId && state.modules.find(x => x.id === p.moduleId)) ? `<span class="emb-tag proy" title="Proyecto vinculado">${escHtml(state.modules.find(x => x.id === p.moduleId).name)}${embEtapaPDe(p) && embEtapaPDe(p).name !== embNombreEtapa(p.etapa) ? ' · ' + escHtml(embEtapaPDe(p).name) : ''}</span>` : '',
     wa ? `<a class="emb-tag wa" href="${embAttr(wa)}" target="_blank" rel="noopener noreferrer" title="Abrir WhatsApp">💬 WhatsApp</a>` : ''
   ].filter(Boolean).join('');
   const next = embNext(p.etapa);
@@ -2970,8 +3001,9 @@ document.addEventListener('keydown', embTeclas);
 function embMove(id, etapa) {
   const p = embList().find(x => x.id === id);
   if (!p) return;
-  embLog(p, 'Etapa: ' + embNombreEtapa(p.etapa) + ' → ' + embNombreEtapa(etapa));
+  embLog(p, 'Etapa: ' + embNombreEtapaP(p) + ' → ' + embNombreEtapa(etapa));
   p.etapa = etapa;
+  embSincEtapaP(p);
   saveLocal(); renderEmbudo();
 }
 
@@ -3010,7 +3042,8 @@ function embOpen(id, etapaForzada) {
   const p = id ? embList().find(x => x.id === id) : null;
   const v = (k, d) => embAttr(p && p[k] != null ? p[k] : (d == null ? '' : d));
   const etapa = etapaForzada || (p ? p.etapa : 'prospecto');
-  const mens = p ? (Number(p.mensualidad) || 0) : EMB_FEE;
+  const modSel = p ? p.moduleId : modPre, modObj = (state.modules || []).find(x => x.id === modSel), cust = embEtapasDe(modSel);
+  const mens = p ? (Number(p.mensualidad) || 0) : (modObj && Number(modObj.embFee) > 0 ? Number(modObj.embFee) : EMB_FEE);
   const proy = p && Number(p.valorProyecto) ? Number(p.valorProyecto) : 0;
   const servs = p ? (p.servicios || []) : EMB_SERVICES;
   document.getElementById('modal-body').innerHTML = `
@@ -3019,7 +3052,7 @@ function embOpen(id, etapaForzada) {
     <div class="modal-field"><label>Qué fabrica o vende</label><input type="text" id="emb-rubro" value="${v('rubro')}"></div>
     <div class="emb-row">
       <div class="modal-field"><label>Etapa</label>
-        <select id="emb-etapa" onchange="embRefreshTpl()">${EMB_STAGES.map(s => `<option value="${s.id}"${s.id === etapa ? ' selected' : ''}>${s.name}</option>`).join('')}</select>
+        <select id="emb-etapa" onchange="embRefreshTpl()">${embOpcionesEtapa(modSel, p ? (embEtapaPDe(p) || {}).id || etapa : (cust && !etapaForzada ? cust[0].id : etapa))}</select>
       </div>
       <div class="modal-field"><label>Mensualidad (COP)</label><input type="text" id="emb-mens" inputmode="numeric" value="${mens ? mens.toLocaleString('es-CO') : ''}" oninput="formatCOPInput(this)"></div>
     </div>
@@ -3039,7 +3072,7 @@ function embOpen(id, etapaForzada) {
       <input type="text" id="emb-resp" list="emb-resp-list" value="${v('responsable')}" placeholder="Quién le hace el seguimiento" autocomplete="off">
       <datalist id="emb-resp-list">${embResponsables().map(r => `<option value="${embAttr(r)}">`).join('')}</datalist>
     </div>
-    <div class="modal-field"><label>Proyecto vinculado <span class="emb-hint">sus tareas se ven también aquí</span></label><select id="emb-modulo"><option value="">(ninguno)</option>${(state.modules || []).map(m => `<option value="${embAttr(m.id)}" ${(p ? p.moduleId === m.id : modPre === m.id) ? 'selected' : ''}>${escHtml(m.name)}</option>`).join('')}</select></div>
+    <div class="modal-field"><label>Proyecto vinculado <span class="emb-hint">sus tareas se ven también aquí</span></label><select id="emb-modulo" onchange="embRefreshEtapas()"><option value="">(ninguno)</option>${(state.modules || []).map(m => `<option value="${embAttr(m.id)}" ${(p ? p.moduleId === m.id : modPre === m.id) ? 'selected' : ''}>${escHtml(m.name)}</option>`).join('')}</select></div>
     ${p ? `
     <div class="emb-sec">
       <div class="emb-sec-title">✅ Actividades por hacer</div>
@@ -3109,8 +3142,9 @@ function embOpen(id, etapaForzada) {
 function embRefreshTpl() {
   const sel = document.getElementById('emb-etapa');
   if (!sel) return;
-  const stage = EMB_STAGES.find(s => s.id === sel.value) || EMB_STAGES[1];
-  document.getElementById('emb-tpl-title').textContent = 'Mensaje sugerido · ' + stage.name;
+  const fe = embEtapaDeForm();
+  const stage = EMB_STAGES.find(s => s.id === fe.etapa) || EMB_STAGES[1];
+  document.getElementById('emb-tpl-title').textContent = 'Mensaje sugerido · ' + (fe.nombre || stage.name);
   document.getElementById('emb-tpl-text').textContent = embTemplate(
     stage.id,
     document.getElementById('emb-nombre').value.trim(),
@@ -3135,7 +3169,8 @@ function embSave() {
   const data = {
     nombre,
     rubro: document.getElementById('emb-rubro').value.trim(),
-    etapa: document.getElementById('emb-etapa').value,
+    etapa: embEtapaDeForm().etapa,
+    etapaP: embEtapaDeForm().etapaP,
     mensualidad: parseCOP(document.getElementById('emb-mens').value),
     valorProyecto: parseCOP(document.getElementById('emb-proy').value),
     servicios: EMB_SERVICES.filter((s, i) => document.getElementById('emb-serv-' + i).checked),
@@ -3152,16 +3187,18 @@ function embSave() {
   const cur = embEditId ? list.find(x => x.id === embEditId) : null;
   let nuevoId = null;
   if (cur) {
-    if (cur.etapa !== data.etapa) {
-      embLog(cur, 'Etapa: ' + embNombreEtapa(cur.etapa) + ' → ' + embNombreEtapa(data.etapa) +
+    if (cur.etapa !== data.etapa || (cur.etapaP || '') !== (data.etapaP || '')) {
+      embLog(cur, 'Etapa: ' + embNombreEtapaP(cur) + ' → ' + embNombreEtapaP(data) +
         (data.etapa === 'perdido' && data.motivoPerdido ? '. Motivo: ' + data.motivoPerdido : ''));
     }
     Object.assign(cur, data);
     if (!cur.moduleId) delete cur.moduleId;
+    embSincEtapaP(cur);
   } else {
     nuevoId = 'p_' + Date.now();
     list.push(Object.assign({ id: nuevoId, desde: new Date().toISOString(), actividades: [], bitacora: [], enlaces: [] }, data));
     if (!list[list.length - 1].moduleId) delete list[list.length - 1].moduleId;
+    embSincEtapaP(list[list.length - 1]);
   }
   saveLocal(); renderEmbudo();
   if (nuevoId) {            // un prospecto nuevo se vuelve a abrir para cargarle actividades
@@ -4494,6 +4531,113 @@ function embPorProyecto() {
     g.ps.forEach(p => { const v = Number(p.mensualidad) || 0; if (p.etapa === 'activo') { act += v; clientes++; } else if (p.etapa !== 'perdido') { pipe += Math.round(v * embProb(p.etapa) / 100); enCurso++; } });
     return { id: g.id, nombre: g.nombre, n: g.ps.length, clientes, enCurso, act, pipe, total: act + pipe };
   });
+}
+
+// ── Etapas propias por proyecto ──
+// Cada prospecto conserva su etapa general (p.etapa) para que alertas, pronóstico y cobros sigan igual.
+// Si su proyecto define etapas propias, p.etapaP guarda cuál es, y cada una "equivale" a una general (base).
+function embEtapasDe(modId) {
+  const m = (state.modules || []).find(x => x.id === modId);
+  return m && Array.isArray(m.embEtapas) && m.embEtapas.length ? m.embEtapas : null;
+}
+function embEtapaPDe(p) {
+  const et = embEtapasDe(p.moduleId); if (!et) return null;
+  return et.find(x => x.id === p.etapaP) || et.find(x => x.base === p.etapa) || et[0];
+}
+function embNombreEtapaP(p) { const e = embEtapaPDe(p); return e ? e.name : embNombreEtapa(p.etapa); }
+function embSincEtapaP(p) {
+  const et = embEtapasDe(p.moduleId);
+  if (!et) { delete p.etapaP; return; }
+  const cur = et.find(x => x.id === p.etapaP);
+  if (cur && cur.base === p.etapa) return;
+  let alt = et.find(x => x.base === p.etapa);
+  if (!alt) {   // ninguna etapa propia equivale a la suya: queda en la más cercana, sin cambiar su etapa general
+    const ix = id => EMB_STAGES.findIndex(s => s.id === id), pi = ix(p.etapa);
+    alt = et.slice().sort((x, y) => Math.abs(ix(x.base) - pi) - Math.abs(ix(y.base) - pi) || ix(x.base) - ix(y.base))[0];
+  }
+  p.etapaP = alt.id;
+}
+function embColumnasProyecto(modId) {
+  return embEtapasDe(modId) || EMB_STAGES.map(s => ({ id: s.id, name: s.name, color: s.color, base: s.id }));
+}
+function embOpcionesEtapa(modId, sel) {
+  const et = embEtapasDe(modId);
+  return (et || EMB_STAGES).map(s => `<option value="${embAttr(s.id)}"${s.id === sel ? ' selected' : ''}>${escHtml(s.name)}</option>`).join('');
+}
+// Lee el selector de etapa de la ficha y lo traduce a {etapa general, etapa propia}
+function embEtapaDeForm() {
+  const sel = document.getElementById('emb-etapa'), mod = document.getElementById('emb-modulo');
+  const v = sel ? sel.value : 'prospecto', et = embEtapasDe(mod ? mod.value : '');
+  const c = et && et.find(x => x.id === v);
+  return c ? { etapa: c.base, etapaP: c.id, nombre: c.name } : { etapa: v, etapaP: undefined, nombre: '' };
+}
+function embRefreshEtapas() {
+  const sel = document.getElementById('emb-etapa'), mod = document.getElementById('emb-modulo'); if (!sel || !mod) return;
+  const prev = embEtapaDeForm();
+  const et = embEtapasDe(mod.value);
+  let nuevo = prev.etapa;
+  if (et) { const c = et.find(x => x.base === prev.etapa) || et[0]; nuevo = c.id; }
+  sel.innerHTML = embOpcionesEtapa(mod.value, nuevo);
+  embRefreshTpl();
+}
+function embMoverP(id, dir) {
+  const p = embList().find(x => x.id === id); if (!p) return;
+  const cols = embColumnasProyecto(p.moduleId), propias = !!embEtapasDe(p.moduleId);
+  const actual = propias ? (embEtapaPDe(p) || {}).id : p.etapa;
+  const i = cols.findIndex(x => x.id === actual), j = i + dir;
+  if (i < 0 || j < 0 || j >= cols.length) return;
+  embLog(p, 'Etapa: ' + cols[i].name + ' → ' + cols[j].name);
+  if (propias) { p.etapaP = cols[j].id; p.etapa = cols[j].base; } else p.etapa = cols[j].id;
+  saveLocal(); renderSidebar(); renderModule(p.moduleId);
+}
+let _ee = null;
+function embEditarEtapas(modId) {
+  const m = state.modules.find(x => x.id === modId); if (!m) return;
+  const et = embEtapasDe(modId);
+  _ee = { modId, fee: Number(m.embFee) || 0, etapas: (et || EMB_STAGES.map(s => ({ id: 'c_' + s.id, name: s.name, color: s.color, base: s.id }))).map(x => ({ ...x })) };
+  embEtapasRender();
+}
+function embEtapasRender() {
+  const e = _ee; if (!e) return;
+  const m = state.modules.find(x => x.id === e.modId);
+  const fila = (x, i) => `<div class="ee-row">
+      <input type="color" value="${embAttr(/^#[0-9a-fA-F]{6}$/.test(x.color) ? x.color : '#6B7280')}" onchange="_ee.etapas[${i}].color=this.value" title="Color">
+      <input type="text" class="ee-n" value="${embAttr(x.name)}" maxlength="40" oninput="_ee.etapas[${i}].name=this.value" placeholder="Nombre de la etapa">
+      <select onchange="_ee.etapas[${i}].base=this.value" title="Equivale a esta etapa del tablero general">${EMB_STAGES.map(s => `<option value="${s.id}"${s.id === x.base ? ' selected' : ''}>≈ ${escHtml(s.name)}</option>`).join('')}</select>
+      <button type="button" class="dt-btn" ${i === 0 ? 'disabled' : ''} onclick="embEtapaMover(${i},-1)" title="Subir">↑</button>
+      <button type="button" class="dt-btn" ${i === e.etapas.length - 1 ? 'disabled' : ''} onclick="embEtapaMover(${i},1)" title="Bajar">↓</button>
+      <button type="button" class="dt-btn" onclick="embEtapaQuitar(${i})" title="Quitar">✕</button></div>`;
+  setModal(`<h3>Etapas y precio · ${escHtml(m.name)}</h3>
+    <p class="bk-p">Define las etapas de venta de este proyecto. Cada una "equivale" a una etapa del tablero general, que sigue mostrando todos los prospectos. Debe haber al menos una que equivalga a <b>Cliente activo</b> y otra a <b>Perdido o pausado</b>.</p>
+    <div class="modal-field"><label>Mensualidad sugerida para los prospectos nuevos de este proyecto (COP)</label><input type="text" id="ee-fee" inputmode="numeric" value="${e.fee ? e.fee.toLocaleString('es-CO') : ''}" oninput="formatCOPInput(this);_ee.fee=parseCOP(this.value)" placeholder="Ej: 2.500.000"></div>
+    <div class="ee-lista">${e.etapas.map(fila).join('')}</div>
+    <button type="button" class="edit-btn" onclick="embEtapaAgregar()">+ Agregar etapa</button>
+    <div class="modal-actions" style="flex-wrap:wrap">
+      <button class="btn-confirm" onclick="embEtapasGuardar()">Guardar</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      ${Array.isArray(m.embEtapas) && m.embEtapas.length ? '<button type="button" class="edit-btn" onclick="embEtapasGenerales()">Volver a las etapas generales</button>' : ''}
+    </div>`, 680);
+  modalFijo(true);
+}
+function embEtapaMover(i, d) { const a = _ee.etapas, j = i + d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; embEtapasRender(); }
+function embEtapaQuitar(i) { if (_ee.etapas.length <= 2) { showToast('Debe quedar al menos 2 etapas'); return; } _ee.etapas.splice(i, 1); embEtapasRender(); }
+function embEtapaAgregar() { if (_ee.etapas.length >= 14) { showToast('Máximo 14 etapas'); return; } _ee.etapas.splice(Math.max(0, _ee.etapas.length - 2), 0, { id: 'c_' + Math.random().toString(36).slice(2, 8), name: '', color: '#3B82F6', base: 'contactado' }); embEtapasRender(); }
+function embEtapasGuardar() {
+  const e = _ee, m = state.modules.find(x => x.id === e.modId); if (!m) return;
+  if (e.etapas.some(x => !String(x.name).trim())) { showToast('⚠️ Todas las etapas necesitan nombre'); return; }
+  if (!e.etapas.some(x => x.base === 'activo')) { showToast('⚠️ Una etapa debe equivaler a "Cliente activo"'); return; }
+  if (!e.etapas.some(x => x.base === 'perdido')) { showToast('⚠️ Una etapa debe equivaler a "Perdido o pausado"'); return; }
+  m.embEtapas = e.etapas.map(x => ({ id: x.id, name: String(x.name).trim().slice(0, 40), color: /^#[0-9a-fA-F]{6}$/.test(x.color) ? x.color : '#6B7280', base: EMB_STAGES.some(s => s.id === x.base) ? x.base : 'prospecto' }));
+  if (e.fee > 0) m.embFee = e.fee; else delete m.embFee;
+  embDeProyecto(m.id).forEach(embSincEtapaP);
+  saveLocal(); renderSidebar(); closeModal(); renderModule(m.id); showToast('✅ Etapas del proyecto guardadas');
+}
+function embEtapasGenerales() {
+  const m = state.modules.find(x => x.id === _ee.modId); if (!m) return;
+  if (!confirm('El proyecto volverá a usar las etapas generales. Cada prospecto quedará en la etapa general equivalente. ¿Continuar?')) return;
+  delete m.embEtapas; if (_ee.fee > 0) m.embFee = _ee.fee; else delete m.embFee;
+  embDeProyecto(m.id).forEach(embSincEtapaP);
+  saveLocal(); renderSidebar(); closeModal(); renderModule(m.id);
 }
 </script>
 </body>
