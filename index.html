@@ -228,6 +228,14 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .dt-edit input[type="text"] { flex: 1 1 100%; }
 .mod-tag { display: inline-block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .3px; padding: 2px 7px; border-radius: 999px; background: var(--gray-100); color: var(--gray-600); margin-left: 6px; vertical-align: 2px; white-space: nowrap; }
 .mod-tag.cap { background: #FEF3C7; color: #92400E; }
+.mt-sel { flex: none; max-width: 150px; padding: 4px 6px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 11px; font-weight: 700; background: white; color: var(--gray-700); font-family: inherit; cursor: pointer; margin-left: 6px; }
+.dark .mt-sel { background: var(--gray-700); border-color: var(--gray-600); color: var(--gray-900); }
+.mt-total { float: right; font-size: 13px; color: var(--gray-900); text-transform: none; letter-spacing: 0; }
+.mt-total small { font-weight: 600; color: var(--gray-400); }
+.mt-req { display: block; font-size: 11px; font-weight: 600; color: #92400E; margin-top: 2px; }
+.dark .mt-req { color: #FDE68A; }
+.mt-bulk { width: 100%; margin-top: 10px; padding: 10px; background: var(--gray-100); color: var(--gray-700); border: 1.5px dashed var(--gray-400); border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.mt-bulk:hover { border-color: var(--blue-600); color: var(--blue-700); }
 .dark .mod-tag { background: var(--gray-700); } .dark .mod-tag.cap { background: #78350F; color: #FDE68A; }
 .dash-aviso { background: #FEF3C7; color: #92400E; border-radius: 10px; padding: 10px 12px; font-size: 13px; margin-bottom: 12px; }
 .dark .dash-aviso { background: #78350F; color: #FDE68A; }
@@ -821,16 +829,18 @@ const STATUSES = [
 ];
 // Tipo de cifra de cada proyecto: lo que significa el número de su "Objetivo (COP)".
 const MOD_TIPOS = {
-  ingreso: { n: 'Ingreso esperado (total)', ayuda: 'Lo que esperas ganar con este proyecto. Cuenta en la Meta Total.' },
+  ingreso: { n: 'Ganancia neta esperada (total)', ayuda: 'Lo que esperas ganar neto con este proyecto (ej. WCF). Cuenta en la Meta Total.' },
   mensual: { n: 'Ingreso mensual (se cuenta × 12 meses)', ayuda: 'La mensualidad. En la Meta Total se cuenta por 12 meses.' },
   venta:   { n: 'Venta aspirada (total)', ayuda: 'Lo que aspiras vender en total. Cuenta en la Meta Total.' },
   capital: { n: 'Capital que necesito', ayuda: 'Dinero que necesitas reunir (compra, inversión). NO cuenta como ingreso: se sigue aparte en "Capital requerido".' }
 };
-function modTipo(m) { return MOD_TIPOS[m && m.tipo] ? m.tipo : 'ingreso'; }
+// Un proyecto sin tipo elegido queda 'sin' (sin clasificar): NO suma en ninguna cifra hasta que lo clasifiques.
+function modTipo(m) { return MOD_TIPOS[m && m.tipo] ? m.tipo : 'sin'; }
 function modEsCapital(m) { return modTipo(m) === 'capital'; }
+function modSinClasificar(m) { return modTipo(m) === 'sin'; }
 // Lo que el proyecto aporta a la Meta Total (el capital no cuenta; lo mensual se multiplica por 12).
 function modAporte(m) {
-  if (modEsCapital(m)) return 0;
+  if (modEsCapital(m) || modSinClasificar(m)) return 0;
   const v = Number(m.meta) || 0;
   return modTipo(m) === 'mensual' ? v * 12 : v;
 }
@@ -840,9 +850,9 @@ function capitalAportado(estado) { return aliList().filter(a => a.tipo === 'inve
 function modTag(m) {
   const t = modTipo(m);
   if (t === 'ingreso') return '';
-  return `<span class="mod-tag${t === 'capital' ? ' cap' : ''}">${{ mensual: 'por mes', venta: 'venta', capital: 'capital' }[t]}</span>`;
+  return `<span class="mod-tag${t === 'capital' || t === 'sin' ? ' cap' : ''}">${{ mensual: 'por mes', venta: 'venta', capital: 'capital', sin: 'sin clasificar' }[t]}</span>`;
 }
-function modEtiquetaCifra(m) { return { capital: 'Capital requerido', mensual: 'Ingreso mensual', venta: 'Venta aspirada' }[modTipo(m)] || 'Objetivo'; }
+function modEtiquetaCifra(m) { return { capital: 'Capital requerido', mensual: 'Ingreso mensual', venta: 'Venta aspirada', ingreso: 'Ganancia neta esperada' }[modTipo(m)] || 'Objetivo (sin clasificar)'; }
 const COLORS = ['#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#EC4899','#06B6D4','#F97316'];
 const MAX_PROJECTS = 22;
 const DEFAULT_SUPABASE = {
@@ -1275,7 +1285,7 @@ function renderDashboard() {
     tarjeta('venc', '🔴 Tareas vencidas', overdue.length, overdue.length ? 'requieren atención' : 'todo al día', overdue.length ? 'var(--red)' : ''),
     tarjeta('cump', '✅ Tareas cumplidas', done.length, 'de ' + all.length + ' en total', 'var(--green)'),
     tarjeta('meta', 'Meta Total', fmtCOP(state.metaTotal), 'Ingresos y ventas', '', true),
-    tarjeta('asig', 'Asignado', fmtCOP(assigned), pct + '% de la meta · solo ingresos', 'var(--blue-600)', true),
+    tarjeta('asig', 'Asignado', fmtCOP(assigned), pct + '% de la meta · solo ingresos' + (state.modules.some(modSinClasificar) ? '<br><span style="color:var(--orange);font-weight:700">⚠ ' + state.modules.filter(modSinClasificar).length + ' sin clasificar</span>' : ''), 'var(--blue-600)', true),
     tarjeta('ing', '💰 Ingresos del mes', fmtCOP(ingSuma(ingMesAct)), 'Hoy: ' + fmtCOP(ingHoyN) + ' · ' + ingMesAct.length + (ingMesAct.length === 1 ? ' registro' : ' registros'), 'var(--green)', true),
     totalCapital() ? tarjeta('cap', '🏦 Capital requerido', fmtCOP(totalCapital()), 'Aportado: ' + fmtCOP(capitalAportado('activo')) + ' (' + Math.round(capitalAportado('activo') / totalCapital() * 100) + '%)', 'var(--orange)', true) : '',
     tarjeta('proy', 'Proyectos', state.modules.length, state.modules.filter(m=>m.status==='marcha').length + ' en marcha', ''),
@@ -1414,7 +1424,7 @@ function dashAbrir(clave) {
     const assigned = totalAsignado();
     const meta = state.metaTotal || 0;
     const libre = meta - assigned;
-    const ing = state.modules.filter(m => !modEsCapital(m));
+    const ing = state.modules.filter(m => !modEsCapital(m) && !modSinClasificar(m));
     titulo = '📊 Distribución del proyecto';
     cuerpo = `
       <div class="dash-resumen">
@@ -1970,42 +1980,103 @@ function ingBorrar(btn, id) {
   ingRefrescar();
 }
 
-// Detalle de la Meta Total: de qué está hecha la cifra
+// Detalle de la Meta Total: tres cifras que NO se mezclan
+//  1) Ganancia neta / ventas (activos principales)   2) Mensualidades (× 12)   3) Capital (no es ingreso)
+function modSetTipo(id, tipo) {
+  const m = (state.modules || []).find(x => x.id === id);
+  if (!m || (tipo && !MOD_TIPOS[tipo])) return;
+  if (tipo) m.tipo = tipo; else delete m.tipo;
+  if (tipo !== 'capital') delete m.paraId;
+  saveLocal(); renderSidebar();
+  if (currentPage === 'dashboard') renderDashboard();
+  dashMeta();
+}
+function modSetPara(id, para) {
+  const m = (state.modules || []).find(x => x.id === id);
+  if (!m || !modEsCapital(m)) return;
+  if (para && (state.modules || []).some(x => x.id === para)) m.paraId = para; else delete m.paraId;
+  saveLocal();
+  dashMeta();
+}
+function modMarcarSin(tipo) {
+  const g = (state.modules || []).filter(modSinClasificar);
+  if (!g.length || !MOD_TIPOS[tipo]) return;
+  if (!confirm('¿Marcar ' + g.length + (g.length === 1 ? ' proyecto' : ' proyectos') + ' como "' + MOD_TIPOS[tipo].n + '"?')) return;
+  g.forEach(m => { m.tipo = tipo; });
+  saveLocal(); renderSidebar();
+  if (currentPage === 'dashboard') renderDashboard();
+  dashMeta();
+}
 function dashMeta() {
   const meta = state.metaTotal || 0;
   const mods = state.modules || [];
-  const asignado = totalAsignado();
+  const idx = new Map(mods.map((m, i) => [m.id, i]));
+  const grupo = f => mods.filter(f).sort((a, b) => (modEsCapital(b) ? Number(b.meta) || 0 : modAporte(b)) - (modEsCapital(a) ? Number(a.meta) || 0 : modAporte(a)));
+  const gan = grupo(m => ['ingreso', 'venta'].indexOf(modTipo(m)) >= 0);
+  const men = grupo(m => modTipo(m) === 'mensual');
+  const cap = grupo(modEsCapital);
+  const sin = grupo(modSinClasificar);
+  const sum = (arr, f) => arr.reduce((t, m) => t + f(m), 0);
+  const totGan = sum(gan, modAporte), totMenAnual = sum(men, modAporte), totMenMes = sum(men, m => Number(m.meta) || 0);
+  const totCap = sum(cap, m => Number(m.meta) || 0);
+  const asignado = totGan + totMenAnual;
   const libre = meta - asignado;
   const pct = meta ? Math.round(asignado / meta * 100) : 0;
   const pctDe = v => meta ? (Math.round((v || 0) / meta * 1000) / 10).toLocaleString('es-CO') + '%' : '—';
-  const porEstado = STATUSES.map(st => {
-    const g = mods.filter(m => m.status === st.key && !modEsCapital(m));
-    return { st, n: g.length, total: g.reduce((t, m) => t + modAporte(m), 0) };
-  }).filter(x => x.n);
-  const orden = mods.map((m, i) => ({ m, i })).filter(x => !modEsCapital(x.m)).sort((a, b) => modAporte(b.m) - modAporte(a.m));
+  const sel = (m) => `<select class="mt-sel" onclick="event.stopPropagation()" onchange="modSetTipo('${aliSafeIdM(m.id)}', this.value)" title="Cambiar el tipo">
+      <option value=""${modSinClasificar(m) ? ' selected' : ''}>Sin clasificar</option>
+      ${Object.keys(MOD_TIPOS).map(k => `<option value="${k}"${modTipo(m) === k ? ' selected' : ''}>${{ ingreso: 'Ganancia neta', mensual: 'Mensualidad', venta: 'Venta', capital: 'Capital' }[k]}</option>`).join('')}
+    </select>`;
+  const dot = m => `<div style="width:10px;height:10px;border-radius:3px;flex:none;background:${COLORS[(idx.get(m.id) || 0) % COLORS.length]}"></div>`;
+  const fila = (m, extra, valor, pctTxt) => `<div class="dash-fila dash-click-fila" onclick="closeModal();goPage('mod_${aliSafeIdM(m.id)}')">
+      ${dot(m)}<span class="dash-fila-n">${escHtml(m.name)}${extra || ''}</span>${pctTxt != null ? `<span class="dash-fila-p">${pctTxt}</span>` : ''}<b>${valor}</b>${sel(m)}
+    </div>`;
+  const capDe = id => cap.filter(c => c.paraId === id);
+  const bloque = (titulo, ayuda, total, filas, vacio) => `<div class="dash-sub">${titulo} <span class="mt-total">${total}</span></div>
+    <div class="emb-hint" style="margin:0 0 4px">${ayuda}</div>
+    ${filas || `<div class="empty-panel">${vacio}</div>`}`;
+
   setModal(`<h3>🎯 Meta Total</h3>
     ${meta ? '' : '<div class="dash-aviso">Aún no has definido la Meta Total. Se cambia en Configuración.</div>'}
+    ${sin.length ? `<div class="dash-aviso">⚠ ${sin.length} ${sin.length === 1 ? 'proyecto sin clasificar no suma' : 'proyectos sin clasificar no suman'} en ninguna cifra. Elige el tipo de cada uno abajo.</div>` : ''}
     <div class="dash-resumen">
       <div><span>Meta total</span><b>${fmtCOP(meta)}</b></div>
-      <div><span>Asignado a proyectos</span><b style="color:var(--blue-600)">${fmtCOP(asignado)}</b></div>
-      <div><span>${libre < 0 ? 'Excede la meta' : 'Sin asignar'}</span><b style="color:${libre < 0 ? 'var(--red)' : 'var(--green)'}">${fmtCOP(Math.abs(libre))}</b></div>
+      <div><span>Ganancia + ingresos del año</span><b style="color:var(--blue-600)">${fmtCOP(asignado)}</b></div>
+      <div><span>${libre < 0 ? 'Excede la meta' : 'Falta para la meta'}</span><b style="color:${libre < 0 ? 'var(--red)' : 'var(--orange)'}">${fmtCOP(Math.abs(libre))}</b></div>
     </div>
-    <div class="dash-prog" title="${pct}% de la meta asignado"><div style="width:${Math.min(100, pct)}%;background:${pct > 100 ? 'var(--red)' : 'var(--blue-600)'}"></div></div>
-    <div class="dash-prog-txt">${pct.toLocaleString('es-CO')}% de la meta está asignada a proyectos${pct > 100 ? ' — los proyectos suman más que la meta' : ''}</div>
-    ${porEstado.length ? `<div class="dash-sub">Por estado</div>
-      ${porEstado.map(x => `<div class="dash-fila"><span class="status-badge ${x.st.cls}">${x.st.label}</span><span class="dash-fila-n">${x.n} ${x.n === 1 ? 'proyecto' : 'proyectos'}</span><span class="dash-fila-p">${pctDe(x.total)}</span><b>${fmtCOP(x.total)}</b></div>`).join('')}` : ''}
-    <div class="dash-sub">Por proyecto (de mayor a menor)</div>
-    ${orden.length ? orden.map(({ m, i }) => `<div class="dash-fila dash-click-fila" onclick="closeModal();goPage('mod_${m.id}')">
-        <div style="width:10px;height:10px;border-radius:3px;flex:none;background:${COLORS[i % COLORS.length]}"></div>
-        <span class="dash-fila-n">${escHtml(m.name)}${modTipo(m) === 'mensual' ? ' <span class="mod-tag">' + fmtCOP(m.meta) + ' × 12</span>' : ''}</span><span class="dash-fila-p">${pctDe(modAporte(m))}</span><b>${fmtCOP(modAporte(m))}</b>
-      </div>`).join('') : '<div class="empty-panel">Aún no hay proyectos</div>'}
-    ${totalCapital() ? `<div class="dash-sub">Fuera de la meta</div>
-      <div class="dash-fila dash-click-fila" onclick="dashCapital()"><span class="dash-fila-n">🏦 Capital que necesitas reunir (no es ingreso)</span><b>${fmtCOP(totalCapital())}</b></div>` : ''}
+    <div class="dash-prog" title="${pct}% de la meta"><div style="width:${Math.min(100, pct)}%;background:${pct > 100 ? 'var(--red)' : 'var(--blue-600)'}"></div></div>
+    <div class="dash-prog-txt">${pct.toLocaleString('es-CO')}% de la meta cubierta${pct > 100 ? ' — se supera la meta' : ''} · el capital no se cuenta como ingreso</div>
+
+    ${bloque('💎 Ganancia neta y ventas', 'Activos principales: lo que esperas ganar en total.', fmtCOP(totGan),
+      gan.map(m => { const c = capDe(m.id), tc = sum(c, x => Number(x.meta) || 0);
+        return fila(m, (modTipo(m) === 'venta' ? ' <span class="mod-tag">venta</span>' : '') + (c.length ? `<span class="mt-req">Requiere capital: ${fmtCOP(tc)} (${c.map(x => escHtml(x.name)).join(', ')})</span>` : ''), fmtCOP(modAporte(m)), pctDe(modAporte(m))); }).join(''),
+      'Ningún proyecto de este tipo todavía.')}
+
+    ${bloque('🔁 Mensualidades', 'Clientes que pagan cada mes. Se cuenta ×12 para la meta del año.', fmtCOP(totMenAnual) + ' <small>/ año</small>',
+      men.map(m => fila(m, ' <span class="mod-tag">' + fmtCOP(m.meta) + ' / mes</span>', fmtCOP(modAporte(m)), pctDe(modAporte(m)))).join('') +
+      (men.length ? `<div class="dash-fila"><span class="dash-fila-n"><b>Total por mes</b></span><b>${fmtCOP(totMenMes)}</b></div>` : ''),
+      'Ningún proyecto de este tipo todavía.')}
+
+    ${bloque('🏦 Capital requerido', 'Inversión necesaria para acceder a los activos. NO es ingreso y no cuenta en la meta.', fmtCOP(totCap),
+      cap.map(m => `<div class="dash-fila dash-click-fila" onclick="closeModal();goPage('mod_${aliSafeIdM(m.id)}')">
+          ${dot(m)}<span class="dash-fila-n">${escHtml(m.name)}</span><b>${fmtCOP(m.meta)}</b>
+          <select class="mt-sel" onclick="event.stopPropagation()" onchange="modSetPara('${aliSafeIdM(m.id)}', this.value)" title="¿Para acceder a cuál proyecto?">
+            <option value="">Para: —</option>
+            ${mods.filter(x => !modEsCapital(x) && x.id !== m.id).map(x => `<option value="${embAttr(x.id)}"${m.paraId === x.id ? ' selected' : ''}>Para: ${escHtml(x.name)}</option>`).join('')}
+          </select>${sel(m)}
+        </div>`).join('') + (cap.length ? `<div class="dash-fila dash-click-fila" onclick="dashCapital()"><span class="dash-fila-n">Ver cuánto han aportado los inversores ›</span></div>` : ''),
+      'Ningún proyecto de este tipo todavía.')}
+
+    ${sin.length ? `<div class="dash-sub">⚠ Sin clasificar <span class="mt-total">${sin.length}</span></div>
+      <div class="emb-hint" style="margin:0 0 4px">No suman en ninguna cifra hasta que elijas su tipo.</div>
+      ${sin.map(m => fila(m, '', fmtCOP(m.meta), null)).join('')}
+      <button class="mt-bulk" onclick="modMarcarSin('mensual')">Marcar todos los sin clasificar como Mensualidad</button>` : ''}
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Cerrar</button>
       <button class="btn-confirm" onclick="closeModal();goPage('config')">Cambiar la meta</button>
-    </div>`);
+    </div>`, 640);
 }
+function aliSafeIdM(id) { return String(id || '').replace(/[^\w\-]/g, ''); }
 
 // Capital requerido: lo que necesitas reunir vs. lo que ya aportan los inversores
 function dashCapital() {
@@ -2101,14 +2172,16 @@ function openModuleModal(mod = null) {
   const isEdit = !!mod;
   let selEmoji = mod ? mod.icon : EMOJIS[state.modules.length % EMOJIS.length];
   let selStatus = mod ? mod.status : 'planificacion';
-  const selTipo = mod ? modTipo(mod) : 'ingreso';
+  const selTipo = mod ? modTipo(mod) : 'sin';
+  const otros = (state.modules || []).filter(x => (!mod || x.id !== mod.id) && !modEsCapital(x));
 
   document.getElementById('modal-body').innerHTML = `
     <h3>${isEdit ? 'Editar proyecto' : 'Nuevo proyecto'}</h3>
     <div class="modal-field"><label>Nombre</label><input type="text" id="mf-name" value="${mod ? embAttr(mod.name) : ''}" placeholder="Nombre del proyecto"></div>
     <div class="modal-field"><label>Descripción corta</label><input type="text" id="mf-desc" value="${mod ? mod.desc : ''}" placeholder="Ej: Red Comercial & Retail"></div>
     <div class="modal-field"><label>Objetivo (COP)</label><input type="text" id="mf-meta" value="${mod && mod.meta ? mod.meta.toLocaleString('es-CO') : ''}" placeholder="0" oninput="formatCOPInput(this)"></div>
-    <div class="modal-field"><label>Tipo de cifra</label><select id="mf-tipo" onchange="modTipoAyuda()">${Object.keys(MOD_TIPOS).map(k => `<option value="${k}" ${selTipo === k ? 'selected' : ''}>${MOD_TIPOS[k].n}</option>`).join('')}</select><div id="mf-tipo-ayuda" class="emb-hint" style="margin:6px 0 0">${MOD_TIPOS[selTipo].ayuda}</div></div>
+    <div class="modal-field"><label>Tipo de cifra</label><select id="mf-tipo" onchange="modTipoAyuda()"><option value=""${selTipo === 'sin' ? ' selected' : ''}>— Elige el tipo —</option>${Object.keys(MOD_TIPOS).map(k => `<option value="${k}" ${selTipo === k ? 'selected' : ''}>${MOD_TIPOS[k].n}</option>`).join('')}</select><div id="mf-tipo-ayuda" class="emb-hint" style="margin:6px 0 0">${selTipo === 'sin' ? 'Elige qué significa la cifra. Mientras no lo elijas, este proyecto no suma en la Meta Total.' : MOD_TIPOS[selTipo].ayuda}</div></div>
+    <div class="modal-field" id="mf-para-box" style="${selTipo === 'capital' ? '' : 'display:none'}"><label>Este capital es para acceder a…</label><select id="mf-para"><option value="">— Ninguno —</option>${otros.map(x => `<option value="${embAttr(x.id)}"${mod && mod.paraId === x.id ? ' selected' : ''}>${escHtml(x.name)}</option>`).join('')}</select></div>
     <div class="modal-field"><label>Estado</label><select id="mf-status">${STATUSES.map(s => `<option value="${s.key}" ${selStatus===s.key?'selected':''}>${s.label}</option>`).join('')}</select></div>
     <div class="modal-field"><label>Ícono</label><div class="emoji-grid" id="eg">${EMOJIS.map(e => `<button class="emoji-btn ${e===selEmoji?'selected':''}" onclick="selectEmoji('${e}')">${e}</button>`).join('')}</div></div>
     ${isEdit ? `<button onclick="deleteModule('${mod.id}')" style="width:100%;padding:10px;background:#FEE2E2;color:var(--red);border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;">🗑 Eliminar proyecto</button>` : ''}
@@ -2122,7 +2195,8 @@ function openModuleModal(mod = null) {
 }
 function modTipoAyuda() {
   const t = document.getElementById('mf-tipo').value, a = document.getElementById('mf-tipo-ayuda');
-  if (a && MOD_TIPOS[t]) a.textContent = MOD_TIPOS[t].ayuda;
+  if (a) a.textContent = MOD_TIPOS[t] ? MOD_TIPOS[t].ayuda : 'Elige qué significa la cifra. Mientras no lo elijas, este proyecto no suma en la Meta Total.';
+  const bx = document.getElementById('mf-para-box'); if (bx) bx.style.display = t === 'capital' ? '' : 'none';
 }
 function selectEmoji(e) {
   window._selEmoji = e;
@@ -2134,12 +2208,19 @@ function saveModule(id) {
   const meta = parseCOP(document.getElementById('mf-meta').value);
   const desc = document.getElementById('mf-desc').value.trim();
   const status = document.getElementById('mf-status').value;
-  const tipo = MOD_TIPOS[document.getElementById('mf-tipo').value] ? document.getElementById('mf-tipo').value : 'ingreso';
+  const tipoSel = document.getElementById('mf-tipo').value;
+  if (!MOD_TIPOS[tipoSel]) { showToast('Elige el tipo de cifra'); return; }
+  const tipo = tipoSel;
+  const paraEl = document.getElementById('mf-para');
+  const paraId = tipo === 'capital' && paraEl ? paraEl.value : '';
   if (id) {
     const m = state.modules.find(x => x.id === id);
     Object.assign(m, { name, desc, icon: window._selEmoji, status, meta, tipo });
+    if (paraId) m.paraId = paraId; else delete m.paraId;
   } else {
-    state.modules.push({ id: 'mod_' + Date.now(), name, desc, icon: window._selEmoji, status, meta, tipo, tasks: [] });
+    const nuevo = { id: 'mod_' + Date.now(), name, desc, icon: window._selEmoji, status, meta, tipo, tasks: [] };
+    if (paraId) nuevo.paraId = paraId;
+    state.modules.push(nuevo);
   }
   closeModal(); saveLocal(); renderSidebar(); goPage(currentPage);
 }
