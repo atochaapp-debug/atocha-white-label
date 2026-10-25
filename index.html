@@ -809,7 +809,7 @@ button, input, select, textarea { font-family: inherit; }
   <div class="install-banner" id="install-banner">
     <div class="ib-text">📲 Instala Atocha en tu dispositivo como app</div>
     <button class="ib-btn" id="install-btn" onclick="installApp()">⬇️ Instalar</button>
-    <button class="ib-close" onclick="document.getElementById('install-banner').classList.remove('show')">✕</button>
+    <button class="ib-close" onclick="ibCerrar()">✕</button>
   </div>
 
   <div class="overlay-bg" id="overlay" onclick="closeSidebar()"></div>
@@ -4028,10 +4028,13 @@ function modalFijo(si) { const mb = document.getElementById('modal-body'); if (m
 
 // Install prompt
 let deferredPrompt = null;
+// El aviso de instalar se calla 30 días cuando la persona lo cierra (el botón "Descargar app" sigue disponible).
+function ibSilenciado() { try { const t = Number(localStorage.getItem('atocha_ib_off') || 0); return t && Date.now() - t < 30 * 86400000; } catch (e) { return false; } }
+function ibCerrar() { document.getElementById('install-banner').classList.remove('show'); try { localStorage.setItem('atocha_ib_off', String(Date.now())); } catch (e) { /* sin almacenamiento */ } }
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
-  document.getElementById('install-banner').classList.add('show');
+  if (!ibSilenciado()) document.getElementById('install-banner').classList.add('show');
 });
 window.addEventListener('appinstalled', () => {
   document.getElementById('install-banner').classList.remove('show');
@@ -4078,6 +4081,8 @@ function installApp() {
 function showCloudBanner() {
   const banner = document.getElementById('cloud-banner');
   if (!sbOk()) return;
+  // Una sola vez por sesión (al entrar), no cada vez que se abre un negocio o se recarga la pantalla.
+  try { if (sessionStorage.getItem('atocha_cb')) return; sessionStorage.setItem('atocha_cb', '1'); } catch (e) { /* sin almacenamiento: se muestra */ }
   const date = state.lastSync ? new Date(state.lastSync).toLocaleString('es-CO') : 'nunca';
   document.getElementById('banner-sync-date').textContent = date;
   banner.style.display = 'flex';
