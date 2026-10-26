@@ -1100,6 +1100,11 @@ function iconoClave(icon, nombre) {
   }
   return EMOJI_A_ICONO[e] || (e === '' ? 'folder' : 'coin');
 }
+// Orden por número de proyecto (P-001, P-002…); los que no tengan número van al final.
+function modsPorNumero() {
+  const n = m => { const q = /^P-(\d+)$/.exec(m.cod || ''); return q ? +q[1] : 1e9; };
+  return state.modules.map((m, i) => ({ m, i })).sort((a, b) => (n(a.m) - n(b.m)) || (a.i - b.i)).map(x => x.m);
+}
 function modTxt(m) { return m ? (m.cod ? m.cod + ' · ' : '') + (m.name || '') : ''; }
 function modChip(m) { return m && m.cod ? '<span class="mcod">' + escHtml(m.cod) + '</span>' : ''; }
 function modPorId(id) { return id ? (state.modules || []).find(x => x.id === id) : null; }
@@ -1444,7 +1449,7 @@ function renderSidebar() {
   if (bnb) { if (pending > 0) { bnb.style.display = 'flex'; bnb.textContent = pending; } else { bnb.style.display = 'none'; } }
 
   const mods = document.getElementById('sb-modules');
-  mods.innerHTML = state.modules.map(m => {
+  mods.innerHTML = modsPorNumero().map(m => {
     const p = m.tasks.filter(t => !t.done).length;
     return `<div class="nav-item" onclick="goPage('mod_${m.id}')" id="nav-mod_${m.id}">
       <span class="ni">${modIco(m, 18)}</span><span class="nn">${modChip(m)}${escHtml(m.name)}</span>
@@ -2437,7 +2442,7 @@ function openModuleModal(mod = null) {
   document.getElementById('modal-body').innerHTML = `
     <h3>${isEdit ? 'Editar proyecto' : 'Nuevo proyecto'}</h3>
     <div class="modal-field"><label>Nombre</label><input type="text" id="mf-name" value="${mod ? embAttr(mod.name) : ''}" placeholder="Nombre del proyecto"></div>
-    ${isEdit ? `<div class="modal-field"><label>Número del proyecto <span class="emb-hint">Ej: P-013. Si ya lo tiene otro proyecto, se intercambian.</span></label><input type="text" id="mf-cod" value="${embAttr(mod.cod || '')}" placeholder="P-001" maxlength="8" autocomplete="off"></div>` : ''}
+    ${isEdit && !AUTH_ON ? `<div class="modal-field"><label>Número del proyecto <span class="emb-hint">Ej: P-013. Si ya lo tiene otro proyecto, se intercambian.</span></label><input type="text" id="mf-cod" value="${embAttr(mod.cod || '')}" placeholder="P-001" maxlength="8" autocomplete="off"></div>` : ''}
     <div class="modal-field"><label>Descripción corta</label><input type="text" id="mf-desc" value="${mod ? mod.desc : ''}" placeholder="Ej: Red Comercial & Retail"></div>
     <div class="modal-field"><label>Objetivo (COP)</label><input type="text" id="mf-meta" value="${mod && mod.meta ? mod.meta.toLocaleString('es-CO') : ''}" placeholder="0" oninput="formatCOPInput(this)"></div>
     <div class="modal-field"><label>Tipo de cifra</label><select id="mf-tipo" onchange="modTipoAyuda()">${Object.keys(MOD_TIPOS).map(k => `<option value="${k}" ${selTipo === k ? 'selected' : ''}>${MOD_TIPOS[k].n}</option>`).join('')}</select><div id="mf-tipo-ayuda" class="emb-hint" style="margin:6px 0 0">${MOD_TIPOS[selTipo].ayuda}</div></div>
