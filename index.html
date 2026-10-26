@@ -2437,6 +2437,7 @@ function openModuleModal(mod = null) {
   document.getElementById('modal-body').innerHTML = `
     <h3>${isEdit ? 'Editar proyecto' : 'Nuevo proyecto'}</h3>
     <div class="modal-field"><label>Nombre</label><input type="text" id="mf-name" value="${mod ? embAttr(mod.name) : ''}" placeholder="Nombre del proyecto"></div>
+    ${isEdit ? `<div class="modal-field"><label>Número del proyecto <span class="emb-hint">Ej: P-013. Si ya lo tiene otro proyecto, se intercambian.</span></label><input type="text" id="mf-cod" value="${embAttr(mod.cod || '')}" placeholder="P-001" maxlength="8" autocomplete="off"></div>` : ''}
     <div class="modal-field"><label>Descripción corta</label><input type="text" id="mf-desc" value="${mod ? mod.desc : ''}" placeholder="Ej: Red Comercial & Retail"></div>
     <div class="modal-field"><label>Objetivo (COP)</label><input type="text" id="mf-meta" value="${mod && mod.meta ? mod.meta.toLocaleString('es-CO') : ''}" placeholder="0" oninput="formatCOPInput(this)"></div>
     <div class="modal-field"><label>Tipo de cifra</label><select id="mf-tipo" onchange="modTipoAyuda()">${Object.keys(MOD_TIPOS).map(k => `<option value="${k}" ${selTipo === k ? 'selected' : ''}>${MOD_TIPOS[k].n}</option>`).join('')}</select><div id="mf-tipo-ayuda" class="emb-hint" style="margin:6px 0 0">${MOD_TIPOS[selTipo].ayuda}</div></div>
@@ -2468,6 +2469,18 @@ function saveModule(id) {
   const tipo = MOD_TIPOS[document.getElementById('mf-tipo').value] ? document.getElementById('mf-tipo').value : 'ingreso';
   if (id) {
     const m = state.modules.find(x => x.id === id);
+    const ce = document.getElementById('mf-cod'), crudo = ce ? ce.value.trim() : '';
+    if (crudo && crudo.toUpperCase() !== String(m.cod || '').toUpperCase()) {
+      const q = /^P?\s*-?\s*0*(\d{1,5})$/i.exec(crudo);
+      if (!q || +q[1] < 1) { showToast('⚠️ El número debe ser como P-013'); return; }
+      const nuevo = 'P-' + String(+q[1]).padStart(3, '0'), otro = state.modules.find(x => x.id !== m.id && x.cod === nuevo);
+      if (otro) {
+        if (!confirm(nuevo + ' lo tiene "' + otro.name + '".\n¿Intercambiar? "' + otro.name + '" pasará a ' + (m.cod || 'sin número') + '.')) return;
+        otro.cod = m.cod || '';
+        if (!otro.cod) delete otro.cod;
+      }
+      m.cod = nuevo;
+    }
     Object.assign(m, { name, desc, icon: window._selEmoji, status, meta, tipo });
   } else {
     state.modules.push({ id: 'mod_' + Date.now(), name, desc, icon: window._selEmoji, status, meta, tipo, tasks: [] });
