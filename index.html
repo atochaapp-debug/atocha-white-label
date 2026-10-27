@@ -59,6 +59,8 @@
 body { font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial, sans-serif; font-variant-numeric: tabular-nums; background: var(--gray-100); color: var(--gray-900); min-height: 100vh; transition: background .3s, color .3s; }
 
 /* ── ONBOARDING ── */
+.ob-salir { display:none; text-align:center; margin-top:14px; font-size:13px; } .ob-salir a { color: var(--blue-700,#1D4ED8); text-decoration: underline; }
+body.auth-on .ob-salir { display:block; }
 #onboarding { position: fixed; inset: 0; background: linear-gradient(135deg, var(--blue-900), var(--blue-700)); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 24px; }
 .ob-card { background: white; border-radius: 20px; padding: 40px 36px; max-width: 460px; width: 100%; box-shadow: var(--shadow-lg); }
 .ob-logo { font-size: 32px; font-weight: 800; color: var(--blue-800); letter-spacing: -1px; margin-bottom: 4px; }
@@ -788,6 +790,9 @@ a.so-link:hover { text-decoration: underline; }
 .imp-c select { flex: 1 1 160px; min-width: 0; padding: 9px 10px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; background: white; color: var(--gray-900); font-family: inherit; }
 .dark .imp-c select { background: var(--gray-800); color: var(--gray-100); border-color: var(--gray-600); }
 
+.ls-tabla td, .ls-tabla th { white-space:nowrap; } .ls-tabla .n { text-align:right; } .ls-nom { max-width:340px; overflow:hidden; text-overflow:ellipsis; } .ls-pn { display:inline-block; max-width:180px; overflow:hidden; text-overflow:ellipsis; vertical-align:bottom; }
+.ls-num, .ls-pl { cursor:pointer; border:none; } .ls-pl:hover { background:#DBEAFE; }
+.ls-est { font-size:11.5px; font-weight:700; border-radius:99px; padding:2px 9px; background:#E5E7EB; color:#374151; } .ls-est.cumplida { background:#DCFCE7; color:#166534; } .ls-est.vencida { background:#FEE2E2; color:#991B1B; } .ls-est.pendiente { background:#FEF3C7; color:#92400E; }
 .build-tag { font-size:10.5px; color:rgba(255,255,255,.35); padding:10px 16px 14px; }
 .mcod { display:inline-block; font-family: ui-monospace, Consolas, monospace; font-size:10px; font-weight:700; letter-spacing:.2px; color:var(--blue-700,#1D4ED8); background:var(--blue-50,#EFF6FF); border-radius:5px; padding:1px 5px; margin-right:6px; vertical-align:1px; white-space:nowrap; }
 .sidebar .mcod { background:rgba(255,255,255,.12); color:#E5E7EB; }
@@ -867,6 +872,7 @@ a.so-link:hover { text-decoration: underline; }
         <div class="hint">¿Ya tienes este negocio en otro dispositivo? Pega aquí su código (lo encuentras en Configuración) para vincularlo y traer sus datos.</div>
       </div>
       <button class="btn-primary" onclick="obNext1()">Continuar →</button>
+      <div class="ob-salir"><a href="#" onclick="authSalir();return false">¿Otra cuenta? Cerrar sesión y volver a entrar</a></div>
     </div>
 
     <div class="ob-step" id="ob2">
@@ -947,6 +953,7 @@ a.so-link:hover { text-decoration: underline; }
       <div class="nav-item active" onclick="goPage('dashboard')" id="nav-dashboard"><span class="ni" data-i="target"></span><span class="nn">Dashboard</span></div>
       <div class="nav-item" onclick="goPage('plan')" id="nav-plan"><span class="ni" data-i="calendar"></span><span class="nn">Plan</span></div>
       <div class="nav-item" onclick="goPage('embudo')" id="nav-embudo"><span class="ni" data-i="funnel"></span><span class="nn">Embudo</span></div>
+      <div class="nav-item" onclick="goPage('listados')" id="nav-listados"><span class="ni" data-i="list"></span><span class="nn">Listados</span></div>
       <div class="nav-section">Módulos</div>
       <div id="sb-modules"></div>
       <div class="nav-section">Gestión</div>
@@ -960,7 +967,7 @@ a.so-link:hover { text-decoration: underline; }
       <div class="nav-item" onclick="toggleDark()" id="nav-dark"><span class="ni" data-i="moon"></span><span class="nn">Modo Oscuro</span></div>
       <div class="nav-item" onclick="authSalir()" id="nav-salir" style="display:none"><span class="ni" data-i="exit"></span><span class="nn">Cerrar sesión</span></div>
       <div class="nav-item" onclick="goPage('config')" id="nav-config"><span class="ni" data-i="gear"></span><span class="nn">Configuración</span></div>
-      <div class="build-tag" title="Versión de Atocha cargada en este momento">Versión 26-oct · 13:50 · orden por número</div>
+      <div class="build-tag" title="Versión de Atocha cargada en este momento">Versión 26-oct · 19:10 · listados</div>
     </div>
   </nav>
 
@@ -1103,6 +1110,97 @@ function iconoClave(icon, nombre) {
   return EMOJI_A_ICONO[e] || (e === '' ? 'folder' : 'coin');
 }
 // Orden por número de proyecto (P-001, P-002…); los que no tengan número van al final.
+
+// ═══════════════════════════════════════════════════════════
+//  LISTADOS: proyectos y tareas, una línea por cada uno. El número abre el proyecto o la tarea.
+// ═══════════════════════════════════════════════════════════
+let lsTab = 'p', lsF = { proy: '', est: '', q: '' };
+const LS_EST_T = { pendiente: 'Pendiente', vencida: 'Vencida', cumplida: 'Cumplida' };
+function lsFecha(f) { return f ? formatDate(f) : '—'; }
+function lsProyectos() {
+  return modsPorNumero().map(m => {
+    const t = m.tasks || [], hechas = t.filter(x => x.done).length, hoy = embToday();
+    const st = STATUSES.find(x => x.key === m.status) || STATUSES[0];
+    return { m, cod: m.cod || '', nombre: m.name || '', creada: m.creada || '', st, total: t.length, hechas, venc: t.filter(x => !x.done && x.date && x.date < hoy).length };
+  });
+}
+function lsEstadoTarea(x) {
+  const hoy = embToday(), f = tkX.fecha(x);
+  return tkX.hecha(x) ? 'cumplida' : (f && f < hoy ? 'vencida' : 'pendiente');
+}
+function lsTareas() {
+  const filas = tkTodas().map(x => {
+    const m = x.kind === 'mod' ? x.dueno : (x.kind === 'emb' ? modPorId(x.dueno.moduleId) : null);
+    return { x, id: x.o.id, num: x.o.num || '', m, proyTxt: m ? modTxt(m) : (x.kind === 'emb' ? 'Embudo · ' + x.dueno.nombre : 'Checklist Maestro'),
+      nombre: tkX.nombre(x) || '', creada: x.o.creada || '', fecha: tkX.fecha(x) || '', est: lsEstadoTarea(x) };
+  });
+  return filas.sort((a, b) => (a.m ? modNum(a.m) : 2e9) - (b.m ? modNum(b.m) : 2e9) || String(a.num).localeCompare(String(b.num)));
+}
+function lsFiltrar(l, esT) {
+  const q = normTxt(lsF.q);
+  return l.filter(r => {
+    if (lsF.proy && (esT ? (lsF.proy === '__none' ? !!r.m : !r.m || r.m.id !== lsF.proy) : r.m.id !== lsF.proy)) return false;
+    if (lsF.est && (esT ? r.est !== lsF.est : r.st.key !== lsF.est)) return false;
+    if (q && normTxt((esT ? [r.num, r.proyTxt, r.nombre] : [r.cod, r.nombre, r.st.label]).join(' ')).indexOf(q) < 0) return false;
+    return true;
+  });
+}
+function lsTabla() {
+  if (lsTab === 'p') {
+    const l = lsFiltrar(lsProyectos(), false);
+    if (!l.length) return '<div class="emb-none" style="padding:18px 4px">Ningún proyecto coincide.</div>';
+    return `<div class="so-scroll"><table class="so-tabla ls-tabla"><thead><tr><th>N° proyecto</th><th>Nombre</th><th>Creación</th><th>Estado</th><th class="n">Tareas</th><th class="n">Vencidas</th></tr></thead><tbody>${l.map(r => `<tr>
+      <td>${r.cod ? `<button type="button" class="tk-num ls-num" onclick="goPage('mod_${embAttr(r.m.id)}')" title="Abrir el proyecto">${escHtml(r.cod)}</button>` : '—'}</td>
+      <td class="ls-nom" title="${embAttr(r.nombre)}">${escHtml(r.nombre)}</td><td>${lsFecha(r.creada)}</td>
+      <td><span class="status-badge ${r.st.cls}">${escHtml(r.st.label)}</span></td><td class="n">${r.hechas} / ${r.total}</td><td class="n">${r.venc ? `<b style="color:var(--red)">${r.venc}</b>` : '0'}</td></tr>`).join('')}</tbody></table></div><div class="so-total">${l.length} proyectos</div>`;
+  }
+  const l = lsFiltrar(lsTareas(), true);
+  if (!l.length) return '<div class="emb-none" style="padding:18px 4px">Ninguna tarea coincide.</div>';
+  return `<div class="so-scroll"><table class="so-tabla ls-tabla"><thead><tr><th>N° tarea</th><th>Proyecto</th><th>Tarea</th><th>Creación</th><th>Vencimiento</th><th>Estado</th></tr></thead><tbody>${l.map(r => `<tr>
+    <td>${r.num ? `<button type="button" class="tk-num ls-num" onclick="tkHoja('${embAttr(r.id)}')" title="Abrir la tarea">${escHtml(r.num)}</button>` : '—'}</td>
+    <td>${r.m && r.m.cod ? `<button type="button" class="mcod ls-pl" onclick="goPage('mod_${embAttr(r.m.id)}')" title="${embAttr(r.proyTxt)}">${escHtml(r.m.cod)}</button>` : ''}<span class="ls-pn">${escHtml(r.m ? r.m.name : r.proyTxt)}</span></td>
+    <td class="ls-nom" title="${embAttr(r.nombre)}">${escHtml(r.nombre)}</td><td>${lsFecha(r.creada)}</td>
+    <td${r.est === 'vencida' ? ' style="color:var(--red);font-weight:700"' : ''}>${lsFecha(r.fecha)}</td><td><span class="ls-est ${r.est}">${LS_EST_T[r.est]}</span></td></tr>`).join('')}</tbody></table></div><div class="so-total">${l.length} de ${lsTareas().length} tareas</div>`;
+}
+function renderListados() {
+  const optE = lsTab === 'p' ? STATUSES.map(x => [x.key, x.label]) : Object.keys(LS_EST_T).map(k => [k, LS_EST_T[k]]);
+  document.getElementById('page-content').innerHTML = `<div class="card so-card">
+    <div class="so-cab"><div><div class="card-title" style="margin:0">Listados</div>
+      <div class="so-sub">Una línea por proyecto o tarea. Pulsa el número para abrirlo.</div></div>
+      <div class="so-btns"><button type="button" class="edit-btn" onclick="lsCsv()">Descargar CSV</button><button type="button" class="edit-btn" onclick="lsImprimir()">🖨 Imprimir</button></div></div>
+    <div class="pt-tabs"><button type="button" class="pt-tab${lsTab === 'p' ? ' act' : ''}" onclick="lsCambiar('p')">Proyectos</button><button type="button" class="pt-tab${lsTab === 't' ? ' act' : ''}" onclick="lsCambiar('t')">Tareas</button></div>
+    <div class="so-filtros">
+      <input type="text" id="ls-q" placeholder="Buscar…" value="${embAttr(lsF.q)}" oninput="lsF.q=this.value;lsPintar()">
+      ${lsTab === 't' ? `<select onchange="lsF.proy=this.value;lsPintar()"><option value="">Todos los proyectos</option>${modsPorNumero().map(m => `<option value="${embAttr(m.id)}"${lsF.proy === m.id ? ' selected' : ''}>${escHtml(modTxt(m))}</option>`).join('')}<option value="__none"${lsF.proy === '__none' ? ' selected' : ''}>Sin proyecto</option></select>` : ''}
+      <select onchange="lsF.est=this.value;lsPintar()"><option value="">Todos los estados</option>${optE.map(([k, n]) => `<option value="${k}"${lsF.est === k ? ' selected' : ''}>${escHtml(n)}</option>`).join('')}</select>
+    </div><div id="ls-lista"></div></div>`;
+  lsPintar();
+}
+function lsPintar() { const e = document.getElementById('ls-lista'); if (e) e.innerHTML = lsTabla(); }
+function lsCambiar(t) { lsTab = t; lsF = { proy: '', est: '', q: '' }; renderListados(); }
+function lsDatos() {
+  if (lsTab === 'p') return { cab: ['N° proyecto', 'Nombre', 'Creación', 'Estado', 'Tareas cumplidas', 'Tareas totales', 'Vencidas'],
+    filas: lsFiltrar(lsProyectos(), false).map(r => [r.cod, r.nombre, r.creada, r.st.label, r.hechas, r.total, r.venc]), titulo: 'Listado de proyectos', arch: 'proyectos' };
+  return { cab: ['N° tarea', 'N° proyecto', 'Proyecto', 'Tarea', 'Creación', 'Vencimiento', 'Estado'],
+    filas: lsFiltrar(lsTareas(), true).map(r => [r.num, r.m ? r.m.cod || '' : '', r.m ? r.m.name : r.proyTxt, r.nombre, r.creada, r.fecha, LS_EST_T[r.est]]), titulo: 'Listado de tareas', arch: 'tareas' };
+}
+function lsCsv() {
+  const d = lsDatos(); if (!d.filas.length) { showToast('No hay filas para descargar'); return; }
+  const cel = v => { let s = String(v == null ? '' : v); if (/^[=@]|^[+\-](?!\d)/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
+  const csv = '﻿' + [d.cab].concat(d.filas).map(f => f.map(cel).join(';')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const nombre = (state.company || 'negocio').trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  a.download = `${d.arch}_${nombre}_${embToday()}.csv`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  showToast('📥 Descargado: ' + a.download);
+}
+function lsImprimir() {
+  const d = lsDatos(); if (!d.filas.length) { showToast('No hay filas para imprimir'); return; }
+  const f = v => /^\d{4}-\d{2}-\d{2}$/.test(String(v)) ? formatDate(v) : (v === '' || v == null ? '—' : v);
+  impLanzar(impDoc(d.titulo, d.filas.length + (lsTab === 'p' ? ' proyectos' : ' tareas'), impTabla(d.cab.map(t => ({ t })), d.filas.map(r => r.map(v => escHtml(String(f(v))))), 'Sin filas.')));
+}
+
 function modNum(m) { const q = /^P-(\d+)$/.exec((m && m.cod) || ''); return q ? +q[1] : 1e9; }
 function modsPorNumero() {
   return state.modules.map((m, i) => ({ m, i })).sort((a, b) => (modNum(a.m) - modNum(b.m)) || (a.i - b.i)).map(x => x.m);
@@ -1500,6 +1598,7 @@ function goPage(page) {
   else if (page === 'notas') renderNotas();
   else if (page === 'soportes') renderSoportes();
   else if (page === 'plan') renderPlan();
+  else if (page === 'listados') renderListados();
   else if (page === 'embudo') renderEmbudo();
   else if (page === 'sync') renderSync();
   else if (page === 'backup') renderBackup();
@@ -1516,6 +1615,7 @@ function getPageTitle(page) {
   if (page === 'notas') return 'Notas';
   if (page === 'soportes') return 'Soportes';
   if (page === 'plan') return 'Plan';
+  if (page === 'listados') return 'Listados';
   if (page === 'embudo') return 'Embudo de prospectos';
   if (page === 'sync') return 'Sincronización';
   if (page === 'backup') return 'Backup';
@@ -4913,7 +5013,7 @@ function pantallaLogin(modo, detalle) {
   document.getElementById('onboarding').style.display = 'none'; document.getElementById('app').style.display = 'none';
   document.getElementById('login').style.display = 'flex';
   const msg = document.getElementById('lg-msg'), btn = document.getElementById('lg-btn');
-  const t = { config: 'Falta configurar la app: pon la URL y la llave de Supabase en APP_CONFIG (mira la guía de instalación).', error: 'No se pudo iniciar sesión: ' + (detalle || ''), expirada: 'Tu sesión venció. Vuelve a entrar con Google.' }[modo] || '';
+  const t = { config: 'Falta configurar la app: pon la URL y la llave de Supabase en APP_CONFIG (mira la guía de instalación).', error: 'No se pudo iniciar sesión: ' + (detalle || ''), expirada: 'Tu sesión venció. Vuelve a entrar con Google.', red: 'No pudimos cargar tus datos (sin conexión o la nube no responde). Revisa tu internet y entra de nuevo.' }[modo] || '';
   msg.textContent = t; msg.style.display = t ? 'block' : 'none';
   if (modo === 'config') btn.style.display = 'none';
 }
@@ -4924,14 +5024,15 @@ function mostrarApp() {
 async function nubeCargarNegocios() {
   try {
     const res = await sbFetch('/rest/v1/atocha_sync?select=id,data,updated_at&order=updated_at.desc');
-    if (!res.ok) return 0;
+    if (res.status === 401 || res.status === 403) return -2;   // sesión inválida en el servidor
+    if (!res.ok) return -1;
     const rows = (await res.json()).filter(r => r && r.data && !/__bk/.test(String(r.id)));
     const perfiles = {}; let primero = null;
     rows.forEach(r => { try { const o = JSON.parse(r.data); if (o && Array.isArray(o.modules)) { o.clientId = r.id; o.cambiosSinSubir = false; perfiles[r.id] = o; if (!primero) primero = r.id; } } catch (e) { /* fila dañada */ } });
     if (!primero) return 0;
     profilesData = { profiles: perfiles, activeId: primero }; state = perfiles[primero]; ensureDefaults(); saveLocal(true);
     return Object.keys(perfiles).length;
-  } catch (e) { return 0; }
+  } catch (e) { return -1; }
 }
 async function arrancar() {
   if (!AUTH_ON) {
@@ -4949,6 +5050,8 @@ async function arrancar() {
   LS_USER = authSession.user.id;
   if (loadLocal()) { mostrarApp(); return; }
   const n = await nubeCargarNegocios();            // dispositivo nuevo: recupera sus negocios de la nube
+  if (n === -2) { authGuardar(null); LS_USER = ''; authSession = null; pantallaLogin('expirada'); return; }
+  if (n < 0) { pantallaLogin('red'); return; }     // sin conexión o error: no es una cuenta vacía, no mostrar la bienvenida
   if (n) { mostrarApp(); showToast('⬇️ Recuperamos ' + n + (n === 1 ? ' negocio' : ' negocios') + ' de tu cuenta'); return; }
   document.getElementById('login').style.display = 'none'; document.getElementById('onboarding').style.display = '';
 }
@@ -5387,6 +5490,7 @@ const tkX = {
 function tkMsDeId(o) { const m = /_(\d{13})/.exec(String(o.id || '')); return m ? Number(m[1]) : 0; }
 function tkAsignarNumeros() {
   let mx = 0; state.modules.forEach(m => { const q = /^P-(\d+)$/.exec(m.cod || ''); if (q) mx = Math.max(mx, +q[1]); });
+  state.modules.forEach(m => { if (!/^\d{4}-\d{2}-\d{2}$/.test(m.creada || '')) { const ms = tkMsDeId(m); m.creada = ms ? isoALocal(new Date(ms).toISOString()) : embToday(); } });
   state.modules.filter(m => !m.cod).sort((a, b) => (tkMsDeId(a) || 0) - (tkMsDeId(b) || 0)).forEach(m => { mx++; m.cod = 'P-' + String(mx).padStart(3, '0'); });
   const todas = tkTodas(), max = {};
   todas.forEach(x => { const m = /^T-(\d{8})-(\d+)$/.exec(x.o.num || ''); if (m) max[m[1]] = Math.max(max[m[1]] || 0, +m[2]); });
