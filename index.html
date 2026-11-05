@@ -1123,7 +1123,7 @@ body.visor-on { background: var(--gray-100); }
       <div class="nav-item" onclick="toggleDark()" id="nav-dark"><span class="ni" data-i="moon"></span><span class="nn">Modo Oscuro</span></div>
       <div class="nav-item" onclick="authSalir()" id="nav-salir" style="display:none"><span class="ni" data-i="exit"></span><span class="nn">Cerrar sesión</span></div>
       <div class="nav-item" onclick="goPage('config')" id="nav-config"><span class="ni" data-i="gear"></span><span class="nn">Configuración</span></div>
-      <div class="build-tag" title="Versión de Atocha cargada en este momento">Versión 5-nov · Embudo oculta etapas vacías</div>
+      <div class="build-tag" title="Versión de Atocha cargada en este momento">Versión 5-nov · etapas vacías ocultas, también en la vista del vendedor</div>
     </div>
   </nav>
 
@@ -5904,8 +5904,10 @@ async function cpVisorCargar(silencio) {
   }
 }
 let cpvIdx = -1;
+// En la vista del vendedor solo salen las etapas que tienen empresas (si no hay ninguna, salen todas).
+function cpvCols() { const c = (cpD && cpD.cols) || [], p = (cpD && cpD.pros) || [], n = c.filter(x => p.some(q => q.c === x.id)); return n.length ? n : c; }
 function cpVisorRender() {
-  const d = cpD, v = document.getElementById('visor'), pros = d.pros || [], cols = d.cols || [];
+  const d = cpD, v = document.getElementById('visor'), pros = d.pros || [], cols = cpvCols();
   const act = pros.reduce((t, p) => t + (p.a ? (Number(p.m) || 0) : 0), 0), esp = act + pros.reduce((t, p) => t + (Number(p.e) || 0), 0);
   const nom = (d.proy.cod ? d.proy.cod + ' · ' : '') + (d.proy.nombre || '');
   const itemsDe = c => pros.filter(p => p.c === c.id).sort((a, b) => (Number(b.m) || 0) - (Number(a.m) || 0));
@@ -5969,7 +5971,7 @@ function cpVisorRender() {
   if (tr) { cpvCab(); requestAnimationFrame(() => { tr.scrollLeft = cpvIdx * tr.clientWidth; }); }
 }
 function cpvCab() {
-  const cols = (cpD && cpD.cols) || [], c = cols[cpvIdx]; if (!c) return;
+  const cols = cpvCols(), c = cols[cpvIdx]; if (!c) return;
   const n = (cpD.pros || []).filter(p => p.c === c.id), suma = n.reduce((t, p) => t + (Number(p.m) || 0), 0);
   const set = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
   set('cpv-pos', 'Etapa ' + (cpvIdx + 1) + ' de ' + cols.length); set('cpv-n', c.name);
