@@ -984,6 +984,7 @@ body.visor-on { background: var(--gray-100); }
 .an-fila { display:flex; gap:8px; align-items:center; padding:8px 4px; border-top:1px solid var(--gray-100); cursor:pointer; } .an-fila .an-dias { margin-left:auto; font-weight:700; color:#B45309; font-size:13px; }
 @media (max-width:760px) { .an-dos { grid-template-columns:1fr; } }
 #an-body .chart, .an-card .chart { max-width:640px; display:block; } #an-body .chart .ch-l, .an-card .chart .ch-l { font-size:12px; } #an-body .chart .ch-v, .an-card .chart .ch-v { font-size:12.5px; }
+.cpv-tareas { margin-bottom:14px; } .cpv-chips { display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 8px; } .cpv-chips span { background:var(--gray-100); border-radius:999px; padding:4px 11px; font-size:13px; color:var(--gray-600); } .cpv-chips span b { color:var(--gray-900); } .cpv-chips span.rojo { background:#FEE2E2; color:#991B1B; } .cpv-chips span.rojo b { color:#991B1B; } .cpv-li.atr em { color:#B91C1C; font-weight:700; }
 </style>
 <body>
 
@@ -1121,7 +1122,7 @@ body.visor-on { background: var(--gray-100); }
       <div class="nav-item" onclick="toggleDark()" id="nav-dark"><span class="ni" data-i="moon"></span><span class="nn">Modo Oscuro</span></div>
       <div class="nav-item" onclick="authSalir()" id="nav-salir" style="display:none"><span class="ni" data-i="exit"></span><span class="nn">Cerrar sesión</span></div>
       <div class="nav-item" onclick="goPage('config')" id="nav-config"><span class="ni" data-i="gear"></span><span class="nn">Configuración</span></div>
-      <div class="build-tag" title="Versión de Atocha cargada en este momento">Versión 4-nov · Análisis: gráficas de proyectos y prospectos</div>
+      <div class="build-tag" title="Versión de Atocha cargada en este momento">Versión 4-nov · embudo sin Diseño ni Arranque, vendedor arranca en Prospecto</div>
     </div>
   </nav>
 
@@ -2201,7 +2202,7 @@ function calNuevaTarea() {
 //  ANÁLISIS: gráficas del desarrollo de los proyectos y de los prospectos
 //  El recorrido de cada prospecto sale de su bitácora ("Etapa: A → B"), así que funciona con el historial que ya existe.
 // ═══════════════════════════════════════════════════════════
-const AN_RUTA = ['diseno', 'prospecto', 'contactado', 'reunion', 'propuesta', 'negociacion', 'arranque', 'activo'];
+const AN_RUTA = ['prospecto', 'contactado', 'reunion', 'propuesta', 'negociacion', 'activo'];
 const AN_ROTULO = { diseno: 'En diseño', prospecto: 'Prospecto', contactado: 'Contactado', reunion: 'Reunión', propuesta: 'Propuesta', negociacion: 'Negociación y cierre', arranque: 'Arranque', activo: 'Cliente activo' };
 let anCfg = { tab: 'proy', proy: '', sem: 13 };
 function anBaseDeNombre(nom) {
@@ -3715,13 +3716,11 @@ const EMB_DIAS_ROJO = 14;     // rojo desde 14
 const EMB_ETAPAS_ALERTA = ['prospecto', 'contactado', 'reunion', 'propuesta', 'negociacion'];
 let embFiltroResp = '', embSoloAlerta = false, embFiltroProy = '';
 const EMB_STAGES = [
-  { id: 'diseno',     name: 'En diseño',      color: '#8B5CF6', guide: 'Definir alcance y valor del proyecto.' },
   { id: 'prospecto',  name: 'Prospecto',      color: '#6B7280', guide: 'Identificar al decisor y su contacto.' },
   { id: 'contactado', name: 'Contactado',     color: '#3B82F6', guide: 'Primer mensaje enviado.' },
   { id: 'reunion',    name: 'Reunión',        color: '#06B6D4', guide: 'Diagnóstico de 20 minutos.' },
   { id: 'propuesta',  name: 'Propuesta',      color: '#F59E0B', guide: 'Paquete mensual enviado.' },
   { id: 'negociacion', name: 'Negociación y cierre', color: '#F97316', guide: 'Ajustes de precio o alcance, y firma.' },
-  { id: 'arranque',   name: 'Arranque',       color: '#EC4899', guide: 'Primer pago hecho, primera semana de trabajo.' },
   { id: 'activo',     name: 'Cliente activo', color: '#10B981', guide: 'Pagando mensualidad.' },
   { id: 'perdido',    name: 'Perdido o pausado', color: '#EF4444', guide: 'Dijo no o más adelante. Anota el motivo.' }
 ];
@@ -3737,6 +3736,7 @@ function embNext(etapa) {
 function embList() {
   if (!state.prospects) state.prospects = [];
   state.prospects.forEach(embMigrar);
+  (state.modules || []).forEach(m => (m.embEtapas || []).forEach(c => { if (c.base === 'diseno') c.base = 'prospecto'; else if (c.base === 'arranque') c.base = 'activo'; }));
   return state.prospects;
 }
 function embId(pref) { return pref + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6); }
@@ -3752,6 +3752,8 @@ function embMigrar(p) {
   if (!Array.isArray(p.bitacora)) p.bitacora = [];
   if (!Array.isArray(p.enlaces)) p.enlaces = [];
   if (!p.desde) p.desde = new Date().toISOString();   // desde cuándo se le hace seguimiento
+  // Las etapas "En diseño" y "Arranque" ya no existen: quien estuviera ahí pasa a Prospecto / Cliente activo.
+  if (p.etapa === 'diseno') p.etapa = 'prospecto'; else if (p.etapa === 'arranque') p.etapa = 'activo';
   return p;
 }
 // Actividades sin hacer, la más próxima primero; las que no tienen fecha van al final.
@@ -3862,8 +3864,8 @@ function renderEmbudo() {
   let activo = 0, embudo = 0;
   list.forEach(p => {
     const m = Number(p.mensualidad) || 0;
-    if (p.etapa === 'activo' || p.etapa === 'arranque') activo += m;
-    else if (p.etapa !== 'diseno' && p.etapa !== 'perdido') embudo += m;
+    if (p.etapa === 'activo') activo += m;
+    else if (p.etapa !== 'perdido') embudo += m;
   });
   const pendientes = (state.modules || []).filter(m => !modEsCapital(m) && !list.some(p => p.moduleId === m.id)).length;
 
@@ -3895,7 +3897,6 @@ function renderEmbudo() {
   <div class="dash-stats">
     <div class="stat-card"><div class="stat-label">Ingreso activo</div><div class="stat-value">${fmtCOP(activo)}</div><div class="stat-sub">por mes, clientes que ya pagan</div></div>
     <div class="stat-card"><div class="stat-label">En el embudo</div><div class="stat-value">${fmtCOP(embudo)}</div><div class="stat-sub">por mes, si cierran todos</div></div>
-    <div class="stat-card"><div class="stat-label">Proyectos en diseño</div><div class="stat-value">${list.filter(p => p.etapa === 'diseno').length}</div><div class="stat-sub">aún sin mensualidad definida</div></div>
   </div>`;
 
   const cols = EMB_STAGES.map((s, idx) => {
@@ -4094,12 +4095,12 @@ function embImportModules() {
     // a "valor del proyecto" en vez de contarse como mensualidad.
     let etapa = 'prospecto', mensualidad = meta, valorProyecto = 0;
     if (m.status === 'marcha') etapa = 'activo';
-    else if (meta === 0 || meta >= 100000000) { etapa = 'diseno'; mensualidad = 0; valorProyecto = meta; }
+    else if (meta === 0 || meta >= 100000000) { etapa = 'prospecto'; mensualidad = 0; valorProyecto = meta; }
     list.push({
       id: 'p_' + Date.now() + '_' + n, moduleId: m.id,
       nombre: m.name || 'Sin nombre', rubro: m.desc || '',
       etapa, mensualidad, valorProyecto,
-      servicios: etapa === 'diseno' ? [] : EMB_SERVICES.slice(),
+      servicios: mensualidad === 0 ? [] : EMB_SERVICES.slice(),
       contacto: '', telefono: '', email: '', ciudad: '',
       desde: new Date().toISOString(), actividades: [], bitacora: [], enlaces: [], notas: ''
     });
@@ -5771,7 +5772,7 @@ function cpPayload(m) {
       en: (p.enlaces || []).map(x => ({ n: x.nombre || '', u: x.url || '' })) };
   });
   return { v: 1, emp: state.company || '', proy: { cod: m.cod || '', nombre: m.name || '', sit: sitDe(m), prog: progDe(m), causa: m.causa || '' },
-    cols: cols.map(c => ({ id: c.id, name: c.name, color: c.color })), pros,
+    cols: cols.map(c => ({ id: c.id, name: c.name, color: c.color, b: c.base || c.id })), pros,
     tareas: (m.tasks || []).map(t => ({ n: t.name || '', f: t.date || '', h: t.done ? 1 : 0, c: t.num || '', i: impN(t) })),
     con: ctList().filter(c => (c.proyectos || []).indexOf(m.id) >= 0).map(c => ({ cod: c.cod || '', n: c.nombre || '', t: CT_TIPOS[c.tipo] || '', em: c.empresa || '', ca: c.cargo || '', tel: c.telefono || '', ema: c.email || '', ci: c.ciudad || '', no: c.notas || '' })),
     dc: dcList(m).filter(d => d.pub).sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || ''))).map(d => ({ t: d.titulo || '', x: d.texto || '', f: d.fecha || '' })),
@@ -5916,15 +5917,24 @@ function cpVisorRender() {
     return `<section class="cpv-slide">${items.map(p => `<div class="cpv-card" onclick="cpFicha('${embAttr(p.id)}')"><div><b>${escHtml(p.n)}</b>
         <div class="mp-cm">${Number(p.m) ? cpPesos(p.m) + '/mes' : 'Sin mensualidad'}</div><div class="mp-ct">${tags(p)}</div></div><span class="cpv-go">Ver ›</span></div>`).join('')
       || '<div class="cpv-vacia">Ninguna empresa está en esta etapa todavía.<br><small>Desliza para ver las demás etapas.</small></div>'}</section>`; };
-  if (cpvIdx < 0 || cpvIdx >= cols.length) { const f = cols.findIndex(c => itemsDe(c).length); cpvIdx = f < 0 ? 0 : f; }
+  if (cpvIdx < 0 || cpvIdx >= cols.length) { let f = cols.findIndex(c => c.b === 'prospecto'); if (f < 0) f = cols.findIndex(c => itemsDe(c).length); cpvIdx = f < 0 ? 0 : f; }
   const feed = [];
   pros.forEach(p => (p.bi || []).forEach(b => feed.push({ p, b })));
   feed.sort((a, b) => (a.b.f < b.b.f ? 1 : -1));
   const tareas = (d.tareas || []).slice().sort((a, b) => (a.h - b.h) || (String(a.f || '9999').localeCompare(String(b.f || '9999')) || (b.i || 0) - (a.i || 0)));
+  const hoyV = embToday(), pendT = tareas.filter(t => !t.h), hecT = tareas.filter(t => t.h), vencT = pendT.filter(t => t.f && t.f < hoyV).length, hoyT = pendT.filter(t => t.f === hoyV).length, semT = pendT.filter(t => t.f > hoyV && t.f <= calSuma(hoyV, 7)).length;
+  const filaT = t => { const atr = !t.h && t.f && t.f < hoyV;
+    return `<div class="cpv-li${t.h ? ' hecha' : ''}${atr ? ' atr' : ''}"><span>${t.h ? '✅ ' : '⬜ '}${t.c ? `<span class="tk-num">${escHtml(t.c)}</span>${impSolo(t.i)}` : impSolo(t.i)}${escHtml(t.n)}</span><em>${d.proy.sit && SIT_T[d.proy.sit] ? `<span class="sit sit-${embAttr(d.proy.sit)}">${escHtml(SIT_T[d.proy.sit])}</span> ` : ''}${atr ? '⚠️ ' : ''}${escHtml(cpF(t.f))}</em></div>`; };
+  const tareasTop = tareas.length ? `<div class="card cpv-tareas"><div class="card-title">Tareas del proyecto ${d.proy.sit && SIT_T[d.proy.sit] ? `<span class="sit sit-${embAttr(d.proy.sit)}">${escHtml(SIT_T[d.proy.sit])}</span>` : ''}</div>
+      <div class="cpv-chips"><span class="${vencT ? 'rojo' : ''}"><b>${vencT}</b> vencidas</span><span><b>${hoyT}</b> para hoy</span><span><b>${semT}</b> esta semana</span><span><b>${pendT.length}</b> pendientes</span></div>
+      ${pendT.slice(0, 5).map(filaT).join('') || '<div class="cpv-vacia" style="padding:8px 0">No hay tareas pendientes. 🎉</div>'}
+      ${pendT.length > 5 ? `<details class="dc-item"><summary>Ver las ${pendT.length - 5} pendientes restantes</summary>${pendT.slice(5).map(filaT).join('')}</details>` : ''}
+      ${hecT.length ? `<details class="dc-item"><summary>Cumplidas (${hecT.length})</summary>${hecT.map(filaT).join('')}</details>` : ''}</div>` : '';
   v.innerHTML = `<div class="cpv-top"><div><span class="cpv-badge">👁 Vista de invitado · solo lectura</span><h1>${escHtml(nom)}</h1>
       ${d.proy.sit ? `<div class="cpv-sit"><span class="sit sit-${embAttr(d.proy.sit)}">${escHtml(SIT_T[d.proy.sit] || '')}</span><span class="prg prg-${embAttr(d.proy.prog)}">${escHtml(PROG_T[d.proy.prog] || '')}</span>${d.proy.causa ? `<small>${escHtml(d.proy.causa)}</small>` : ''}</div>` : ''}
       <small>${escHtml(d.emp || '')}${d.emp ? ' · ' : ''}Actualizado ${escHtml(cpFH(d.actualizado))}</small></div>
       <button class="btn-add cpv-ref" type="button" onclick="cpVisorCargar()">↻ Actualizar</button></div>
+    ${tareasTop}
     ${cols.length ? `<div class="cpv-car" id="cpv-car">
       <div class="cpv-car-h"><button type="button" class="cpv-arr" id="cpv-prev" aria-label="Etapa anterior" onclick="cpvIr(-1)">‹</button>
         <div class="cpv-car-t"><small id="cpv-pos"></small><b id="cpv-n"></b><span id="cpv-s"></span></div>
@@ -5949,7 +5959,6 @@ function cpVisorRender() {
     ${(d.docs || []).length ? `<div class="card" style="margin-top:16px"><div class="card-title">Documentos del proyecto (${d.docs.length})</div>${d.docs.map(s => { const u = embUrlSegura(s.u); return `<div class="cpv-ct">
         <div><span class="tk-num">${escHtml(s.cod)}</span>${u ? `<a href="${embAttr(u)}" target="_blank" rel="noopener noreferrer"><b>${escHtml(s.t)}</b></a>` : `<b>${escHtml(s.t)}</b>`}</div>
         <div class="cpv-sub">${escHtml([s.k, cpF(s.f), s.e].filter(Boolean).join(' · '))}</div></div>`; }).join('')}<div class="cpv-sub" style="margin-top:8px">Los documentos se abren en Google Drive: si te pide permiso, solicítalo a quien te compartió este enlace.</div></div>` : ''}
-    ${tareas.length ? `<div class="card" style="margin-top:16px"><div class="card-title">Tareas del proyecto${d.proy.sit && SIT_T[d.proy.sit] ? ` <span class="sit sit-${embAttr(d.proy.sit)}">${escHtml(SIT_T[d.proy.sit])}</span>` : ''}</div>${tareas.map(t => `<div class="cpv-li${t.h ? ' hecha' : ''}"><span>${t.h ? '✅ ' : '⬜ '}${t.c ? `<span class="tk-num">${escHtml(t.c)}</span>${impSolo(t.i)}` : impSolo(t.i)}${escHtml(t.n)}</span><em>${d.proy.sit && SIT_T[d.proy.sit] ? `<span class="sit sit-${embAttr(d.proy.sit)}">${escHtml(SIT_T[d.proy.sit])}</span> ` : ''}${escHtml(cpF(t.f))}</em></div>`).join('')}</div>` : ''}
     <div id="cpv-ov-slot"></div>`;
   const tr = document.getElementById('cpv-track');
   if (tr) { cpvCab(); requestAnimationFrame(() => { tr.scrollLeft = cpvIdx * tr.clientWidth; }); }
@@ -6528,7 +6537,7 @@ function backupExtraHtml() {
 function embDiasA() { return Number(state.embDias && state.embDias.a) || EMB_DIAS_ALERTA; }
 function embDiasR() { return Number(state.embDias && state.embDias.r) || EMB_DIAS_ROJO; }
 function embSinAccion(p) {
-  if (EMB_ETAPAS_ALERTA.indexOf(p.etapa) < 0 && p.etapa !== 'arranque') return false;
+  if (EMB_ETAPAS_ALERTA.indexOf(p.etapa) < 0) return false;
   return !(p.actividades || []).some(a => !a.hecha);
 }
 function embSeguimiento() {
