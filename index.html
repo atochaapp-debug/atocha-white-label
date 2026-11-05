@@ -7,17 +7,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Atocha">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0B0B0B">
+<meta name="theme-color" content="#1E3A8A">
 <title>Atocha</title>
-<meta name="description" content="Tus proyectos, prospectos, tareas y metas en un solo lugar.">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Atocha">
-<meta property="og:title" content="Atocha">
-<meta property="og:description" content="Tus proyectos, prospectos, tareas y metas en un solo lugar. Entra con tu cuenta de Google.">
-<meta property="og:url" content="https://atochamultiusuario-debug.github.io/atocha-white-label/">
-<meta property="og:image" content="https://atochamultiusuario-debug.github.io/atocha-white-label/og-image.jpg">
 <link rel="manifest" href="manifest.json" id="pwa-manifest">
-<link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" id="apple-icon">
 <style>
 :root {
@@ -1196,7 +1188,7 @@ let state = {
   modules: [],   // {id, name, desc, icon, status, meta, tasks:[]}
   checklist: [], // {id, name, priority, date, done, doneDate, projectId}
   notes: [],     // {id, title, body, date}
-  sync: { url: 'https://dswmwnnmtjvdzgyhscdv.supabase.co', key: 'sb_publishable__CTEfCmCR5T8nhIG7XArVw_7yk53rcP' },
+  sync: { url: 'https://zssmacjxevyiwdolllcd.supabase.co', key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpzc21hY2p4ZXZ5aXdkb2xsbGNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMjA1OTIsImV4cCI6MjA5Njc5NjU5Mn0.hF35RV1tv5OY3nwyh_0_ba6jBix4QYHVc123wb5sTGI' },
   dark: false,
   lastSync: null
 };
@@ -1605,10 +1597,10 @@ const MAX_PROJECTS = 30;
 // Versión para compartir: googleLogin: true y poner aquí la URL y la llave "anon" de TU proyecto de Supabase.
 //   Cada persona entra con su cuenta de Google y solo ve sus propios datos (ver la guía de instalación).
 const APP_CONFIG = {
-  supabaseUrl: 'https://dswmwnnmtjvdzgyhscdv.supabase.co',
-  anonKey: 'sb_publishable__CTEfCmCR5T8nhIG7XArVw_7yk53rcP',
-  googleLogin: true,
-  contacto: 'atocha.app@gmail.com'          // correo de contacto para temas de privacidad (se muestra en "Cómo cuidamos tus datos")
+  supabaseUrl: 'https://zssmacjxevyiwdolllcd.supabase.co',
+  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpzc21hY2p4ZXZ5aXdkb2xsbGNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMjA1OTIsImV4cCI6MjA5Njc5NjU5Mn0.hF35RV1tv5OY3nwyh_0_ba6jBix4QYHVc123wb5sTGI',
+  googleLogin: false,
+  contacto: ''          // correo de contacto para temas de privacidad (se muestra en "Cómo cuidamos tus datos")
 };
 const DEFAULT_SUPABASE = { url: APP_CONFIG.supabaseUrl, key: APP_CONFIG.anonKey };
 const AUTH_ON = !!APP_CONFIG.googleLogin;
@@ -6320,7 +6312,7 @@ function modalFijo(si) { const mb = document.getElementById('modal-body'); if (m
   const ctx = canvas.getContext('2d');
   // Background
   const grad = ctx.createLinearGradient(0,0,512,512);
-  grad.addColorStop(0,'#0B0B0B'); grad.addColorStop(1,'#0B0B0B');
+  grad.addColorStop(0,'#0F2557'); grad.addColorStop(1,'#1D4ED8');
   ctx.fillStyle = grad;
   const r = 100;
   ctx.beginPath();
@@ -6330,7 +6322,7 @@ function modalFijo(si) { const mb = document.getElementById('modal-body'); if (m
   ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
   ctx.closePath(); ctx.fill();
   // Letter A
-  ctx.fillStyle = '#FACC15';
+  ctx.fillStyle = '#F59E0B';
   ctx.font = 'bold 360px Arial Black, Arial';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText('A', 256, 280);
