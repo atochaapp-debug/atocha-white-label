@@ -992,6 +992,16 @@ body.visor-on { background: var(--gray-100); }
 #modal.z-top { z-index:10001; }
 #bk-aviso { position:fixed; left:16px; bottom:16px; z-index:600; max-width:360px; background:#FEF3C7; color:#78350F; border:1px solid #FCD34D; border-radius:12px; padding:12px 14px; font-size:13px; box-shadow:0 8px 24px rgba(0,0,0,.18); display:flex; flex-direction:column; gap:6px; }
 #bk-aviso button { align-self:flex-start; border:none; border-radius:8px; padding:7px 12px; font-weight:700; cursor:pointer; background:#92400E; color:#fff; font-family:inherit; margin-right:6px; } #bk-aviso .bk-x { background:transparent; color:#92400E; }
+.btn-ventana, .win-mini { display:none; }
+@media (pointer: fine) {
+  .btn-ventana { display:inline-flex; }
+  .win-mini { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border:1px solid var(--gray-200); border-radius:7px; background:var(--gray-100); color:var(--gray-600); font-size:13px; cursor:pointer; padding:0; font-family:inherit; opacity:.0; transition:opacity .15s; }
+  .module-card:hover .win-mini, .emb-card:hover .win-mini, .win-mini:focus-visible { opacity:1; }
+  .win-mini:hover { border-color:var(--blue-500); color:var(--blue-700); }
+  .mc-top .win-mini { margin-left:auto; margin-right:6px; }
+  .emb-card { position:relative; } .emb-card .win-mini { position:absolute; top:8px; right:8px; } .emb-card .emb-name { padding-right:28px; }
+}
+body.en-ventana .btn-ventana, body.en-ventana .btn-app, body.en-ventana #nav-app { display:none !important; }
 </style>
 <body>
 
@@ -1130,7 +1140,7 @@ body.visor-on { background: var(--gray-100); }
       <div class="nav-item" onclick="toggleDark()" id="nav-dark"><span class="ni" data-i="moon"></span><span class="nn">Modo Oscuro</span></div>
       <div class="nav-item" onclick="authSalir()" id="nav-salir" style="display:none"><span class="ni" data-i="exit"></span><span class="nn">Cerrar sesión</span></div>
       <div class="nav-item" onclick="goPage('config')" id="nav-config"><span class="ni" data-i="gear"></span><span class="nn">Configuración</span></div>
-      <div class="build-tag" title="Versión de Atocha cargada en este momento"><b class="build-ed">PERSONAL</b> · Versión 15-nov · recuperar de la nube + aviso de backup · etiqueta PERSONAL / GOOGLE</div>
+      <div class="build-tag" title="Versión de Atocha cargada en este momento"><b class="build-ed">PERSONAL</b> · Versión 15-nov · pantallas en otra ventana · etiqueta PERSONAL / GOOGLE</div>
     </div>
   </nav>
 
@@ -1141,6 +1151,7 @@ body.visor-on { background: var(--gray-100); }
         <span class="tt-company" id="tt-company">—</span>
         <span class="tt-page" id="tt-page">Dashboard</span>
       </div>
+      <button class="topbar-btn btn-icon btn-ventana" onclick="ventanaAbrirPagina()" title="Abrir esta pantalla en otra ventana (para llevarla a otro monitor)">⧉</button>
       <button class="topbar-btn btn-icon" onclick="buscarAbrir()" title="Buscar (Ctrl+K)"><span data-i="search" data-z="16"></span></button>
       <button class="topbar-btn btn-app" id="btn-app" onclick="installApp()" title="Instalar la app en este dispositivo"><span data-i="download" data-z="15"></span>Descargar app</button>
       <button class="topbar-btn btn-cloud" onclick="syncUp()"><span data-i="upload" data-z="15"></span>Subir</button>
@@ -1790,7 +1801,63 @@ function obFinish() {
 // ═══════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+//  OTRA VENTANA PARA PANTALLAS COMPLETAS: abre Atocha en una ventana nueva ya situada en la pantalla elegida
+//  (embudo, calendario, plan, listados, contactos, un proyecto, una tarjeta del embudo…). Es la misma app: lo que
+//  haces en una ventana aparece solo en la otra (se comparten los datos del navegador).
+// ═══════════════════════════════════════════════════════════
+const EN_VENTANA = (() => { try { return new URLSearchParams(location.search).get('w') || ''; } catch (e) { return ''; } })();
+function ventanaAbrir(destino) {
+  const n = (state && state.clientId) || (profilesData && profilesData.activeId) || '';
+  const url = location.href.split('#')[0].split('?')[0] + '?w=' + encodeURIComponent(destino) + (n ? '&n=' + encodeURIComponent(n) : '');
+  const w = window.open(url, 'atochaV_' + String(destino).replace(/[^\w]/g, '_'), 'popup=yes,width=1280,height=860');
+  if (!w) { showToast('⚠️ El navegador bloqueó la ventana. Permite las ventanas emergentes de este sitio y vuelve a intentar.'); return; }
+  ventanaColocar(w);
+}
+async function ventanaColocar(w) {   // con dos monitores la lleva al otro (Chrome pide permiso una sola vez)
+  try {
+    if (window.screen && window.screen.isExtended && window.getScreenDetails) {
+      const dt = await window.getScreenDetails(), o = dt.screens.find(s => s !== dt.currentScreen);
+      if (o && !w.closed) { w.moveTo(o.availLeft, o.availTop); w.resizeTo(o.availWidth, o.availHeight); }
+    }
+  } catch (e) { }
+}
+function ventanaAbrirPagina() { ventanaAbrir(currentPage || 'dashboard'); }
+function ventanaNegocio() {   // la ventana nueva abre el mismo negocio que la que la abrió
+  try {
+    const n = new URLSearchParams(location.search).get('n');
+    if (n && profilesData.profiles[n] && profilesData.activeId !== n) { profilesData.activeId = n; state = profilesData.profiles[n]; ensureDefaults(); document.getElementById('sb-company').textContent = state.company; renderProfileSwitcher(); }
+  } catch (e) { }
+}
+function ventanaInicio() {
+  document.body.classList.add('en-ventana');
+  const d = EN_VENTANA, m = /^emb:(.+)$/.exec(d);
+  if (m) { goPage('embudo'); setTimeout(() => { try { embOpen(m[1]); } catch (e) { } }, 200); }
+  else if (d && d !== 'dashboard') goPage(d);
+}
+// Datos compartidos entre ventanas: si otra ventana guarda, esta toma lo nuevo y se repinta cuando no estás escribiendo.
+let ventanaPend = false;
+window.addEventListener('storage', e => {
+  try {
+    if (!e.key || e.key !== 'atocha_profiles_v1' + lsSufijo() || !e.newValue || !profilesData || !profilesData.activeId) return;
+    const nuevo = JSON.parse(e.newValue); if (!nuevo || !nuevo.profiles) return;
+    const mio = profilesData.activeId;
+    if (!nuevo.profiles[mio]) return;
+    nuevo.activeId = mio; profilesData = nuevo; state = nuevo.profiles[mio]; ensureDefaults();
+    ventanaPend = true;
+  } catch (x) { }
+});
+setInterval(() => {
+  if (!ventanaPend) return;
+  const mod = document.getElementById('modal'), ae = document.activeElement;
+  if (mod && mod.style.display !== 'none') return;
+  if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return;
+  ventanaPend = false;
+  const pc = document.getElementById('page-content'), y = pc ? pc.scrollTop : 0, wy = window.scrollY;
+  try { document.getElementById('sb-company').textContent = state.company; renderSidebar(); goPage(currentPage || 'dashboard'); if (pc) pc.scrollTop = y; window.scrollTo(0, wy); } catch (x) { }
+}, 1500);
 function initApp() {
+  if (EN_VENTANA) ventanaNegocio();
   try { tkAsignarNumeros(); } catch (e) { /* ver saveLocal */ }
   const ns = document.getElementById('nav-salir'); if (ns) ns.style.display = AUTH_ON ? '' : 'none';
   if (state.dark) document.body.classList.add('dark'); else document.body.classList.remove('dark');
@@ -1798,6 +1865,7 @@ function initApp() {
   renderSidebar();
   renderProfileSwitcher();
   goPage('dashboard');
+  if (EN_VENTANA) { ventanaInicio(); return; }   // la ventana extra no repite avisos ni copias automáticas
   snapGuardar('Automática', false);
   setTimeout(showCloudBanner, 800);
   setTimeout(recordatorioDia, 1600);
@@ -2344,6 +2412,7 @@ function goPage(page) {
   if (nav) nav.classList.add('active');
   document.getElementById('tt-company').textContent = state.company || 'Atocha';
   document.getElementById('tt-page').textContent = getPageTitle(page);
+  if (EN_VENTANA) document.title = getPageTitle(page) + ' · ' + (state.company || 'Atocha');
   // update bottom nav
   document.querySelectorAll('.bn-item').forEach(n => n.classList.remove('active'));
   if (page === 'dashboard') { const b = document.getElementById('bn-dashboard'); if(b) b.classList.add('active'); }
@@ -3385,6 +3454,7 @@ function moduleCard(m) {
   return `<div class="module-card${sitActivo(m) ? '' : ' mod-inact'}" onclick="goPage('mod_${m.id}')">
     ${pending > 0 ? `<div class="mc-badge-count">${pending}</div>` : ''}
     <div class="mc-top"><div class="mc-icon">${modIco(m, 22)}</div>
+      <button type="button" class="win-mini" onclick="event.stopPropagation();ventanaAbrir('mod_${embAttr(m.id)}')" title="Abrir este proyecto en otra ventana">⧉</button>
       <button type="button" class="sit-btn mc-sit" onclick="event.stopPropagation();sitAbrir('${embAttr(m.id)}')" title="${embAttr('Cambiar progress y status' + (m.causa ? ' · ' + m.causa : ''))}">${prgChip(m)}${sitActivo(m) ? '' : sitChip(m)}</button></div>
     <div class="mc-name">${modChip(m)}${escHtml(m.name)}</div>
     <div class="mc-desc">${escHtml(m.desc || '—')}</div>
@@ -4076,6 +4146,7 @@ function embCard(p, idx) {
   const puedePerder = ['prospecto', 'contactado', 'reunion', 'propuesta', 'negociacion'].indexOf(p.etapa) >= 0;
   return `
   <div class="emb-card">
+    <button type="button" class="win-mini" onclick="ventanaAbrir('emb:${id}')" title="Abrir esta tarjeta en otra ventana">⧉</button>
     <button class="emb-name" onclick="embOpen('${id}')">${escHtml(p.nombre)}</button>
     <div class="emb-prgrow"><button type="button" class="sit-btn" onclick="embProgAbrir('${id}')" title="Cambiar progress">${prgChip(p)}</button></div>
     ${p.rubro ? `<div class="emb-rubro">${escHtml(p.rubro)}</div>` : ''}
