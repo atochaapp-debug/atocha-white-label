@@ -989,6 +989,9 @@ body.visor-on { background: var(--gray-100); }
 .build-ed { color:rgba(255,255,255,.7); letter-spacing:.5px; }
 #modal.pop-oculto { display:none !important; } #modal-body { position:relative; }
 .pop-btn { float:right; margin:-8px -8px 6px 10px; background:var(--gray-100); border:1px solid var(--gray-200); border-radius:8px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer; color:var(--gray-700); font-family:inherit; } .pop-btn:hover { border-color:var(--blue-500); }
+#modal.z-top { z-index:10001; }
+#bk-aviso { position:fixed; left:16px; bottom:16px; z-index:600; max-width:360px; background:#FEF3C7; color:#78350F; border:1px solid #FCD34D; border-radius:12px; padding:12px 14px; font-size:13px; box-shadow:0 8px 24px rgba(0,0,0,.18); display:flex; flex-direction:column; gap:6px; }
+#bk-aviso button { align-self:flex-start; border:none; border-radius:8px; padding:7px 12px; font-weight:700; cursor:pointer; background:#92400E; color:#fff; font-family:inherit; margin-right:6px; } #bk-aviso .bk-x { background:transparent; color:#92400E; }
 </style>
 <body>
 
@@ -1027,6 +1030,7 @@ body.visor-on { background: var(--gray-100); }
         <div class="hint">¿Ya tienes este negocio en otro dispositivo? Pega aquí su código (lo encuentras en Configuración) para vincularlo y traer sus datos.</div>
       </div>
       <button class="btn-primary" onclick="obNext1()">Continuar →</button>
+      <div class="ob-salir" style="display:block"><a href="#" onclick="nubeRecuperarAbrir();return false">☁️ ¿Ya tenías negocios? Recupéralos de la nube</a></div>
       <div class="ob-salir"><a href="#" onclick="authSalir();return false">¿Otra cuenta? Cerrar sesión y volver a entrar</a></div>
     </div>
 
@@ -1126,7 +1130,7 @@ body.visor-on { background: var(--gray-100); }
       <div class="nav-item" onclick="toggleDark()" id="nav-dark"><span class="ni" data-i="moon"></span><span class="nn">Modo Oscuro</span></div>
       <div class="nav-item" onclick="authSalir()" id="nav-salir" style="display:none"><span class="ni" data-i="exit"></span><span class="nn">Cerrar sesión</span></div>
       <div class="nav-item" onclick="goPage('config')" id="nav-config"><span class="ni" data-i="gear"></span><span class="nn">Configuración</span></div>
-      <div class="build-tag" title="Versión de Atocha cargada en este momento"><b class="build-ed">PERSONAL</b> · Versión 15-nov · ventanas en otra pantalla · etiqueta PERSONAL / GOOGLE</div>
+      <div class="build-tag" title="Versión de Atocha cargada en este momento"><b class="build-ed">PERSONAL</b> · Versión 15-nov · recuperar de la nube + aviso de backup · etiqueta PERSONAL / GOOGLE</div>
     </div>
   </nav>
 
@@ -1797,6 +1801,7 @@ function initApp() {
   snapGuardar('Automática', false);
   setTimeout(showCloudBanner, 800);
   setTimeout(recordatorioDia, 1600);
+  setTimeout(bkAviso, 4000);
   // Los enlaces de invitado se ponen al día solos cada vez que abres Atocha (sin tener que pulsar Subir).
   setTimeout(() => { try { if (Object.keys(cpMap()).some(k => cpActivo(k)) && sbOk()) cpRepublicarTodos(); } catch (e) { /* sin conexión: queda para el próximo Subir */ } }, 2500);
 }
@@ -4844,6 +4849,11 @@ function renderSync() {
       <input type="text" id="sy-code-new" placeholder="biz_..." autocomplete="off">
       <button class="btn-sync-down" onclick="linkSyncCode()">🔗 Vincular y descargar</button>
     </div>
+    <div style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:18px;">
+      <label style="font-size:13px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">¿Borraste datos o cambiaste de equipo?</label>
+      <button class="btn-sync-down" onclick="nubeRecuperarAbrir()">☁️ Recuperar negocios de la nube</button>
+      <div class="sync-hint" style="margin-top:8px;">Muestra todo lo que tienes guardado en la nube y trae varios negocios de una vez, sin escribir códigos.</div>
+    </div>
     <div class="sync-hint">
       💡 <strong>Regla de oro:</strong> Descarga al entrar · Sube al salir.<br>
       Última sync: ${state.lastSync ? new Date(state.lastSync).toLocaleString('es-CO') : 'nunca'}
@@ -6170,6 +6180,75 @@ function renderBackup() {
     <div style="margin-top:16px;font-size:12px;color:var(--gray-400);">Última exportación: guarda regularmente para no perder datos.</div>
   </div>` + backupExtraHtml();
 }
+// ═══════════════════════════════════════════════════════════
+//  RECUPERAR NEGOCIOS DE LA NUBE: lista todo lo guardado en la base y deja traer varios de una vez
+//  (sirve tras limpiar Chrome o al abrir Atocha en un equipo nuevo). No pisa los negocios que ya están aquí.
+// ═══════════════════════════════════════════════════════════
+let nubeFilas = [];
+function nubeEnOnboarding() { const o = document.getElementById('onboarding'); return !!o && o.style.display !== 'none' && getComputedStyle(o).display !== 'none'; }
+async function nubeRecuperarAbrir() {
+  if (!sbOk()) { showToast(AUTH_ON ? '⚠️ Inicia sesión primero' : '⚠️ Aún no hay conexión con la nube'); return; }
+  setModal('<h3>☁️ Tus negocios en la nube</h3><p style="color:var(--gray-500);font-size:14px;">Buscando…</p>', 640);
+  if (nubeEnOnboarding()) document.getElementById('modal').classList.add('z-top');
+  try {
+    const res = await sbFetch('/rest/v1/atocha_sync?select=id,data,updated_at&order=updated_at.desc');
+    if (!res.ok) throw new Error('http ' + res.status);
+    nubeFilas = (await res.json()).filter(r => r && r.data && !/__bk/.test(String(r.id))).map(r => {
+      let o = null; try { o = JSON.parse(r.data); } catch (e) { }
+      return o && Array.isArray(o.modules) ? { id: r.id, upd: r.updated_at, o } : null;
+    }).filter(Boolean);
+  } catch (e) { setModal('<h3>☁️ Tus negocios en la nube</h3><p style="color:#B91C1C;font-size:14px;">No se pudo consultar la nube. Revisa tu conexión e inténtalo de nuevo.</p><div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cerrar</button></div>', 640); return; }
+  nubeRecuperarPintar();
+}
+function nubeRecuperarPintar() {
+  const aqui = id => !!(profilesData && profilesData.profiles && profilesData.profiles[id]);
+  const filas = nubeFilas.map((f, i) => {
+    const ya = aqui(f.id), np = (f.o.modules || []).length;
+    const fec = f.upd ? new Date(f.upd).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+    return `<label style="display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--gray-200);border-radius:10px;margin-bottom:8px;${ya ? 'opacity:.55;' : 'cursor:pointer;'}">
+      <input type="checkbox" id="nr-${i}" ${ya ? 'disabled' : 'checked'}>
+      <span style="flex:1;min-width:0;"><b>${escHtml(f.o.company || f.id)}</b><br><span style="font-size:12px;color:var(--gray-500);">${np} proyecto${np === 1 ? '' : 's'} · subido ${fec} · código ${escHtml(f.id)}</span></span>
+      ${ya ? '<span style="font-size:12px;color:var(--gray-500);">ya está aquí</span>' : ''}</label>`;
+  }).join('');
+  const hay = nubeFilas.some(f => !aqui(f.id));
+  setModal(`<h3>☁️ Tus negocios en la nube</h3>
+    <p style="color:var(--gray-500);font-size:13px;margin:0 0 12px;">${nubeFilas.length ? 'Marca los que quieres traer a este equipo. Los que ya están aquí no se tocan.' : 'No hay negocios guardados en la nube.'}</p>
+    ${filas}
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cerrar</button>${hay ? '<button class="btn-confirm" onclick="nubeRecuperarTraer()">⬇️ Traer seleccionados</button>' : ''}</div>`, 640);
+  if (nubeEnOnboarding()) document.getElementById('modal').classList.add('z-top');
+}
+function nubeRecuperarTraer() {
+  const sel = nubeFilas.filter((f, i) => { const c = document.getElementById('nr-' + i); return c && c.checked && !c.disabled; });
+  if (!sel.length) { showToast('Marca al menos un negocio'); return; }
+  const sinNegocio = !profilesData.activeId || !profilesData.profiles[profilesData.activeId] || nubeEnOnboarding();
+  sel.forEach(f => { const o = JSON.parse(JSON.stringify(f.o)); o.clientId = f.id; o.cambiosSinSubir = false; profilesData.profiles[f.id] = o; });
+  closeModal();
+  if (sinNegocio) {
+    profilesData.activeId = sel[0].id; state = profilesData.profiles[sel[0].id]; ensureDefaults(); saveLocal(true);
+    document.getElementById('onboarding').style.display = 'none'; document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'block'; initApp();
+  } else {
+    saveLocal(true); renderProfileSwitcher();
+  }
+  showToast('✅ Recuperaste ' + sel.length + (sel.length === 1 ? ' negocio' : ' negocios') + '. Cámbiate entre ellos con el selector de arriba a la izquierda.');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  AVISO DE BACKUP: si pasan más de 7 días sin exportar, avisa (una vez por sesión, y se puede posponer)
+// ═══════════════════════════════════════════════════════════
+const BK_KEY = 'atocha_ultimo_backup';
+function bkMarcar() { try { localStorage.setItem(BK_KEY, String(Date.now())); } catch (e) { } }
+function bkAviso() {
+  try {
+    if (sessionStorage.getItem('atocha_bk_pos')) return;
+    let t = Number(localStorage.getItem(BK_KEY) || 0);
+    if (!t) { localStorage.setItem(BK_KEY, String(Date.now())); return; }   // primera vez: la cuenta empieza hoy
+    const dias = Math.floor((Date.now() - t) / 86400000); if (dias < 7) return;
+    let b = document.getElementById('bk-aviso');
+    if (!b) { b = document.createElement('div'); b.id = 'bk-aviso'; document.body.appendChild(b); }
+    b.innerHTML = `<b>💾 Hace ${dias} días que no exportas un backup.</b><span>Guarda una copia por si se borran los datos del navegador.</span><button onclick="exportBackup();document.getElementById('bk-aviso').remove()">Exportar ahora</button><button class="bk-x" onclick="try{sessionStorage.setItem('atocha_bk_pos','1')}catch(e){};document.getElementById('bk-aviso').remove()">Después</button>`;
+  } catch (e) { }
+}
 function exportBackup() {
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
@@ -6180,7 +6259,7 @@ function exportBackup() {
   const date = now.toISOString().split('T')[0];
   const time = now.toTimeString().slice(0,5).replace(':','');
   a.download = `atocha_${safeName}_${date}_${time}.json`;
-  a.click();
+  a.click(); bkMarcar();
   showToast('📦 Backup exportado');
 }
 function actualizarDesdeArchivo(e) {
@@ -6386,7 +6465,7 @@ function closeModal(e) {
   const mb = document.getElementById('modal-body');
   // En los formularios, un clic fuera de la ventana no cierra (así no se pierde lo escrito).
   if (e && mb.dataset && mb.dataset.fijo === '1') return;
-  if (!e || e.target.id === 'modal') { document.getElementById('modal').style.display = 'none'; mb.style.maxWidth = ''; if (mb.dataset) mb.dataset.fijo = ''; popSiCerro(); }
+  if (!e || e.target.id === 'modal') { document.getElementById('modal').style.display = 'none'; mb.style.maxWidth = ''; if (mb.dataset) mb.dataset.fijo = ''; popSiCerro(); document.getElementById('modal').classList.remove('z-top'); }
 }
 function modalFijo(si) { const mb = document.getElementById('modal-body'); if (mb.dataset) mb.dataset.fijo = si ? '1' : ''; }
 
