@@ -986,6 +986,9 @@ body.visor-on { background: var(--gray-100); }
 #an-body .chart, .an-card .chart { max-width:640px; display:block; } #an-body .chart .ch-l, .an-card .chart .ch-l { font-size:12px; } #an-body .chart .ch-v, .an-card .chart .ch-v { font-size:12.5px; }
 .cpv-tareas { margin-bottom:14px; } .cpv-chips { display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 8px; } .cpv-chips span { background:var(--gray-100); border-radius:999px; padding:4px 11px; font-size:13px; color:var(--gray-600); } .cpv-chips span b { color:var(--gray-900); } .cpv-chips span.rojo { background:#FEE2E2; color:#991B1B; } .cpv-chips span.rojo b { color:#991B1B; } .cpv-li.atr em { color:#B91C1C; font-weight:700; }
 .emb-vacias { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0 0 10px; }
+.build-ed { color:rgba(255,255,255,.7); letter-spacing:.5px; }
+#modal.pop-oculto { display:none !important; } #modal-body { position:relative; }
+.pop-btn { float:right; margin:-8px -8px 6px 10px; background:var(--gray-100); border:1px solid var(--gray-200); border-radius:8px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer; color:var(--gray-700); font-family:inherit; } .pop-btn:hover { border-color:var(--blue-500); }
 </style>
 <body>
 
@@ -1123,7 +1126,7 @@ body.visor-on { background: var(--gray-100); }
       <div class="nav-item" onclick="toggleDark()" id="nav-dark"><span class="ni" data-i="moon"></span><span class="nn">Modo Oscuro</span></div>
       <div class="nav-item" onclick="authSalir()" id="nav-salir" style="display:none"><span class="ni" data-i="exit"></span><span class="nn">Cerrar sesión</span></div>
       <div class="nav-item" onclick="goPage('config')" id="nav-config"><span class="ni" data-i="gear"></span><span class="nn">Configuración</span></div>
-      <div class="build-tag" title="Versión de Atocha cargada en este momento">Versión 5-nov · etapas vacías ocultas, también en la vista del vendedor</div>
+      <div class="build-tag" title="Versión de Atocha cargada en este momento"><b class="build-ed">PERSONAL</b> · Versión 15-nov · ventanas en otra pantalla · etiqueta PERSONAL / GOOGLE</div>
     </div>
   </nav>
 
@@ -3278,8 +3281,93 @@ function dashProyectos() {
     </div>`);
 }
 // Abre la ventana de detalle (ancha) con el contenido dado
+// ═══════════════════════════════════════════════════════════
+//  OTRA VENTANA: abre la lista que estás viendo (tareas de hoy, vencidas, pendientes, cumplidas…) en una ventana
+//  aparte del navegador, para arrastrarla al segundo monitor. La ventana refleja la lista y sigue funcionando:
+//  lo que marcas ahí se guarda en la app y la lista se actualiza sola.
+// ═══════════════════════════════════════════════════════════
+let popW = null, popObs = null, popVig = null, popAct = false, popRaf = 0, popCierre = 0;
+const POP_EVT = ['click', 'change', 'input', 'keydown', 'keyup', 'submit', 'focus', 'blur', 'dblclick'];
+function popDisp() { try { return window.matchMedia('(pointer: fine)').matches; } catch (e) { return false; } }
+function popViva() { return !!(popW && !popW.closed); }
+function popSync() {
+  popRaf = 0; if (!popViva()) return;
+  const src = document.getElementById('modal-body'), d = popW.document, r = d.getElementById('pop-root'); if (!r) return;
+  const y = popW.scrollY; r.innerHTML = src.innerHTML;
+  // los controles se ejecutan en esta ventana: se pasan los on… a atributos de datos y los atiende un único oyente
+  r.querySelectorAll('*').forEach(el => [...el.attributes].forEach(a => { if (/^on/i.test(a.name)) { el.setAttribute('data-h-' + a.name.slice(2).toLowerCase(), a.value); el.removeAttribute(a.name); } }));
+  const t = src.querySelector('h3, .card-title'); if (t && t.textContent.trim()) d.title = t.textContent.trim().slice(0, 60) + ' · Atocha';
+  popW.scrollTo(0, y);
+}
+function popAgenda() { if (!popRaf) popRaf = requestAnimationFrame(popSync); }
+function popEvento(ev) {
+  if (!popViva()) return;
+  const tg = ev.target;
+  if (tg && tg.id && (ev.type === 'input' || ev.type === 'change')) {   // lo que escribes o eliges se copia al control equivalente de la app
+    const o = document.getElementById(tg.id);
+    if (o && o !== tg) { if (tg.type === 'checkbox' || tg.type === 'radio') o.checked = tg.checked; else o.value = tg.value; }
+  }
+  popAct = true; clearTimeout(popCierre); popCierre = setTimeout(() => { popAct = false; }, 500);
+  const attr = 'data-h-' + ev.type;
+  for (let el = tg; el && el.nodeType === 1; el = el.parentElement) {
+    if (!el.hasAttribute || !el.hasAttribute(attr)) continue;
+    let r; try { r = new Function('event', el.getAttribute(attr)).call(el, ev); } catch (e) { console.error(e); }
+    if (r === false) ev.preventDefault();
+    if (ev.cancelBubble) break;
+  }
+}
+function popLimpiar() {
+  if (popObs) { popObs.disconnect(); popObs = null; } clearInterval(popVig); popVig = null;
+  document.getElementById('modal').classList.remove('pop-oculto');
+}
+function popDesacoplar() {   // desde la app se abrió otra ventana: la de aparte queda como foto y la nueva se ve aquí
+  popLimpiar();
+  if (popViva()) { const r = popW.document.getElementById('pop-root'); if (r) r.insertAdjacentHTML('afterbegin', '<div class="pop-aviso">Esta ventana ya no se actualiza. Ciérrala y vuelve a abrirla desde la app.</div>'); }
+  popW = null;
+}
+function popSiCerro() {   // la app cerró la ventana: si no se vuelve a abrir enseguida, se cierra también la de aparte
+  if (!popViva()) return; clearTimeout(popCierre);
+  setTimeout(() => { if (popViva() && document.getElementById('modal').style.display === 'none') { try { popW.close(); } catch (e) { } popLimpiar(); popW = null; } }, 250);
+}
+async function modalPop() {
+  const src = document.getElementById('modal-body'); if (!src || !src.innerHTML.trim()) return;
+  if (popViva()) { popW.focus(); return; }
+  const w = window.open('', 'atochaVentana', 'popup=yes,width=1000,height=800');
+  if (!w) { showToast('⚠️ El navegador bloqueó la ventana. Permite las ventanas emergentes de este sitio y vuelve a intentar.'); return; }
+  popW = w;
+  w.document.open(); w.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Atocha · lista</title></head><body><div class="modal" id="pop-root"></div></body></html>'); w.document.close();
+  [...document.documentElement.attributes].forEach(a => { try { w.document.documentElement.setAttribute(a.name, a.value); } catch (e) { } });
+  w.document.body.className = document.body.className;
+  document.querySelectorAll('style, link[rel="stylesheet"]').forEach(n => w.document.head.appendChild(w.document.importNode(n, true)));
+  const st = w.document.createElement('style');
+  st.textContent = 'html,body{margin:0;background:var(--gray-50,#F8FAFC);} #pop-root{max-width:none!important;width:100%!important;max-height:none!important;border-radius:0!important;box-shadow:none!important;min-height:100vh;box-sizing:border-box;overflow:visible!important;} .pop-btn{display:none!important;} .pop-aviso{background:#FEF3C7;color:#92400E;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:13px;font-weight:600;}';
+  w.document.head.appendChild(st);
+  POP_EVT.forEach(t => w.document.addEventListener(t, popEvento, true));
+  w.addEventListener('beforeunload', () => { });
+  document.getElementById('modal').classList.add('pop-oculto');
+  popObs = new MutationObserver(popAgenda); popObs.observe(src, { childList: true, subtree: true, characterData: true });
+  popVig = setInterval(() => { if (!popViva()) { popLimpiar(); popW = null; document.getElementById('modal').style.display = 'none'; } }, 600);
+  popSync();
+  // con dos monitores, intenta colocarla en el otro (el navegador pide permiso una sola vez)
+  try {
+    if (window.screen && window.screen.isExtended && window.getScreenDetails) {
+      const dt = await window.getScreenDetails(), o = dt.screens.find(s => s !== dt.currentScreen);
+      if (o && popViva()) { w.moveTo(o.availLeft + 30, o.availTop + 30); w.resizeTo(Math.min(1100, o.availWidth - 60), Math.min(900, o.availHeight - 60)); }
+    }
+  } catch (e) { }
+}
+window.addEventListener('beforeunload', () => { try { if (popViva()) popW.close(); } catch (e) { } });
+// el botón se añade a toda ventana de solo lectura/listas (las que no son formularios con "Guardar")
+function popBoton() {
+  const m = document.getElementById('modal-body'); if (!m || !popDisp()) return;
+  if (m.querySelector(':scope > .pop-btn') || !m.innerHTML.trim()) return;
+  if (m.querySelector('.btn-confirm, form, input[type=text], textarea')) return;
+  m.insertAdjacentHTML('afterbegin', '<button type="button" class="pop-btn" onclick="modalPop()" title="Abrir esta lista en otra ventana para llevarla a otro monitor">⧉ Otra ventana</button>');
+}
+try { new MutationObserver(popBoton).observe(document.getElementById('modal-body'), { childList: true }); } catch (e) { }
 function setModal(html, ancho) {
   modalFijo(false);
+  if (popViva() && !popAct) popDesacoplar();
   const m = document.getElementById('modal-body');
   m.innerHTML = html;
   m.style.maxWidth = (ancho || 600) + 'px';
@@ -6298,7 +6386,7 @@ function closeModal(e) {
   const mb = document.getElementById('modal-body');
   // En los formularios, un clic fuera de la ventana no cierra (así no se pierde lo escrito).
   if (e && mb.dataset && mb.dataset.fijo === '1') return;
-  if (!e || e.target.id === 'modal') { document.getElementById('modal').style.display = 'none'; mb.style.maxWidth = ''; if (mb.dataset) mb.dataset.fijo = ''; }
+  if (!e || e.target.id === 'modal') { document.getElementById('modal').style.display = 'none'; mb.style.maxWidth = ''; if (mb.dataset) mb.dataset.fijo = ''; popSiCerro(); }
 }
 function modalFijo(si) { const mb = document.getElementById('modal-body'); if (mb.dataset) mb.dataset.fijo = si ? '1' : ''; }
 
