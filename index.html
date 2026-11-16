@@ -988,7 +988,7 @@ body.visor-on { background: var(--gray-100); }
 .emb-vacias { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0 0 10px; }
 .build-ed { color:rgba(255,255,255,.7); letter-spacing:.5px; }
 #modal.pop-oculto { display:none !important; } #modal-body { position:relative; }
-.pop-btn { float:right; margin:-8px -8px 6px 10px; background:var(--gray-100); border:1px solid var(--gray-200); border-radius:8px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer; color:var(--gray-700); font-family:inherit; } .pop-btn:hover { border-color:var(--blue-500); }
+.pop-btn { position:sticky; top:0; z-index:5; float:right; margin:-8px -8px 6px 10px; background:var(--gray-100); border:1px solid var(--gray-200); border-radius:8px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer; color:var(--gray-700); font-family:inherit; } .pop-btn:hover { border-color:var(--blue-500); }
 #modal.z-top { z-index:10001; }
 #bk-aviso { position:fixed; left:16px; bottom:16px; z-index:600; max-width:360px; background:#FEF3C7; color:#78350F; border:1px solid #FCD34D; border-radius:12px; padding:12px 14px; font-size:13px; box-shadow:0 8px 24px rgba(0,0,0,.18); display:flex; flex-direction:column; gap:6px; }
 #bk-aviso button { align-self:flex-start; border:none; border-radius:8px; padding:7px 12px; font-weight:700; cursor:pointer; background:#92400E; color:#fff; font-family:inherit; margin-right:6px; } #bk-aviso .bk-x { background:transparent; color:#92400E; }
@@ -1140,7 +1140,7 @@ body.en-ventana .btn-ventana, body.en-ventana .btn-app, body.en-ventana #nav-app
       <div class="nav-item" onclick="toggleDark()" id="nav-dark"><span class="ni" data-i="moon"></span><span class="nn">Modo Oscuro</span></div>
       <div class="nav-item" onclick="authSalir()" id="nav-salir" style="display:none"><span class="ni" data-i="exit"></span><span class="nn">Cerrar sesión</span></div>
       <div class="nav-item" onclick="goPage('config')" id="nav-config"><span class="ni" data-i="gear"></span><span class="nn">Configuración</span></div>
-      <div class="build-tag" title="Versión de Atocha cargada en este momento"><b class="build-ed">PERSONAL</b> · Versión 15-nov · pantallas en otra ventana · etiqueta PERSONAL / GOOGLE</div>
+      <div class="build-tag" title="Versión de Atocha cargada en este momento"><b class="build-ed">PERSONAL</b> · Versión 16-nov · ordenar tablas, botón fijo, backup de todos · etiqueta PERSONAL / GOOGLE</div>
     </div>
   </nav>
 
@@ -6237,6 +6237,7 @@ function renderBackup() {
     <p style="font-size:14px;color:var(--gray-600);margin-bottom:20px;">Exporta todos tus datos como archivo JSON o importa un backup anterior.</p>
     <div class="backup-actions">
       <button class="btn-backup btn-export" onclick="exportBackup()">📥 Exportar Backup</button>
+      <button class="btn-backup btn-export" onclick="exportBackupTodos()" title="Un solo archivo con todos los negocios de este equipo">📥 Exportar TODOS los negocios</button>
       <label class="btn-backup btn-import" style="cursor:pointer;">
         📤 Importar Backup
         <input type="file" accept=".json" style="display:none" onchange="importBackup(event)">
@@ -6317,8 +6318,33 @@ function bkAviso() {
     const dias = Math.floor((Date.now() - t) / 86400000); if (dias < 7) return;
     let b = document.getElementById('bk-aviso');
     if (!b) { b = document.createElement('div'); b.id = 'bk-aviso'; document.body.appendChild(b); }
-    b.innerHTML = `<b>💾 Hace ${dias} días que no exportas un backup.</b><span>Guarda una copia por si se borran los datos del navegador.</span><button onclick="exportBackup();document.getElementById('bk-aviso').remove()">Exportar ahora</button><button class="bk-x" onclick="try{sessionStorage.setItem('atocha_bk_pos','1')}catch(e){};document.getElementById('bk-aviso').remove()">Después</button>`;
+    b.innerHTML = `<b>💾 Hace ${dias} días que no exportas un backup.</b><span>Guarda una copia por si se borran los datos del navegador.</span><button onclick="(Object.keys(profilesData.profiles).length>1?exportBackupTodos:exportBackup)();document.getElementById('bk-aviso').remove()">Exportar ahora</button><button class="bk-x" onclick="try{sessionStorage.setItem('atocha_bk_pos','1')}catch(e){};document.getElementById('bk-aviso').remove()">Después</button>`;
   } catch (e) { }
+}
+function exportBackupTodos() {
+  saveLocal(true);
+  const ids = Object.keys(profilesData.profiles || {});
+  const blob = new Blob([JSON.stringify({ atochaTodos: 1, fecha: new Date().toISOString(), profiles: profilesData.profiles }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  const now = new Date();
+  a.download = `atocha_TODOS_${now.toISOString().split('T')[0]}_${now.toTimeString().slice(0, 5).replace(':', '')}.json`;
+  a.click(); bkMarcar();
+  showToast('📦 Backup de ' + ids.length + (ids.length === 1 ? ' negocio exportado' : ' negocios exportado'));
+}
+function importarTodos(d) {
+  const ids = Object.keys(d.profiles || {}).filter(id => d.profiles[id] && Array.isArray(d.profiles[id].modules));
+  if (!ids.length) { showToast('❌ El archivo no trae negocios'); return; }
+  const yaEstan = ids.filter(id => profilesData.profiles[id]);
+  const nuevos = ids.filter(id => !profilesData.profiles[id]);
+  let reemplazar = false;
+  if (yaEstan.length) reemplazar = confirm('El archivo trae ' + ids.length + ' negocios. ' + yaEstan.length + ' ya existen en este equipo.\n\nAceptar = reemplazar esos ' + yaEstan.length + ' por los del archivo (y agregar los ' + nuevos.length + ' nuevos).\nCancelar = solo agregar los ' + nuevos.length + ' nuevos y no tocar los demás.');
+  else if (!confirm('Se agregarán ' + ids.length + ' negocios a este equipo. ¿Continuar?')) return;
+  snapGuardar('Antes de importar todos', true);
+  let n = 0;
+  ids.forEach(id => { if (profilesData.profiles[id] && !reemplazar) return; profilesData.profiles[id] = d.profiles[id]; n++; });
+  if (profilesData.profiles[profilesData.activeId] && profilesData.profiles[profilesData.activeId] !== state) { state = profilesData.profiles[profilesData.activeId]; }
+  ensureDefaults(); saveLocal(true); renderProfileSwitcher(); renderSidebar(); goPage('dashboard');
+  showToast('✅ ' + n + (n === 1 ? ' negocio importado' : ' negocios importados') + '. Cámbiate entre ellos con el selector de arriba a la izquierda.');
 }
 function exportBackup() {
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
@@ -6357,6 +6383,7 @@ function importBackup(e) {
   r.onload = ev => {
     try {
       const d = JSON.parse(ev.target.result);
+      if (d && d.atochaTodos && d.profiles) { importarTodos(d); return; }
       snapGuardar('Antes de importar', true);
       state = d;
       saveLocal(); renderSidebar(); goPage('dashboard');
@@ -7667,6 +7694,7 @@ function dcForm(mid, id) {
     <div class="modal-field"><label>Título</label><input type="text" id="dc-t" maxlength="160" value="${embAttr(d ? d.titulo : '')}" placeholder="Ej: Acuerdo comercial con el aliado" autocomplete="off"></div>
     <div class="modal-field"><label>Texto (pega aquí)</label><textarea id="dc-x" rows="12" maxlength="60000" placeholder="Pega o escribe el contenido…" style="width:100%;resize:vertical">${escHtml(d ? d.texto : '')}</textarea></div>
     <div class="dc-imp"><button type="button" class="edit-btn" onclick="document.getElementById('dc-file').click()">📄 Cargar desde un archivo (Word .docx, .txt, .md, .csv, .html)</button><input type="file" id="dc-file" accept=".docx,.txt,.md,.csv,.json,.html,.htm,.rtf,text/*" style="display:none" onchange="dcArchivo(this)"><span class="so-sub" id="dc-msg"> También puedes arrastrar el archivo al cuadro de texto. Los PDF no: ábrelos, selecciona el texto, cópialo (Ctrl+C) y pégalo aquí.</span></div>
+    <div class="dc-imp"><button type="button" class="edit-btn" onclick="dcOrdenarTabla()" title="Convierte una tabla pegada (de un PDF, por ejemplo) en filas con columnas separadas por |">🧾 Ordenar tabla pegada en filas</button><span style="font-size:12px;color:var(--gray-500);margin-left:8px;">Si seleccionas solo una parte del texto, ordena solo esa parte.</span></div>
     <label class="rt-fila" style="border:0"><input type="checkbox" id="dc-pub"${!d || d.pub ? ' checked' : ''}><span>Visible en el enlace de invitado de este proyecto</span></label>
     <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancelar</button><button class="btn-confirm" onclick="dcGuardar('${embAttr(mid)}','${embAttr(id || '')}')">Guardar</button></div>`, 620);
   modalFijo(true);   // un clic o arrastre que termine fuera de la ventana no debe cerrarla ni borrar lo pegado
@@ -7674,6 +7702,29 @@ function dcForm(mid, id) {
   tx.addEventListener('dragover', e => e.preventDefault());
   tx.addEventListener('drop', e => { const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) { e.preventDefault(); dcArchivo({ files: [f], value: '' }); } });
   const i = document.getElementById(d ? 'dc-x' : 'dc-t'); if (i) i.focus();
+}
+// Tablas pegadas desde un PDF suelen llegar con una celda por línea o separadas por espacios largos.
+function dcOrdenarTabla() {
+  const tx = document.getElementById('dc-x'); if (!tx) return;
+  const a = tx.selectionStart, b = tx.selectionEnd, parte = a !== b;
+  const src = parte ? tx.value.slice(a, b) : tx.value;
+  const lineas = src.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  if (!lineas.length) { showToast('Pega primero el texto de la tabla'); return; }
+  if (lineas.every(l => / \| /.test(l))) { showToast('Esto ya está ordenado como tabla'); return; }
+  const sep = /\t| {2,}/;
+  let filas;
+  if (lineas.filter(l => sep.test(l)).length >= Math.ceil(lineas.length * 0.6)) {
+    filas = lineas.map(l => l.split(sep).map(c => c.trim()).filter(Boolean));
+  } else {
+    const n = parseInt(prompt('Este texto trae una celda por línea. ¿Cuántas columnas tiene la tabla? (por ejemplo 3)', '3'), 10);
+    if (!n || n < 2 || n > 12) { showToast('Escribe un número de columnas entre 2 y 12'); return; }
+    if (lineas.length % n && !confirm('Son ' + lineas.length + ' líneas y no se reparten exacto en ' + n + ' columnas: la última fila quedará incompleta. ¿Continuar?')) return;
+    filas = []; for (let i = 0; i < lineas.length; i += n) filas.push(lineas.slice(i, i + n));
+  }
+  const txt = filas.map(f => f.join(' | ')).join('\n');
+  const ini = parte ? (/^\s*/.exec(src)[0]) : '', fin = parte ? (/\s*$/.exec(src)[0]) : '';
+  tx.value = parte ? tx.value.slice(0, a) + ini + txt + fin + tx.value.slice(b) : txt;
+  showToast('🧾 ' + filas.length + ' filas ordenadas. Revísalas antes de guardar.');
 }
 async function dcTextoDeArchivo(f) {
   const n = (f.name || '').toLowerCase();
